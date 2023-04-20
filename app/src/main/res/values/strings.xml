@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Highlights</string>
+    <string name="tab_text_1">Не-хрень</string>
+    <string name="tab_text_2">Хрень</string>
+    <string name="genre">Genre</string>
+    <string name="name">Name</string>
+    <string name="year">Year</string>
+    <string name="save">Save</string>
+    <string name="author">Author</string>
+</resources>
