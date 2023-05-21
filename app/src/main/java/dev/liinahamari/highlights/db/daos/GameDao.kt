@@ -1,9 +1,13 @@
 package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
+import dev.liinahamari.highlights.ui.main.EntityCategory
 
 @Entity
-data class Game(@PrimaryKey val name: String, val genre: String, val year: Int)
+data class Game(
+    @PrimaryKey val name: String, val genre: String, override val year: Int, override val category: EntityCategory,
+    override val posterUrl: String
+) : Entry
 
 @Dao
 interface GameDao {

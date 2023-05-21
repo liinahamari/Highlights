@@ -1,9 +1,17 @@
 package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
+import dev.liinahamari.highlights.ui.main.EntityCategory
 
 @Entity
-data class Book(@PrimaryKey val name: String, val genre: String, val author: String, val year: Int)
+data class Book(
+    @PrimaryKey val name: String,
+    val genre: String,
+    val author: String,
+    override val year: Int,
+    override val category: EntityCategory,
+    override val posterUrl: String
+): Entry
 
 @Dao
 interface BookDao {

@@ -9,7 +9,7 @@ import dev.liinahamari.highlights.ui.main.SectionsPagerAdapter
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private val ui by viewBinding(ActivityMainBinding::bind)
-    private val adapter = SectionsPagerAdapter(this, supportFragmentManager)
+    private val adapter = SectionsPagerAdapter(supportFragmentManager)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

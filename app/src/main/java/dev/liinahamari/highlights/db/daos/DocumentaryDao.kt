@@ -1,9 +1,13 @@
 package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
+import dev.liinahamari.highlights.ui.main.EntityCategory
 
 @Entity
-data class Documentary(@PrimaryKey val name: String, val year: Int)
+data class Documentary(
+    @PrimaryKey val name: String, override val year: Int, override val category: EntityCategory,
+    override val posterUrl: String
+): Entry
 
 @Dao
 interface DocumentaryDao {

@@ -5,6 +5,7 @@
     <string name="genre">Genre</string>
     <string name="name">Name</string>
     <string name="year">Year</string>
+    <string name="poster_url">Poster URL</string>
     <string name="save">Save</string>
     <string name="author">Author</string>
 </resources>

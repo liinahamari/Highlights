@@ -18,14 +18,16 @@ import dev.liinahamari.highlights.db.daos.Book
 import dev.liinahamari.highlights.db.daos.Documentary
 import dev.liinahamari.highlights.db.daos.Game
 import dev.liinahamari.highlights.db.daos.Movie
+import dev.liinahamari.highlights.ui.main.CategoriesFragment.Companion.ARG_CATEGORY
 
-class CategoryFragment : Fragment(R.layout.fragment_category) {
-    private var movie = Movie("", "", 0)
-    private var documentary = Documentary("", 0)
-    private var game = Game("", "", 0)
-    private var book = Book("", "", "", 0)
+class EntryFragment : Fragment(R.layout.fragment_category) {
+    private var movie = Movie("", "", 0, EntityCategory.GOOD, "")
+    private var documentary = Documentary("", 0, EntityCategory.GOOD, "")
+    private var game = Game("", "", 0, EntityCategory.GOOD, "")
+    private var book = Book("", "", "", 0, EntityCategory.GOOD, "")
 
-    private val category by lazy { requireArguments().getString(ARG_CATEGORY) }
+    private val entityType by lazy { requireArguments().getString(ARG_ENTITY_TYPE) }
+    private val category: EntityCategory by lazy { EntityCategory.valueOf(requireArguments().getString(ARG_CATEGORY)!!) }
     private val db by lazy { (requireActivity().application as App).db }
     private val ui by viewBinding(FragmentCategoryBinding::bind)
 
@@ -39,7 +41,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
                     addView(EditText(requireContext()).apply {
                         setHint(R.string.name)
                         doOnTextChanged { text, _, _, _ ->
-                            when (category) {
+                            when (entityType) {
                                 "bookDao" -> book = book.copy(name = text.toString())
                                 "movieDao" -> movie = movie.copy(name = text.toString())
                                 "documentaryDao" -> documentary = documentary.copy(name = text.toString())
@@ -48,11 +50,11 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
                             }
                         }
                     })
-                    if (category != "documentaryDao") {
+                    if (entityType != "documentaryDao") {
                         addView(EditText(requireContext()).apply {
                             setHint(R.string.genre)
                             doOnTextChanged { text, _, _, _ ->
-                                when (category) {
+                                when (entityType) {
                                     "bookDao" -> book = book.copy(genre = text.toString())
                                     "moviesDao" -> movie = movie.copy(genre = text.toString())
                                     "gameDao" -> game = game.copy(genre = text.toString())
@@ -65,7 +67,7 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
                         inputType = InputType.TYPE_CLASS_NUMBER
                         setHint(R.string.year)
                         doOnTextChanged { text, _, _, _ ->
-                            when (category) {
+                            when (entityType) {
                                 "bookDao" -> book = book.copy(year = text.toString().toInt())
                                 "moviesDao" -> movie = movie.copy(year = text.toString().toInt())
                                 "documentaryDao" -> documentary = documentary.copy(year = text.toString().toInt())
@@ -74,7 +76,20 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
                             }
                         }
                     })
-                    if (category == "bookDao") {
+                    addView(EditText(requireContext()).apply {
+                        inputType = InputType.TYPE_CLASS_TEXT
+                        setHint(R.string.poster_url)
+                        doOnTextChanged { text, _, _, _ ->
+                            when (entityType) {
+                                "bookDao" -> book = book.copy(posterUrl = text.toString())
+                                "moviesDao" -> movie = movie.copy(posterUrl = text.toString())
+                                "documentaryDao" -> documentary = documentary.copy(posterUrl = text.toString())
+                                "gameDao" -> game = game.copy(posterUrl = text.toString())
+                                else -> throw IllegalStateException()
+                            }
+                        }
+                    })
+                    if (entityType == "bookDao") {
                         addView(EditText(requireContext()).apply {
                             inputType = InputType.TYPE_CLASS_TEXT
                             setHint(R.string.author)
@@ -85,18 +100,20 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
                     }
                 })
                 setPositiveButton(android.R.string.ok) { _, _ ->
-                    when (category) {
-                        "bookDao" -> db.bookDao().insert(book)
-                        "moviesDao" -> db.movieDao().insert(movie)
-                        "documentaryDao" -> db.documentaryDao().insert(documentary)
-                        "gameDao" -> db.gameDao().insert(game)
+                    when (entityType) {
+                        "bookDao" -> db.bookDao().insert(book.copy(category = category))
+                        "moviesDao" -> db.movieDao().insert(movie.copy(category = category))
+                        "documentaryDao" -> db.documentaryDao().insert(documentary.copy(category = category))
+                        "gameDao" -> db.gameDao().insert(game.copy(category = category))
                         else -> throw IllegalStateException()
                     }
-                    val data: List<String> = when (category) {
-                        "bookDao" -> db.bookDao().getAll().map { it.toString() }
-                        "moviesDao" -> db.movieDao().getAll().map { it.toString() }
-                        "documentaryDao" -> db.documentaryDao().getAll().map { it.toString() }
-                        "gameDao" -> db.gameDao().getAll().map { it.toString() }
+                    val data: List<Entry> = when (entityType) {
+                        "bookDao" -> db.bookDao().getAll()
+                            .map { Entry(description = "${it.author}: ${it.name}", url = it.posterUrl) }
+                        "moviesDao" -> db.movieDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
+                        "documentaryDao" -> db.documentaryDao().getAll()
+                            .map { Entry(description = it.name, url = it.posterUrl) }
+                        "gameDao" -> db.gameDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
                         else -> throw IllegalStateException()
                     }
                     ui.entriesRv.adapter = EntryAdapter(data).apply { notifyDataSetChanged() }
@@ -104,11 +121,12 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
             }.show()
         }
 
-        val data: List<String> = when (category) {
-            "bookDao" -> db.bookDao().getAll().map { it.toString() }
-            "moviesDao" -> db.movieDao().getAll().map { it.toString() }
-            "documentaryDao" -> db.documentaryDao().getAll().map { it.toString() }
-            "gameDao" -> db.gameDao().getAll().map { it.toString() }
+        val data: List<Entry> = when (entityType) {
+            "bookDao" -> db.bookDao().getAll()
+                .map { Entry(description = "${it.author}: ${it.name}", url = it.posterUrl) }
+            "moviesDao" -> db.movieDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
+            "documentaryDao" -> db.documentaryDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
+            "gameDao" -> db.gameDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
             else -> throw IllegalStateException()
         }
 
@@ -116,8 +134,10 @@ class CategoryFragment : Fragment(R.layout.fragment_category) {
     }
 
     companion object {
-        const val ARG_CATEGORY = "arg_category"
-        @JvmStatic fun newInstance(categoryName: String) =
-            CategoryFragment().apply { arguments = bundleOf(ARG_CATEGORY to categoryName) }
+        const val ARG_ENTITY_TYPE = "arg_entity_type"
+        @JvmStatic fun newInstance(entityType: String, category: String) =
+            EntryFragment().apply {
+                arguments = bundleOf(ARG_ENTITY_TYPE to entityType, ARG_CATEGORY to category)
+            }
     }
 }

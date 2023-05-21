@@ -3,17 +3,24 @@ package dev.liinahamari.highlights.ui.main
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import dev.liinahamari.highlights.R
 
-class EntryAdapter(private val dataSet: List<String>) : RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
+data class Entry(
+    val description: String, val url: String
+)
 
+class EntryAdapter(private val dataSet: List<Entry>) : RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameTv: TextView
+        val posterIv: ImageView
 
         init {
             nameTv = view.findViewById(R.id.entryNameTv)
+            posterIv = view.findViewById(R.id.posterIv)
         }
     }
 
@@ -23,7 +30,10 @@ class EntryAdapter(private val dataSet: List<String>) : RecyclerView.Adapter<Ent
     )
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.nameTv.text = dataSet[position]
+        viewHolder.nameTv.text = dataSet[position].description
+        Glide.with(viewHolder.posterIv.context)
+            .load(dataSet[position].url)
+            .into(viewHolder.posterIv)
     }
 
     override fun getItemCount() = dataSet.size
