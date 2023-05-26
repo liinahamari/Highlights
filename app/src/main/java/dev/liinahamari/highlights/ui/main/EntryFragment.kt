@@ -56,7 +56,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                             doOnTextChanged { text, _, _, _ ->
                                 when (entityType) {
                                     "bookDao" -> book = book.copy(genre = text.toString())
-                                    "moviesDao" -> movie = movie.copy(genre = text.toString())
+                                    "movieDao" -> movie = movie.copy(genre = text.toString())
                                     "gameDao" -> game = game.copy(genre = text.toString())
                                     else -> throw IllegalStateException()
                                 }
@@ -69,7 +69,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                         doOnTextChanged { text, _, _, _ ->
                             when (entityType) {
                                 "bookDao" -> book = book.copy(year = text.toString().toInt())
-                                "moviesDao" -> movie = movie.copy(year = text.toString().toInt())
+                                "movieDao" -> movie = movie.copy(year = text.toString().toInt())
                                 "documentaryDao" -> documentary = documentary.copy(year = text.toString().toInt())
                                 "gameDao" -> game = game.copy(year = text.toString().toInt())
                                 else -> throw IllegalStateException()
@@ -82,7 +82,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                         doOnTextChanged { text, _, _, _ ->
                             when (entityType) {
                                 "bookDao" -> book = book.copy(posterUrl = text.toString())
-                                "moviesDao" -> movie = movie.copy(posterUrl = text.toString())
+                                "movieDao" -> movie = movie.copy(posterUrl = text.toString())
                                 "documentaryDao" -> documentary = documentary.copy(posterUrl = text.toString())
                                 "gameDao" -> game = game.copy(posterUrl = text.toString())
                                 else -> throw IllegalStateException()
@@ -102,7 +102,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                 setPositiveButton(android.R.string.ok) { _, _ ->
                     when (entityType) {
                         "bookDao" -> db.bookDao().insert(book.copy(category = category))
-                        "moviesDao" -> db.movieDao().insert(movie.copy(category = category))
+                        "movieDao" -> db.movieDao().insert(movie.copy(category = category))
                         "documentaryDao" -> db.documentaryDao().insert(documentary.copy(category = category))
                         "gameDao" -> db.gameDao().insert(game.copy(category = category))
                         else -> throw IllegalStateException()
@@ -110,7 +110,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                     val data: List<Entry> = when (entityType) {
                         "bookDao" -> db.bookDao().getAll()
                             .map { Entry(description = "${it.author}: ${it.name}", url = it.posterUrl) }
-                        "moviesDao" -> db.movieDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
+                        "movieDao" -> db.movieDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
                         "documentaryDao" -> db.documentaryDao().getAll()
                             .map { Entry(description = it.name, url = it.posterUrl) }
                         "gameDao" -> db.gameDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
@@ -124,7 +124,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
         val data: List<Entry> = when (entityType) {
             "bookDao" -> db.bookDao().getAll()
                 .map { Entry(description = "${it.author}: ${it.name}", url = it.posterUrl) }
-            "moviesDao" -> db.movieDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
+            "movieDao" -> db.movieDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
             "documentaryDao" -> db.documentaryDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
             "gameDao" -> db.gameDao().getAll().map { Entry(description = it.name, url = it.posterUrl) }
             else -> throw IllegalStateException()

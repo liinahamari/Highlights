@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import dev.liinahamari.highlights.ImagePopup
 import dev.liinahamari.highlights.R
 
 data class Entry(
@@ -33,7 +34,12 @@ class EntryAdapter(private val dataSet: List<Entry>) : RecyclerView.Adapter<Entr
         viewHolder.nameTv.text = dataSet[position].description
         Glide.with(viewHolder.posterIv.context)
             .load(dataSet[position].url)
+            .timeout(20_000)
             .into(viewHolder.posterIv)
+        viewHolder.posterIv.setOnClickListener {
+            ImagePopup(it.context)
+                .show(dataSet[position].url, it)
+        }
     }
 
     override fun getItemCount() = dataSet.size
