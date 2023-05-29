@@ -16,7 +16,7 @@ import android.widget.PopupWindow
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 
-class ImagePopup constructor(context: Context) : AppCompatImageView(context) {
+class PopupImage constructor(context: Context) : AppCompatImageView(context) {
     @SuppressLint("InflateParams") fun show(imageUrl: String?, viewToAttachTo: View) {
         val layout =
             (viewToAttachTo.context.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(

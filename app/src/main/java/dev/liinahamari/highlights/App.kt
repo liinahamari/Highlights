@@ -2,6 +2,7 @@ package dev.liinahamari.highlights
 
 import android.app.Application
 import androidx.room.Room
+import dev.liinahamari.highlights.db.DATABASE_NAME
 import dev.liinahamari.highlights.db.EntriesDatabase
 
 class App : Application() {
@@ -11,7 +12,7 @@ class App : Application() {
         super.onCreate()
         db = Room.databaseBuilder(
             applicationContext,
-            EntriesDatabase::class.java, "entries-db",
-        ).allowMainThreadQueries().build()
+            EntriesDatabase::class.java, DATABASE_NAME,
+        ).build()
     }
 }
