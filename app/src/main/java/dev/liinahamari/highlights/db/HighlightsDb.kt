@@ -7,6 +7,7 @@ import androidx.room.TypeConverters
 import dev.liinahamari.highlights.db.daos.*
 import dev.liinahamari.highlights.ui.main.EntityCategory
 
+const val DATABASE_NAME = "entries-db"
 @TypeConverters(CategoryConverters::class)
 @Database(entities = [Book::class, Documentary::class, Movie::class, Game::class], version = 1)
 abstract class EntriesDatabase : RoomDatabase() {
