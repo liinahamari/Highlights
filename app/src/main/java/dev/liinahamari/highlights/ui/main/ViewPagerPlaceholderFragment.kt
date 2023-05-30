@@ -5,20 +5,20 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import dev.liinahamari.highlights.IOnBackPressed
 import dev.liinahamari.highlights.R
-import dev.liinahamari.highlights.ui.main.EntryFragment.Companion.ARG_ENTITY_TYPE
+import dev.liinahamari.highlights.ui.main.EntryFragment.Companion.ARG_CATEGORY
 
 class ViewPagerPlaceholderFragment : Fragment(R.layout.fragment_main), IOnBackPressed {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         childFragmentManager.beginTransaction()
-            .replace(R.id.pagerContainer, CategoriesFragment.newInstance(requireArguments().getString(ARG_ENTITY_TYPE)!!))
+            .replace(R.id.pagerContainer, CategoriesFragment.newInstance(requireArguments().getParcelable(ARG_CATEGORY)!!))
             .commit()
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(categoryName: String): ViewPagerPlaceholderFragment = ViewPagerPlaceholderFragment().apply {
-            arguments = bundleOf(EntryFragment.ARG_ENTITY_TYPE to categoryName)
+        fun newInstance(category: EntityCategory): ViewPagerPlaceholderFragment = ViewPagerPlaceholderFragment().apply {
+            arguments = bundleOf(ARG_CATEGORY to category)
         }
     }
 

@@ -7,24 +7,27 @@ import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import dev.liinahamari.highlights.R
-import dev.liinahamari.highlights.db.EntriesDatabase
 
 class CategoriesFragment : Fragment(R.layout.fragment_categories) {
-    val category: EntityCategory by lazy { EntityCategory.valueOf(requireArguments().getString(ARG_CATEGORY)!!) }
-
     companion object {
         const val ARG_CATEGORY = "arg_category"
-        @JvmStatic fun newInstance(categoryName: String) =
-            CategoriesFragment().apply { arguments = bundleOf(ARG_CATEGORY to categoryName) }
+        @JvmStatic fun newInstance(category: EntityCategory) =
+            CategoriesFragment().apply { arguments = bundleOf(ARG_CATEGORY to category) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        EntriesDatabase::class.java.declaredMethods.map { it.name }.forEach { entityType ->
+        EntityType.values().map { it.toString() }.forEach { entityType ->
             view.findViewById<LinearLayout>(R.id.categoriesContainer).addView(Button(requireContext()).apply {
-                text = entityType.dropLast(3)
+                text = entityType
                 setOnClickListener {
                     parentFragmentManager.beginTransaction()
-                        .add(R.id.pagerContainer, EntryFragment.newInstance(entityType, category.name))
+                        .add(
+                            R.id.pagerContainer,
+                            EntryFragment.newInstance(
+                                requireArguments().getParcelable(ARG_CATEGORY)!!,
+                                EntityType.valueOf(entityType)
+                            )
+                        )
                         .addToBackStack("123")
                         .commit()
                 }

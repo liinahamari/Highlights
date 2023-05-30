@@ -2,6 +2,8 @@ package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
 import dev.liinahamari.highlights.ui.main.EntityCategory
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 
 @Entity
 data class Documentary(
@@ -12,17 +14,20 @@ data class Documentary(
 @Dao
 interface DocumentaryDao {
     @Query("SELECT * FROM documentary")
-    fun getAll(): List<Documentary>
+    fun getAll(): Single<List<Documentary>>
+
+    @Query("SELECT * FROM documentary WHERE category = :entityCategory")
+    fun getAll(entityCategory: EntityCategory): Single<List<Documentary>>
 
     @Query("SELECT * FROM documentary WHERE name LIKE :name LIMIT 1")
-    fun findByName(name: String): Documentary
+    fun findByName(name: String): Single<Documentary>
 
     @Insert
-    fun insertAll(vararg documentaries: Documentary)
+    fun insertAll(vararg documentaries: Documentary): Completable
 
     @Insert
-    fun insert(documentary: Documentary)
+    fun insert(documentary: Documentary): Completable
 
     @Delete
-    fun delete(documentary: Documentary)
+    fun delete(documentary: Documentary): Completable
 }
