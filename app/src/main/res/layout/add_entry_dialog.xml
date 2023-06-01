@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
     android:orientation="vertical">
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +18,7 @@
         app:hintEnabled="true">
         <requestFocus />
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nameTv"
+            android:id="@+id/nameEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -33,7 +35,6 @@
         app:hintAnimationEnabled="true"
         android:visibility="gone"
         app:hintEnabled="true">
-        <requestFocus />
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/authorTv"
             android:visibility="gone"
@@ -53,9 +54,8 @@
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true">
-        <requestFocus />
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/genreTv"
+            android:id="@+id/genreEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -71,15 +71,15 @@
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true">
-        <requestFocus />
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/yearTv"
+            android:id="@+id/yearEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/posterUrlInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -89,11 +89,12 @@
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true">
-        <requestFocus />
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/posterUrlTv"
+            android:id="@+id/posterUrlEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
             android:ems="10"
             android:inputType="textUri" />
     </com.google.android.material.textfield.TextInputLayout>

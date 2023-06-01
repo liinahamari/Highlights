@@ -8,4 +8,5 @@
     <string name="poster_url">Poster URL</string>
     <string name="save">Save</string>
     <string name="author">Author</string>
+    <string name="url_is_not_valid">Url is not valid</string>
 </resources>
