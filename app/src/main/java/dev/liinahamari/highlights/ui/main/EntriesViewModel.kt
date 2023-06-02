@@ -21,6 +21,7 @@ class EntriesViewModel(
     private val _fetchEvent = SingleLiveEvent<FetchEvent>()
     val fetchEvent: LiveData<FetchEvent> get() = _fetchEvent
 
+    //todo delegate
     private val disposable = CompositeDisposable()
 
     fun fetchEntries(entityType: EntityType, entityCategory: EntityCategory) {
@@ -29,29 +30,29 @@ class EntriesViewModel(
                 .map { it.map { Entry("Title: ${it.name}\n", it.posterUrl) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _fetchEvent.value = FetchEvent.UNSUCCESSFUL }
-                .subscribe { entries -> _fetchEvent.value = FetchEvent.SUCCESSFUL(entries) })
+                .doOnError { _fetchEvent.value = FetchEvent.Failure }
+                .subscribe { entries -> _fetchEvent.value = FetchEvent.Success(entries) })
 
             EntityType.BOOK -> disposable.add(db.bookDao().getAll(entityCategory)
                 .map { it.map { Entry("Title: ${it.name}\n", it.posterUrl) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _fetchEvent.value = FetchEvent.UNSUCCESSFUL }
-                .subscribe { entries -> _fetchEvent.value = FetchEvent.SUCCESSFUL(entries) })
+                .doOnError { _fetchEvent.value = FetchEvent.Failure }
+                .subscribe { entries -> _fetchEvent.value = FetchEvent.Success(entries) })
 
             EntityType.MOVIE -> disposable.add(db.movieDao().getAll(entityCategory)
                 .map { it.map { Entry("Title: ${it.name}\n", it.posterUrl) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _fetchEvent.value = FetchEvent.UNSUCCESSFUL }
-                .subscribe { entries -> _fetchEvent.value = FetchEvent.SUCCESSFUL(entries) })
+                .doOnError { _fetchEvent.value = FetchEvent.Failure }
+                .subscribe { entries -> _fetchEvent.value = FetchEvent.Success(entries) })
 
             EntityType.GAME -> disposable.add(db.gameDao().getAll(entityCategory)
                 .map { it.map { Entry("Title: ${it.name}\n", it.posterUrl) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _fetchEvent.value = FetchEvent.UNSUCCESSFUL }
-                .subscribe { entries -> _fetchEvent.value = FetchEvent.SUCCESSFUL(entries) })
+                .doOnError { _fetchEvent.value = FetchEvent.Failure }
+                .subscribe { entries -> _fetchEvent.value = FetchEvent.Success(entries) })
         }
     }
 
@@ -63,16 +64,16 @@ class EntriesViewModel(
     fun saveMovie(movie: Movie) {
         disposable.add(
             db.movieDao().insert(movie).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _saveEvent.value = SaveEvent.UNSUCCESSFUL }
-                .subscribe { _saveEvent.value = SaveEvent.SUCCESSFUL }
+                .doOnError { _saveEvent.value = SaveEvent.Failure }
+                .subscribe { _saveEvent.value = SaveEvent.Success }
         )
     }
 
     fun saveBook(book: Book) {
         disposable.add(
             db.bookDao().insert(book).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _saveEvent.value = SaveEvent.UNSUCCESSFUL }
-                .subscribe { _saveEvent.value = SaveEvent.SUCCESSFUL }
+                .doOnError { _saveEvent.value = SaveEvent.Failure }
+                .subscribe { _saveEvent.value = SaveEvent.Success }
         )
     }
 
@@ -80,26 +81,26 @@ class EntriesViewModel(
         disposable.add(
             db.documentaryDao().insert(documentary).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _saveEvent.value = SaveEvent.UNSUCCESSFUL }
-                .subscribe { _saveEvent.value = SaveEvent.SUCCESSFUL }
+                .doOnError { _saveEvent.value = SaveEvent.Failure }
+                .subscribe { _saveEvent.value = SaveEvent.Success }
         )
     }
 
     fun saveGame(game: Game) {
         disposable.add(
             db.gameDao().insert(game).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _saveEvent.value = SaveEvent.UNSUCCESSFUL }
-                .subscribe { _saveEvent.value = SaveEvent.SUCCESSFUL }
+                .doOnError { _saveEvent.value = SaveEvent.Failure }
+                .subscribe { _saveEvent.value = SaveEvent.Success }
         )
     }
 
     sealed class SaveEvent {
-        object SUCCESSFUL : SaveEvent()
-        object UNSUCCESSFUL : SaveEvent()
+        object Success : SaveEvent()
+        object Failure : SaveEvent()
     }
 
     sealed class FetchEvent {
-        data class SUCCESSFUL(val entries: List<Entry>) : FetchEvent()
-        object UNSUCCESSFUL : FetchEvent()
+        data class Success(val entries: List<Entry>) : FetchEvent()
+        object Failure : FetchEvent()
     }
 }

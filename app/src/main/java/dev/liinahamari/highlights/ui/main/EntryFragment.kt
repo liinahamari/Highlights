@@ -32,7 +32,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             )
         }
         entriesViewModel.fetchEvent.observe(viewLifecycleOwner) {
-            if (it is EntriesViewModel.FetchEvent.SUCCESSFUL) {
+            if (it is EntriesViewModel.FetchEvent.Success) {
                 ui.entriesRv.adapter = EntryAdapter(it.entries).apply { notifyDataSetChanged() }
             }
         }
