@@ -29,7 +29,6 @@ fun Fragment.showAddMovieDialog(category: EntityCategory, onSubmit: (movie: Movi
                 findViewById<TextInputLayout>(R.id.posterUrlInputLayout)?.error = null
                 movie = movie.copy(posterUrl = text.toString())
             }
-
     }.show()
 }
 
