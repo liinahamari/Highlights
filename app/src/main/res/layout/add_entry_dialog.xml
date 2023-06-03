@@ -98,4 +98,14 @@
             android:ems="10"
             android:inputType="textUri" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/countrySelectionBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/country"
+        app:cornerRadius="3dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="10dp"/>
 </LinearLayout>

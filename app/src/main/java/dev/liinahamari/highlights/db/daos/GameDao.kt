@@ -8,8 +8,35 @@ import io.reactivex.rxjava3.core.Single
 @Entity
 data class Game(
     @PrimaryKey val name: String, val genre: String, override val year: Int, override val category: EntityCategory,
-    override val posterUrl: String
-) : Entry
+    override val posterUrl: String,
+    override val countryCodes: Array<String>
+) : Entry {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Game
+
+        if (name != other.name) return false
+        if (genre != other.genre) return false
+        if (year != other.year) return false
+        if (category != other.category) return false
+        if (posterUrl != other.posterUrl) return false
+        if (!countryCodes.contentEquals(other.countryCodes)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + genre.hashCode()
+        result = 31 * result + year
+        result = 31 * result + category.hashCode()
+        result = 31 * result + posterUrl.hashCode()
+        result = 31 * result + countryCodes.contentHashCode()
+        return result
+    }
+}
 
 @Dao
 interface GameDao {
