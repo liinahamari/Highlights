@@ -3,17 +3,24 @@ package dev.liinahamari.highlights.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import dev.liinahamari.highlights.SingleLiveEvent
-import dev.liinahamari.highlights.db.EntriesDatabase
 import dev.liinahamari.highlights.db.daos.Book
+import dev.liinahamari.highlights.db.daos.BookDao
 import dev.liinahamari.highlights.db.daos.Documentary
+import dev.liinahamari.highlights.db.daos.DocumentaryDao
 import dev.liinahamari.highlights.db.daos.Game
+import dev.liinahamari.highlights.db.daos.GameDao
 import dev.liinahamari.highlights.db.daos.Movie
+import dev.liinahamari.highlights.db.daos.MovieDao
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
-class EntriesViewModel(
-    private val db: EntriesDatabase
+class EntriesViewModel @Inject constructor(
+    private val bookDao: BookDao,
+    private val movieDao: MovieDao,
+    private val documentaryDao: DocumentaryDao,
+    private val gameDao: GameDao
 ) : ViewModel() {
     private val _saveEvent = SingleLiveEvent<SaveEvent>()
     val saveEvent: LiveData<SaveEvent> get() = _saveEvent
@@ -26,28 +33,28 @@ class EntriesViewModel(
 
     fun fetchEntries(entityType: EntityType, entityCategory: EntityCategory) {
         when (entityType) {
-            EntityType.DOCUMENTARY -> disposable.add(db.documentaryDao().getAll(entityCategory)
+            EntityType.DOCUMENTARY -> disposable.add(documentaryDao.getAll(entityCategory)
                 .map { it.map { Entry("Title: ${it.name}\n", it.posterUrl) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _fetchEvent.value = FetchEvent.Failure }
                 .subscribe { entries -> _fetchEvent.value = FetchEvent.Success(entries) })
 
-            EntityType.BOOK -> disposable.add(db.bookDao().getAll(entityCategory)
+            EntityType.BOOK -> disposable.add(bookDao.getAll(entityCategory)
                 .map { it.map { Entry("Title: ${it.name}\n", it.posterUrl) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _fetchEvent.value = FetchEvent.Failure }
                 .subscribe { entries -> _fetchEvent.value = FetchEvent.Success(entries) })
 
-            EntityType.MOVIE -> disposable.add(db.movieDao().getAll(entityCategory)
+            EntityType.MOVIE -> disposable.add(movieDao.getAll(entityCategory)
                 .map { it.map { Entry("Title: ${it.name}\n", it.posterUrl) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _fetchEvent.value = FetchEvent.Failure }
                 .subscribe { entries -> _fetchEvent.value = FetchEvent.Success(entries) })
 
-            EntityType.GAME -> disposable.add(db.gameDao().getAll(entityCategory)
+            EntityType.GAME -> disposable.add(gameDao.getAll(entityCategory)
                 .map { it.map { Entry("Title: ${it.name}\n", it.posterUrl) } }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -63,7 +70,7 @@ class EntriesViewModel(
 
     fun saveMovie(movie: Movie) {
         disposable.add(
-            db.movieDao().insert(movie).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            movieDao.insert(movie).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _saveEvent.value = SaveEvent.Failure }
                 .subscribe { _saveEvent.value = SaveEvent.Success }
         )
@@ -71,7 +78,7 @@ class EntriesViewModel(
 
     fun saveBook(book: Book) {
         disposable.add(
-            db.bookDao().insert(book).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            bookDao.insert(book).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _saveEvent.value = SaveEvent.Failure }
                 .subscribe { _saveEvent.value = SaveEvent.Success }
         )
@@ -79,7 +86,7 @@ class EntriesViewModel(
 
     fun saveDocumentary(documentary: Documentary) {
         disposable.add(
-            db.documentaryDao().insert(documentary).subscribeOn(Schedulers.io())
+            documentaryDao.insert(documentary).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _saveEvent.value = SaveEvent.Failure }
                 .subscribe { _saveEvent.value = SaveEvent.Success }
@@ -88,7 +95,7 @@ class EntriesViewModel(
 
     fun saveGame(game: Game) {
         disposable.add(
-            db.gameDao().insert(game).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            gameDao.insert(game).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _saveEvent.value = SaveEvent.Failure }
                 .subscribe { _saveEvent.value = SaveEvent.Success }
         )

@@ -1,18 +1,13 @@
 package dev.liinahamari.highlights
 
 import android.app.Application
-import androidx.room.Room
-import dev.liinahamari.highlights.db.DATABASE_NAME
-import dev.liinahamari.highlights.db.EntriesDatabase
+import dev.liinahamari.highlights.di.components.DaggerMainComponent
+import dev.liinahamari.highlights.di.components.MainComponent
 
 class App : Application() {
-    lateinit var db: EntriesDatabase
-
+    lateinit var appComponent: MainComponent
     override fun onCreate() {
+        appComponent = DaggerMainComponent.builder().application(this).build()
         super.onCreate()
-        db = Room.databaseBuilder(
-            applicationContext,
-            EntriesDatabase::class.java, DATABASE_NAME,
-        ).build()
     }
 }

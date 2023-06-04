@@ -16,10 +16,6 @@ import dev.liinahamari.highlights.db.daos.Movie
 import dev.liinahamari.highlights.db.daos.MovieDao
 import dev.liinahamari.highlights.ui.main.EntityCategory
 
-
-//todo backup
-const val DATABASE_NAME = "entries-db"
-
 @TypeConverters(CategoryConverters::class, CountryConverter::class)
 @Database(entities = [Book::class, Documentary::class, Movie::class, Game::class], version = 1)
 abstract class EntriesDatabase : RoomDatabase() {
