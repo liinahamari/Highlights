@@ -4,6 +4,7 @@ import android.webkit.URLUtil.isNetworkUrl
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
@@ -81,7 +82,8 @@ fun Fragment.showAddBookDialog(category: EntityCategory, onSubmit: (book: Book) 
     }.apply {
         findViewById<TextInputEditText>(R.id.nameEt)
             ?.doOnTextChanged { text, _, _, _ -> book = book.copy(name = text.toString()) }
-        findViewById<TextInputEditText>(R.id.authorTv)
+        findViewById<TextInputLayout>(R.id.authorEtContainer)?.isVisible = true
+        findViewById<TextInputEditText>(R.id.authorEt)
             ?.doOnTextChanged { text, _, _, _ -> book = book.copy(author = text.toString()) }
         findViewById<TextInputEditText>(R.id.genreEt)
             ?.doOnTextChanged { text, _, _, _ -> book = book.copy(genre = text.toString()) }

@@ -25,6 +25,7 @@
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/authorEtContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -32,12 +33,11 @@
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         app:endIconMode="clear_text"
-        app:hintAnimationEnabled="true"
         android:visibility="gone"
+        app:hintAnimationEnabled="true"
         app:hintEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/authorTv"
-            android:visibility="gone"
+            android:id="@+id/authorEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
