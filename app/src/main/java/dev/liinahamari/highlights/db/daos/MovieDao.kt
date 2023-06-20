@@ -63,6 +63,7 @@ interface MovieDao {
 }
 
 enum class MovieGenre {
+    ARTHOUSE,
     ACTION,
     THRILLER,
     HORROR,
