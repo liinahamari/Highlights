@@ -7,7 +7,10 @@ import io.reactivex.rxjava3.core.Single
 
 @Entity
 data class Movie(
-    @PrimaryKey val name: String, val genre: String, override val year: Int, override val category: EntityCategory,
+    @PrimaryKey val name: String,
+    val genres: List<MovieGenre>,
+    override val year: Int,
+    override val category: EntityCategory,
     override val posterUrl: String,
     override val countryCodes: Array<String>
 ) : Entry {
@@ -18,7 +21,7 @@ data class Movie(
         other as Movie
 
         if (name != other.name) return false
-        if (genre != other.genre) return false
+        if (genres != other.genres) return false
         if (year != other.year) return false
         if (category != other.category) return false
         if (posterUrl != other.posterUrl) return false
@@ -29,7 +32,7 @@ data class Movie(
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + genre.hashCode()
+        result = 31 * result + genres.hashCode()
         result = 31 * result + year
         result = 31 * result + category.hashCode()
         result = 31 * result + posterUrl.hashCode()
@@ -57,4 +60,21 @@ interface MovieDao {
 
     @Delete
     fun delete(movie: Movie): Completable
+}
+
+enum class MovieGenre {
+    ACTION,
+    THRILLER,
+    HORROR,
+    DRAMA,
+    COMEDY,
+    WESTERN,
+    SCIENCE_FICTION,
+    ADVENTURE,
+    HISTORY,
+    FANTASY,
+    HISTORICAL_FICTION,
+    DETECTIVE_FICTION,
+    MAGICAL_REALISM,
+    POST_APOCALYPTIC_FICTION
 }

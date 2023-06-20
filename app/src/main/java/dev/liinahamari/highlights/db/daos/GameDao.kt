@@ -7,7 +7,10 @@ import io.reactivex.rxjava3.core.Single
 
 @Entity
 data class Game(
-    @PrimaryKey val name: String, val genre: String, override val year: Int, override val category: EntityCategory,
+    @PrimaryKey val name: String,
+    val genres: List<GameGenre>,
+    override val year: Int,
+    override val category: EntityCategory,
     override val posterUrl: String,
     override val countryCodes: Array<String>
 ) : Entry {
@@ -18,7 +21,7 @@ data class Game(
         other as Game
 
         if (name != other.name) return false
-        if (genre != other.genre) return false
+        if (genres != other.genres) return false
         if (year != other.year) return false
         if (category != other.category) return false
         if (posterUrl != other.posterUrl) return false
@@ -29,7 +32,7 @@ data class Game(
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + genre.hashCode()
+        result = 31 * result + genres.hashCode()
         result = 31 * result + year
         result = 31 * result + category.hashCode()
         result = 31 * result + posterUrl.hashCode()
@@ -56,4 +59,16 @@ interface GameDao {
 
     @Delete
     fun delete(game: Game): Completable
+}
+
+enum class GameGenre {
+    ADVENTURE,
+    FIGHTING,
+    FPS,
+    RPG,
+    SIMULATION,
+    RTS,
+    TPS,
+    STRATEGY,
+    SURVIVAL_HORROR
 }

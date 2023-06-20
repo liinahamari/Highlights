@@ -8,7 +8,7 @@ import io.reactivex.rxjava3.core.Single
 @Entity
 data class Book(
     @PrimaryKey val name: String,
-    val genre: String,
+    val genres: List<BookGenre>,
     val author: String,
     override val year: Int,
     override val category: EntityCategory,
@@ -22,7 +22,7 @@ data class Book(
         other as Book
 
         if (name != other.name) return false
-        if (genre != other.genre) return false
+        if (genres != other.genres) return false
         if (author != other.author) return false
         if (year != other.year) return false
         if (category != other.category) return false
@@ -34,7 +34,7 @@ data class Book(
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + genre.hashCode()
+        result = 31 * result + genres.hashCode()
         result = 31 * result + author.hashCode()
         result = 31 * result + year
         result = 31 * result + category.hashCode()
@@ -63,4 +63,25 @@ interface BookDao {
 
     @Delete
     fun delete(book: Book): Completable
+}
+
+enum class BookGenre {
+    FICTION,
+    SCIENCE_FICTION,
+    THRILLER,
+    HISTORY,
+    HISTORICAL_FICTION,
+    FANTASY,
+    MEMOIR,
+    SHORT_STORIES,
+    HUMOR,
+    BIOGRAPHY,
+    SPIRITUALITY,
+    TRAVEL_LITERATURE,
+    MAGICAL_REALISM,
+    WESTERN_FICTION,
+    LITERATURE_REALISM,
+    SOCIAL_SCIENCE,
+    DYSTOPIAN_FICTION,
+    PHILOSOPHY
 }

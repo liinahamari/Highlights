@@ -22,6 +22,8 @@ class EntriesViewModel @Inject constructor(
     private val documentaryDao: DocumentaryDao,
     private val gameDao: GameDao
 ) : ViewModel() {
+    private val _getBook = SingleLiveEvent<Book>()
+    val getBook: LiveData<Book> get() = _getBook
     private val _saveEvent = SingleLiveEvent<SaveEvent>()
     val saveEvent: LiveData<SaveEvent> get() = _saveEvent
 
