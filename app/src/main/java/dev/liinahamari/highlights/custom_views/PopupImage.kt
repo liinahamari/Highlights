@@ -1,13 +1,11 @@
-package dev.liinahamari.highlights
+package dev.liinahamari.highlights.custom_views
 
 import android.content.Context
-import android.content.Context.WINDOW_SERVICE
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.WindowManager.LayoutParams
 import android.widget.PopupWindow
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
@@ -18,7 +16,7 @@ class PopupImage constructor(context: Context) : AppCompatImageView(context) {
         with(PopupBinding.inflate(LayoutInflater.from(context))) {
             Glide.with(viewToAttachTo.context).load(imageUrl).into(imageView)
 
-            PopupWindow(root, MATCH_PARENT, MATCH_PARENT, true).apply {
+            PopupWindow(root, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true).apply {
                 showAtLocation(viewToAttachTo, Gravity.CENTER, 0, 0)
                 closeBtn.setOnClickListener { dismiss() }
                 dimBehind()
@@ -33,9 +31,9 @@ class PopupImage constructor(context: Context) : AppCompatImageView(context) {
         } else {
             contentView.parent.parent as View
         }
-        with(contentView.context.getSystemService(WINDOW_SERVICE) as WindowManager) {
-            updateViewLayout(container, (container.layoutParams as LayoutParams).apply {
-                flags = LayoutParams.FLAG_DIM_BEHIND
+        with(contentView.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager) {
+            updateViewLayout(container, (container.layoutParams as WindowManager.LayoutParams).apply {
+                flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
                 dimAmount = 0.3f
             })
         }

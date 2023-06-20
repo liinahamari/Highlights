@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import dev.liinahamari.highlights.PopupImage
+import dev.liinahamari.highlights.custom_views.PopupImage
 import dev.liinahamari.highlights.databinding.EntryRowItemBinding
 
 

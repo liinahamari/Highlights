@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dev.liinahamari.highlights.R
-import dev.liinahamari.highlights.appComponent
+import dev.liinahamari.highlights.helper.appComponent
 import dev.liinahamari.highlights.databinding.FragmentCategoryBinding
 import javax.inject.Inject
 

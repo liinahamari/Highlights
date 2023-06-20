@@ -2,7 +2,7 @@ package dev.liinahamari.highlights.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import dev.liinahamari.highlights.SingleLiveEvent
+import dev.liinahamari.highlights.helper.SingleLiveEvent
 import dev.liinahamari.highlights.db.daos.Book
 import dev.liinahamari.highlights.db.daos.BookDao
 import dev.liinahamari.highlights.db.daos.Documentary

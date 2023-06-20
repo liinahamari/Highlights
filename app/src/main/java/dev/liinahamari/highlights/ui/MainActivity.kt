@@ -1,9 +1,10 @@
-package dev.liinahamari.highlights
+package dev.liinahamari.highlights.ui
 
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.liinahamari.highlights.R
 import dev.liinahamari.highlights.databinding.ActivityMainBinding
 import dev.liinahamari.highlights.ui.main.SectionsPagerAdapter
 

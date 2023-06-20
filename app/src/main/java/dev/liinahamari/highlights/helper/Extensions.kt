@@ -1,4 +1,4 @@
-package dev.liinahamari.highlights
+package dev.liinahamari.highlights.helper
 
 import android.content.Context
 import android.view.LayoutInflater.from
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import dev.liinahamari.highlights.App
 import dev.liinahamari.highlights.di.components.MainComponent
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int): View = from(context).inflate(layoutRes, this, false)

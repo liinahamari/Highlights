@@ -1,4 +1,4 @@
-package dev.liinahamari.highlights
+package dev.liinahamari.highlights.helper
 
 import android.util.Log
 import androidx.annotation.MainThread
