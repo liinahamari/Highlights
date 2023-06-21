@@ -25,7 +25,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.3'
-    implementation "androidx.fragment:fragment-ktx:1.5.7"
+    implementation "androidx.fragment:fragment-ktx:1.6.0"
 
     def room_version = "2.5.1"
     implementation "androidx.room:room-runtime:$room_version"
@@ -43,10 +43,10 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
     implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'
 
-    implementation "com.google.code.gson:gson:2.9.0"
+    implementation "com.google.code.gson:gson:2.10"
 
-    implementation 'com.google.dagger:dagger:2.40'
-    kapt 'com.google.dagger:dagger-compiler:2.40'
+    implementation 'com.google.dagger:dagger:2.42'
+    kapt 'com.google.dagger:dagger-compiler:2.42'
 
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
