@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.viewpager2.widget.ViewPager2
 import dev.liinahamari.highlights.App
 import dev.liinahamari.highlights.di.components.MainComponent
 
@@ -19,3 +21,5 @@ val Context.appComponent: MainComponent
 
 val Fragment.appComponent: MainComponent?
     get() = context?.appComponent
+
+fun ViewPager2.getCurrentFragment(fm: FragmentManager): Fragment = fm.findFragmentByTag("f${currentItem}")!!

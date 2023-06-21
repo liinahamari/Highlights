@@ -7,6 +7,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.liinahamari.highlights.R
 import dev.liinahamari.highlights.databinding.ActivityMainBinding
+import dev.liinahamari.highlights.helper.getCurrentFragment
 import dev.liinahamari.highlights.ui.main.SectionsPagerAdapter
 import dev.liinahamari.highlights.ui.main.TAB_TITLES
 
@@ -16,15 +17,22 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupViewPager()
+        setupOnBackPressed()
+    }
+
+    private fun setupViewPager() {
         ui.pager.adapter = adapter
         TabLayoutMediator(ui.tabs, ui.pager) { tab, position ->
             tab.text = TAB_TITLES[position].toString().replace('_', ' ')
         }.attach()
+    }
 
+    private fun setupOnBackPressed() {
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                with(supportFragmentManager.fragments.first()) {
-                    if (this !is IOnBackPressed) return
+                with(ui.pager.getCurrentFragment(supportFragmentManager)) {
+                    if (this !is OnBackPressedListener) return
                     this.onBackPressed()
                 }
             }
@@ -32,6 +40,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 }
 
-interface IOnBackPressed {
+interface OnBackPressedListener {
     fun onBackPressed()
 }
