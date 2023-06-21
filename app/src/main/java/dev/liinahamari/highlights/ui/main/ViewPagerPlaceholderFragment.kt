@@ -3,8 +3,9 @@ package dev.liinahamari.highlights.ui.main
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import dev.liinahamari.highlights.ui.OnBackPressedListener
 import dev.liinahamari.highlights.R
+import dev.liinahamari.highlights.helper.getParcelableOf
+import dev.liinahamari.highlights.ui.OnBackPressedListener
 import dev.liinahamari.highlights.ui.main.EntryFragment.Companion.ARG_CATEGORY
 import dev.liinahamari.highlights.ui.main.entries_list.EntriesFragment
 
@@ -12,7 +13,7 @@ class ViewPagerPlaceholderFragment : Fragment(R.layout.fragment_main), OnBackPre
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         childFragmentManager.beginTransaction()
-            .replace(R.id.pagerContainer, EntriesFragment.newInstance(requireArguments().getParcelable(ARG_CATEGORY)!!))
+            .replace(R.id.pagerContainer, EntriesFragment.newInstance(requireArguments().getParcelableOf(ARG_CATEGORY)))
             .commit()
     }
 

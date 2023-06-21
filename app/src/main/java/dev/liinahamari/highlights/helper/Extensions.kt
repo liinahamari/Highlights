@@ -1,6 +1,8 @@
 package dev.liinahamari.highlights.helper
 
 import android.content.Context
+import android.os.Build
+import android.os.Bundle
 import android.view.LayoutInflater.from
 import android.view.View
 import android.view.ViewGroup
@@ -23,3 +25,9 @@ val Fragment.appComponent: MainComponent?
     get() = context?.appComponent
 
 fun ViewPager2.getCurrentFragment(fm: FragmentManager): Fragment = fm.findFragmentByTag("f${currentItem}")!!
+
+inline fun <reified T> Bundle.getParcelableOf(key: String): T = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    getParcelable(key, T::class.java)!!
+} else {
+    @Suppress("DEPRECATION") getParcelable(key)!!
+}

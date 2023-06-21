@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package dev.liinahamari.highlights.ui.main
 
 import android.content.Context
@@ -11,14 +9,18 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dev.liinahamari.highlights.R
-import dev.liinahamari.highlights.helper.appComponent
 import dev.liinahamari.highlights.databinding.FragmentCategoryBinding
+import dev.liinahamari.highlights.helper.appComponent
+import dev.liinahamari.highlights.helper.getParcelableOf
 import javax.inject.Inject
 
-class EntryFragment : Fragment(R.layout.fragment_category) {
+class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val ui by viewBinding(FragmentCategoryBinding::bind)
-    private val entriesViewModel: EntriesViewModel by viewModels { viewModelFactory }
+    private val entryViewModel: EntryViewModel by viewModels { viewModelFactory }
+
+    private val argumentEntityType: EntityType by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
+    private val argumentEntityCategory: EntityCategory by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
 
     override fun onAttach(context: Context) {
         appComponent?.inject(this)
@@ -28,51 +30,30 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupViewModelSubscriptions()
         setupFab()
-        entriesViewModel.fetchEntries(
-            requireArguments().getParcelable(ARG_TYPE)!!,
-            requireArguments().getParcelable(ARG_CATEGORY)!!
-        )
+        entryViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
     }
 
     private fun setupViewModelSubscriptions() {
-        entriesViewModel.saveEvent.observe(viewLifecycleOwner) {
-            entriesViewModel.fetchEntries(
-                requireArguments().getParcelable(ARG_TYPE)!!,
-                requireArguments().getParcelable(ARG_CATEGORY)!!
-            )
+        entryViewModel.saveEvent.observe(viewLifecycleOwner) {
+            entryViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
         }
-        entriesViewModel.fetchEvent.observe(viewLifecycleOwner) {
-            if (it is EntriesViewModel.FetchEvent.Success) {
-                ui.entriesRv.adapter = EntryAdapter(it.entries).apply { notifyDataSetChanged() }
+        entryViewModel.fetchEvent.observe(viewLifecycleOwner) {
+            if (it is EntryViewModel.FetchEvent.Success) {
+                ui.entriesRv.adapter = EntryAdapter(it.entries, this).apply { notifyDataSetChanged() }
             }
         }
     }
 
     private fun setupFab() {
         ui.fab.setOnClickListener {
-            @Suppress("DEPRECATION")
-            when (requireArguments().getParcelable<EntityType>(ARG_TYPE)) {
-                EntityType.BOOK -> showAddBookDialog(
-                    requireArguments().getParcelable(ARG_CATEGORY)!!,
-                    entriesViewModel::saveBook
-                )
-
-                EntityType.GAME -> showAddGameDialog(
-                    requireArguments().getParcelable(ARG_CATEGORY)!!,
-                    entriesViewModel::saveGame
-                )
-
-                EntityType.MOVIE -> showAddMovieDialog(
-                    requireArguments().getParcelable(ARG_CATEGORY)!!,
-                    entriesViewModel::saveMovie
-                )
-
+            when (argumentEntityType) {
+                EntityType.BOOK -> showAddBookDialog(argumentEntityCategory, entryViewModel::saveBook)
+                EntityType.GAME -> showAddGameDialog(argumentEntityCategory, entryViewModel::saveGame)
+                EntityType.MOVIE -> showAddMovieDialog(argumentEntityCategory, entryViewModel::saveMovie)
                 EntityType.DOCUMENTARY -> showAddDocumentaryDialog(
-                    requireArguments().getParcelable(ARG_CATEGORY)!!,
-                    entriesViewModel::saveDocumentary
+                    argumentEntityCategory,
+                    entryViewModel::saveDocumentary
                 )
-
-                else -> throw IllegalStateException()
             }
         }
     }
