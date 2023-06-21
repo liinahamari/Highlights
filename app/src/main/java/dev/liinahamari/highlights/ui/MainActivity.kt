@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun setupViewPager() {
         ui.pager.adapter = adapter
         TabLayoutMediator(ui.tabs, ui.pager, true, false) { tab, position ->
-            tab.text = TAB_TITLES[position].toString().replace('_', ' ')
+            tab.text = TAB_TITLES[position].toString().replace('_', '-')
         }.attach()
     }
 

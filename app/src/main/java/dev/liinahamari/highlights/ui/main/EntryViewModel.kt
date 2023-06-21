@@ -16,7 +16,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
-class EntriesViewModel @Inject constructor(
+class EntryViewModel @Inject constructor(
     private val bookDao: BookDao,
     private val movieDao: MovieDao,
     private val documentaryDao: DocumentaryDao,

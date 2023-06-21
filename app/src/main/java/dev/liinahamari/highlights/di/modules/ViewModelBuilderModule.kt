@@ -6,7 +6,7 @@ import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
-import dev.liinahamari.highlights.ui.main.EntriesViewModel
+import dev.liinahamari.highlights.ui.main.EntryViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -16,8 +16,8 @@ import kotlin.reflect.KClass
 abstract class ViewModelBuilderModule {
     @Binds
     @IntoMap
-    @ViewModelKey(EntriesViewModel::class)
-    abstract fun entriesViewModel(viewModel: EntriesViewModel): ViewModel
+    @ViewModelKey(EntryViewModel::class)
+    abstract fun entriesViewModel(viewModel: EntryViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

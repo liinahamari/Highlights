@@ -96,6 +96,8 @@
         android:id="@+id/genreBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
         app:cornerRadius="3dp"
         android:text="@string/genre" />
 </LinearLayout>

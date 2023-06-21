@@ -6,13 +6,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dev.liinahamari.highlights.R
-import dev.liinahamari.highlights.databinding.FragmentCategoriesBinding
+import dev.liinahamari.highlights.databinding.FragmentEntriesBinding
 import dev.liinahamari.highlights.ui.main.EntityCategory
 import dev.liinahamari.highlights.ui.main.EntityType
 import dev.liinahamari.highlights.ui.main.EntryFragment
 
 class EntriesFragment : Fragment(R.layout.fragment_entries) {
-    private val ui: FragmentCategoriesBinding by viewBinding(FragmentCategoriesBinding::bind)
+    private val ui: FragmentEntriesBinding by viewBinding(FragmentEntriesBinding::bind)
 
     companion object {
         const val ARG_CATEGORY = "arg_category"
