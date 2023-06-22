@@ -59,6 +59,9 @@ interface GameDao {
 
     @Delete
     fun delete(game: Game): Completable
+
+    @Query("DELETE FROM game WHERE name = :id")
+    fun delete(id: String): Completable
 }
 
 enum class GameGenre {

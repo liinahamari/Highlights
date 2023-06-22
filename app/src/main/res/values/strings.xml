@@ -10,4 +10,6 @@
     <string name="author">Author</string>
     <string name="url_is_not_valid">Url is not valid</string>
     <string name="country">Country</string>
+    <string name="sure_to_delete">Are you sure to delete?</string>
+    <string name="yes">Yes</string>
 </resources>

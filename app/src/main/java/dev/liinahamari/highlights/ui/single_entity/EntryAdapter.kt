@@ -1,4 +1,4 @@
-package dev.liinahamari.highlights.ui.main
+package dev.liinahamari.highlights.ui.single_entity
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,15 +8,26 @@ import dev.liinahamari.highlights.custom_views.PopupImage
 import dev.liinahamari.highlights.databinding.EntryRowItemBinding
 
 
-data class Entry(val description: String, val url: String)
+data class Entry(val id: String, val description: String, val url: String, val clazz: Class<*>)
 
-class EntryAdapter(private val dataSet: List<Entry>) : RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
-    class ViewHolder(private val ui: EntryRowItemBinding) : RecyclerView.ViewHolder(ui.root) {
+private const val TIMEOUT_20_SEC = 20_000
+
+interface LongClickListener {
+    fun onLongClicked(id: String, clazz: Class<*>, position: Int)
+}
+
+class EntryAdapter(val dataSet: MutableList<Entry>, private val longClickListener: LongClickListener) :
+    RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
+    inner class ViewHolder(private val ui: EntryRowItemBinding) : RecyclerView.ViewHolder(ui.root) {
         fun bind(entry: Entry) {
+            ui.root.setOnLongClickListener {
+                longClickListener.onLongClicked(entry.id, entry.clazz, bindingAdapterPosition)
+                true
+            }
             ui.entryNameTv.text = entry.description
             Glide.with(ui.posterIv.context)
                 .load(entry.url)
-                .timeout(20_000)
+                .timeout(TIMEOUT_20_SEC)
                 .into(ui.posterIv)
             ui.posterIv.setOnClickListener {
                 PopupImage(it.context).show(entry.url, it)

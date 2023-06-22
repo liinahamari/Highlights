@@ -60,6 +60,9 @@ interface MovieDao {
 
     @Delete
     fun delete(movie: Movie): Completable
+
+    @Query("DELETE FROM movie WHERE name = :id")
+    fun delete(id: String): Completable
 }
 
 enum class MovieGenre {

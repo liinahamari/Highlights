@@ -63,6 +63,9 @@ interface BookDao {
 
     @Delete
     fun delete(book: Book): Completable
+
+    @Query("DELETE FROM book WHERE name = :id")
+    fun delete(id: String): Completable
 }
 
 enum class BookGenre {

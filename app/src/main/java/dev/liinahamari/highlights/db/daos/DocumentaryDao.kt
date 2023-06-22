@@ -55,4 +55,7 @@ interface DocumentaryDao {
 
     @Delete
     fun delete(documentary: Documentary): Completable
+
+    @Query("DELETE FROM documentary WHERE name = :id")
+    fun delete(id: String): Completable
 }

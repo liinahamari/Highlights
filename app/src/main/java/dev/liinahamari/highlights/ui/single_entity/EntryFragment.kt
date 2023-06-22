@@ -3,13 +3,19 @@ package dev.liinahamari.highlights.ui.single_entity
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.afollestad.materialdialogs.MaterialDialog
 import dev.liinahamari.highlights.R
 import dev.liinahamari.highlights.databinding.FragmentCategoryBinding
+import dev.liinahamari.highlights.db.daos.Book
+import dev.liinahamari.highlights.db.daos.Documentary
+import dev.liinahamari.highlights.db.daos.Game
+import dev.liinahamari.highlights.db.daos.Movie
 import dev.liinahamari.highlights.helper.appComponent
 import dev.liinahamari.highlights.helper.getParcelableOf
 import dev.liinahamari.highlights.ui.single_entity.EntityType.BOOK
@@ -19,9 +25,12 @@ import dev.liinahamari.highlights.ui.single_entity.EntityType.MOVIE
 import javax.inject.Inject
 
 class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val ui by viewBinding(FragmentCategoryBinding::bind)
-    private val entryViewModel: EntryViewModel by viewModels { viewModelFactory }
+
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val fetchEntriesViewModel: FetchEntriesViewModel by viewModels { viewModelFactory }
+    private val saveEntryViewModel: SaveEntryViewModel by viewModels { viewModelFactory }
+    private val deleteEntryViewModel: DeleteEntryViewModel by viewModels { viewModelFactory }
 
     private val argumentEntityType: EntityType by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
     private val argumentEntityCategory: EntityCategory by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
@@ -34,16 +43,27 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupViewModelSubscriptions()
         setupFab()
-        entryViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+        fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
     }
 
     private fun setupViewModelSubscriptions() {
-        entryViewModel.saveEvent.observe(viewLifecycleOwner) {
-            entryViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+        deleteEntryViewModel.deleteEvent.observe(viewLifecycleOwner) {
+            when (it) {
+                is DeleteEvent.Failure -> Toast.makeText(context, "Failed to delete", Toast.LENGTH_SHORT).show()
+                is DeleteEvent.Success -> {
+                    Toast.makeText(context, "Successfully deleted", Toast.LENGTH_SHORT).show()
+                    (ui.entriesRv.adapter as EntryAdapter).dataSet.removeAt(it.position)
+                    ui.entriesRv.adapter?.notifyItemRemoved(it.position)
+                }
+            }
         }
-        entryViewModel.fetchEvent.observe(viewLifecycleOwner) {
-            if (it is EntryViewModel.FetchEvent.Success) {
-                ui.entriesRv.adapter = EntryAdapter(it.entries, this).apply { notifyDataSetChanged() }
+        saveEntryViewModel.saveEvent.observe(viewLifecycleOwner) {
+            fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+        }
+        fetchEntriesViewModel.fetchEvent.observe(viewLifecycleOwner) {
+            if (it is FetchEntriesViewModel.FetchEvent.Success) {
+                ui.entriesRv.adapter = EntryAdapter(it.entries.toMutableList(), this)
+                    .apply { notifyDataSetChanged() }
             }
         }
     }
@@ -51,10 +71,10 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     private fun setupFab() {
         ui.fab.setOnClickListener {
             when (argumentEntityType) {
-                BOOK -> showAddBookDialog(argumentEntityCategory, entryViewModel::saveBook)
-                GAME -> showAddGameDialog(argumentEntityCategory, entryViewModel::saveGame)
-                MOVIE -> showAddMovieDialog(argumentEntityCategory, entryViewModel::saveMovie)
-                DOCUMENTARY -> showAddDocumentaryDialog(argumentEntityCategory, entryViewModel::saveDocumentary)
+                BOOK -> showAddBookDialog(argumentEntityCategory, saveEntryViewModel::saveBook)
+                GAME -> showAddGameDialog(argumentEntityCategory, saveEntryViewModel::saveGame)
+                MOVIE -> showAddMovieDialog(argumentEntityCategory, saveEntryViewModel::saveMovie)
+                DOCUMENTARY -> showAddDocumentaryDialog(argumentEntityCategory, saveEntryViewModel::saveDocumentary)
             }
         }
     }
@@ -66,5 +86,20 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
             EntryFragment().apply {
                 arguments = bundleOf(ARG_CATEGORY to entityCategory, ARG_TYPE to entityType)
             }
+    }
+
+    override fun onLongClicked(id: String, clazz: Class<*>, position: Int) {
+        MaterialDialog(requireContext())
+            .message(R.string.sure_to_delete)
+            .negativeButton(R.string.yes)
+            .positiveButton {
+                when (clazz) {
+                    Book::class.java -> deleteEntryViewModel.deleteBook(id, position)
+                    Movie::class.java -> deleteEntryViewModel.deleteMovie(id, position)
+                    Documentary::class.java -> deleteEntryViewModel.deleteDocumentary(id, position)
+                    Game::class.java -> deleteEntryViewModel.deleteGame(id, position)
+                    else -> throw IllegalStateException()
+                }
+            }.show()
     }
 }
