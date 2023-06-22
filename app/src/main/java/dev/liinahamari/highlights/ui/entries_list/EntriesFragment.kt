@@ -1,4 +1,4 @@
-package dev.liinahamari.highlights.ui.main.entries_list
+package dev.liinahamari.highlights.ui.entries_list
 
 import android.os.Bundle
 import android.view.View
@@ -8,9 +8,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dev.liinahamari.highlights.R
 import dev.liinahamari.highlights.databinding.FragmentEntriesBinding
 import dev.liinahamari.highlights.helper.getParcelableOf
-import dev.liinahamari.highlights.ui.main.EntityCategory
-import dev.liinahamari.highlights.ui.main.EntityType
-import dev.liinahamari.highlights.ui.main.EntryFragment
+import dev.liinahamari.highlights.ui.single_entity.EntityCategory
+import dev.liinahamari.highlights.ui.single_entity.EntityType
+import dev.liinahamari.highlights.ui.single_entity.EntryFragment
 
 class EntriesFragment : Fragment(R.layout.fragment_entries) {
     private val ui: FragmentEntriesBinding by viewBinding(FragmentEntriesBinding::bind)

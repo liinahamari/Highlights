@@ -1,10 +1,10 @@
-package dev.liinahamari.highlights.ui.main.entries_list
+package dev.liinahamari.highlights.ui.entries_list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dev.liinahamari.highlights.databinding.ButtonItemBinding
-import dev.liinahamari.highlights.ui.main.EntityType
+import dev.liinahamari.highlights.ui.single_entity.EntityType
 
 class EntityButtonsAdapter(private val onEntityClick: (EntityType) -> Unit) :
     RecyclerView.Adapter<EntityButtonsAdapter.ViewHolder>() {

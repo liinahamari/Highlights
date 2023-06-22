@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:context=".ui.main.ViewPagerPlaceholderFragment" />
+        tools:context=".ui.tabs.ViewPagerPlaceholderFragment" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

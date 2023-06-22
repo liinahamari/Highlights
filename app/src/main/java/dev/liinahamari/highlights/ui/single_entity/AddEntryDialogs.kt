@@ -1,4 +1,4 @@
-package dev.liinahamari.highlights.ui.main
+package dev.liinahamari.highlights.ui.single_entity
 
 import android.webkit.URLUtil.isNetworkUrl
 import android.widget.Button
@@ -44,6 +44,10 @@ fun Fragment.showAddMovieDialog(category: EntityCategory, onSubmit: (movie: Movi
             ?.doOnTextChanged { text, _, _, _ -> movie = movie.copy(year = text.toString().toInt()) }
         findViewById<TextInputEditText>(R.id.posterUrlEt)
             ?.doOnTextChanged { text, _, _, _ ->
+                Glide.with(this@showAddMovieDialog).load(text.toString()).downloadOnly(50, 50).toCompletable()
+                    .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe({
+                        Toast.makeText(context, "A", Toast.LENGTH_SHORT).show()
+                    }, { Toast.makeText(context, "B", Toast.LENGTH_SHORT).show() })
                 findViewById<TextInputLayout>(R.id.posterUrlInputLayout)?.error = null
                 movie = movie.copy(posterUrl = text.toString())
             }
@@ -127,6 +131,7 @@ private fun Fragment.getGenericAddEntryDialog(
     }.show().apply {
         findViewById<Button>(R.id.countrySelectionBtn)
             ?.setOnClickListener {
+                //todo move to first launch and cache
                 val allLocales = Locale.getISOCountries().map { Locale("", it) }
                 MaterialDialog(context).positiveButton(res = android.R.string.ok) { }
                     .listItemsMultiChoice(items = allLocales.map { it.displayCountry },
@@ -149,10 +154,11 @@ private fun Fragment.getGenericAddEntryDialog(
                 MaterialDialog(context)
                     .listItemsMultiChoice(
                         items = genres,
-                        selection = { _: MaterialDialog, _: IntArray, items: List<CharSequence> ->
+                        selection = { _: MaterialDialog, _: IntArray, items: List<CharSequence>/*todo check _ handles fine*/ ->
                             genresSelectionCallback.invoke(items.map { it.toString() })
                         })
                     .positiveButton()
                     .show()
             }
     }
+/*todo validation sm kupi*/

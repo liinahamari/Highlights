@@ -8,8 +8,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dev.liinahamari.highlights.R
 import dev.liinahamari.highlights.databinding.ActivityMainBinding
 import dev.liinahamari.highlights.helper.getCurrentFragment
-import dev.liinahamari.highlights.ui.main.SectionsPagerAdapter
-import dev.liinahamari.highlights.ui.main.TAB_TITLES
+import dev.liinahamari.highlights.ui.tabs.SectionsPagerAdapter
+import dev.liinahamari.highlights.ui.tabs.TAB_TITLES
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private val ui by viewBinding(ActivityMainBinding::bind)

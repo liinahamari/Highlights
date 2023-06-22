@@ -1,4 +1,4 @@
-package dev.liinahamari.highlights.ui.main
+package dev.liinahamari.highlights.ui.single_entity
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

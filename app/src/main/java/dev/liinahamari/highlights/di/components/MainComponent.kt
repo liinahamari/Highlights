@@ -6,7 +6,7 @@ import dev.liinahamari.highlights.App
 import dev.liinahamari.highlights.di.modules.AppModule
 import dev.liinahamari.highlights.di.modules.DatabaseModule
 import dev.liinahamari.highlights.di.modules.ViewModelBuilderModule
-import dev.liinahamari.highlights.ui.main.EntryFragment
+import dev.liinahamari.highlights.ui.single_entity.EntryFragment
 import javax.inject.Singleton
 
 @Singleton

@@ -1,7 +1,7 @@
 package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
-import dev.liinahamari.highlights.ui.main.EntityCategory
+import dev.liinahamari.highlights.ui.single_entity.EntityCategory
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 

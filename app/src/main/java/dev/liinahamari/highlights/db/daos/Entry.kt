@@ -1,6 +1,6 @@
 package dev.liinahamari.highlights.db.daos
 
-import dev.liinahamari.highlights.ui.main.EntityCategory
+import dev.liinahamari.highlights.ui.single_entity.EntityCategory
 
 interface Entry {
     val category: EntityCategory

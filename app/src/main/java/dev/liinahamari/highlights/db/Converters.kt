@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken
 import dev.liinahamari.highlights.db.daos.BookGenre
 import dev.liinahamari.highlights.db.daos.GameGenre
 import dev.liinahamari.highlights.db.daos.MovieGenre
-import dev.liinahamari.highlights.ui.main.EntityCategory
+import dev.liinahamari.highlights.ui.single_entity.EntityCategory
 
 class CategoryConverters {
     @TypeConverter
@@ -48,7 +48,7 @@ class BookGenreConverters {
 
 class CountryConverter {
     @TypeConverter fun fromString(value: String): Array<String> =
-        Gson().fromJson(value, object : TypeToken<Array<String>?>() {}.type)
+        Gson().fromJson(value, object : TypeToken<Array<String>>() {}.type/*fixme '_'*/)
 
     @TypeConverter fun fromArrayList(array: Array<String>): String = Gson().toJson(array)
 }

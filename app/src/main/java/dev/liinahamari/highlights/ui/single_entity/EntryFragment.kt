@@ -1,4 +1,4 @@
-package dev.liinahamari.highlights.ui.main
+package dev.liinahamari.highlights.ui.single_entity
 
 import android.content.Context
 import android.os.Bundle
@@ -12,6 +12,10 @@ import dev.liinahamari.highlights.R
 import dev.liinahamari.highlights.databinding.FragmentCategoryBinding
 import dev.liinahamari.highlights.helper.appComponent
 import dev.liinahamari.highlights.helper.getParcelableOf
+import dev.liinahamari.highlights.ui.single_entity.EntityType.BOOK
+import dev.liinahamari.highlights.ui.single_entity.EntityType.DOCUMENTARY
+import dev.liinahamari.highlights.ui.single_entity.EntityType.GAME
+import dev.liinahamari.highlights.ui.single_entity.EntityType.MOVIE
 import javax.inject.Inject
 
 class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
@@ -47,13 +51,10 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     private fun setupFab() {
         ui.fab.setOnClickListener {
             when (argumentEntityType) {
-                EntityType.BOOK -> showAddBookDialog(argumentEntityCategory, entryViewModel::saveBook)
-                EntityType.GAME -> showAddGameDialog(argumentEntityCategory, entryViewModel::saveGame)
-                EntityType.MOVIE -> showAddMovieDialog(argumentEntityCategory, entryViewModel::saveMovie)
-                EntityType.DOCUMENTARY -> showAddDocumentaryDialog(
-                    argumentEntityCategory,
-                    entryViewModel::saveDocumentary
-                )
+                BOOK -> showAddBookDialog(argumentEntityCategory, entryViewModel::saveBook)
+                GAME -> showAddGameDialog(argumentEntityCategory, entryViewModel::saveGame)
+                MOVIE -> showAddMovieDialog(argumentEntityCategory, entryViewModel::saveMovie)
+                DOCUMENTARY -> showAddDocumentaryDialog(argumentEntityCategory, entryViewModel::saveDocumentary)
             }
         }
     }

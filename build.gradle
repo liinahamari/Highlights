@@ -27,7 +27,7 @@ def setupDefaultModuleConfig(CommonExtension it) {
 
     it.buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled false
             debuggable true
         }
     }

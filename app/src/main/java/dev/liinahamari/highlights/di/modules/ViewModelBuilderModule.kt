@@ -6,7 +6,7 @@ import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
-import dev.liinahamari.highlights.ui.main.EntryViewModel
+import dev.liinahamari.highlights.ui.single_entity.EntryViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
