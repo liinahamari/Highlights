@@ -1,3 +1,5 @@
+@file:Suppress("UnsafeOptInUsageError")
+
 package dev.liinahamari.feature.db_backup.impl
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -7,10 +9,10 @@ import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
-import androidx.core.os.BuildCompat.PrereleaseSdkCheck
 import androidx.core.os.BuildCompat.isAtLeastT
 import androidx.fragment.app.Fragment
 import androidx.room.RoomDatabase
@@ -18,7 +20,6 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV
 import androidx.security.crypto.EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
 import androidx.security.crypto.MasterKey
-import com.google.common.io.Files.copy
 import dev.liinahamari.feature.db_backup.impl.OnCompleteListener.Companion.EXIT_CODE_ERROR_BACKUP_FILE_CHOOSER
 import dev.liinahamari.feature.db_backup.impl.OnCompleteListener.Companion.EXIT_CODE_ERROR_BACKUP_FILE_CREATOR
 import dev.liinahamari.feature.db_backup.impl.OnCompleteListener.Companion.EXIT_CODE_ERROR_STORAGE_PERMISSONS_NOT_GRANTED
@@ -29,7 +30,57 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+//todo make available from activity
+
+/**
+ * Cause [RoomBackupTool] tied to host fragment's lifecycle, programmer client are responsible to handle potential
+ * memory leak. General approach is to instantiate class while [Fragment.onCreate] and make null while [Fragment.onDetach]
+ * */
+
+private const val PERMISSION_EXPLANATION_DIALOG_TITLE = "Permission needed"
+private const val PERMISSION_EXPLANATION_DIALOG_MESSAGE = "App needs permission to store backup"
+
 class RoomBackupTool(private val fragment: Fragment) {
+    private val contentResolver by lazy { fragment.requireActivity().contentResolver }
+
+    private val permissionRequestLauncher =
+        fragment.registerForActivityResult(RequestMultiplePermissions()) { permissions ->
+            if (permissions.values.all { it }.not()) {
+                fragment.requireActivity().providePermissionExplanationDialog(
+                    appId!!, PERMISSION_EXPLANATION_DIALOG_TITLE, PERMISSION_EXPLANATION_DIALOG_MESSAGE
+                ).show()
+                onCompleteListener?.onComplete(false, EXIT_CODE_ERROR_STORAGE_PERMISSONS_NOT_GRANTED)
+            } else {
+                when (currentProcess) {
+                    PROCESS_BACKUP -> openBackupFileCreator.launch(backupFilename)
+                    PROCESS_RESTORE -> openBackupFileChooser.launch(arrayOf("application/octet-stream"))
+                }
+            }
+        }
+
+    private val openBackupFileChooser = fragment.registerForActivityResult(OpenDocument()) { result ->
+        if (result != null) {
+            fragment.requireActivity().contentResolver.openInputStream(result)?.let(::doRestore)
+        } else {
+            fragment.requireActivity().providePermissionExplanationDialog(
+                appId!!, PERMISSION_EXPLANATION_DIALOG_TITLE, PERMISSION_EXPLANATION_DIALOG_MESSAGE
+            ).show()
+            onCompleteListener?.onComplete(false, EXIT_CODE_ERROR_BACKUP_FILE_CHOOSER)
+        }
+    }
+
+    private val openBackupFileCreator =
+        fragment.registerForActivityResult(CreateDocument("application/octet-stream")) { result ->
+            if (result != null) {
+                contentResolver.openOutputStream(result)?.let(::doBackup)
+            } else {
+                fragment.requireActivity().providePermissionExplanationDialog(
+                    appId!!, PERMISSION_EXPLANATION_DIALOG_TITLE, PERMISSION_EXPLANATION_DIALOG_MESSAGE
+                ).show()
+                onCompleteListener?.onComplete(false, EXIT_CODE_ERROR_BACKUP_FILE_CREATOR)
+            }
+        }
+
     companion object {
         private lateinit var INTERNAL_BACKUP_PATH: File
         private lateinit var TEMP_BACKUP_PATH: File
@@ -47,14 +98,12 @@ class RoomBackupTool(private val fragment: Fragment) {
     private lateinit var dbName: String
 
     var roomDatabase: RoomDatabase? = null
+    var appId: String? = null
     var enableLogDebug: Boolean = true
     var onCompleteListener: OnCompleteListener? = object : OnCompleteListener {
-        override fun onComplete(success: Boolean, message: String, exitCode: Int) {
-            Toast.makeText(
-                fragment.requireContext(),
-                "success: $success, message: $message, exitCode: $exitCode",
-                Toast.LENGTH_LONG
-            ).show()
+        override fun onComplete(success: Boolean, exitCode: Int) {
+            Toast.makeText(fragment.requireContext(), "success: $success, exitCode: $exitCode", LENGTH_LONG)
+                .show()
 //            if (success) restartApp(Intent(this@MainActivity, MainActivity::class.java))
         }
     }
@@ -95,18 +144,17 @@ class RoomBackupTool(private val fragment: Fragment) {
         roomDatabase = db
     }
 
-    @PrereleaseSdkCheck
+    fun setApplicationId(applicationId: String) {
+        this.appId = applicationId
+    }
+
     fun backup() {
         val success = initRoomBackup()
         if (!success) return
 
         currentProcess = PROCESS_BACKUP
 
-        val filename =
-            "$dbName-${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Calendar.getInstance().time)}.sqlite3"
-        if (enableLogDebug) Log.d(javaClass.name, "backupFilename: $filename")
-
-        backupFilename = filename
+        backupFilename = "$dbName-${getCurrentDayTimeStamp()}.sqlite3"
         permissionRequestLauncher.launch(
             if (isAtLeastT()) arrayOf(
                 READ_MEDIA_IMAGES,
@@ -116,15 +164,17 @@ class RoomBackupTool(private val fragment: Fragment) {
         )
     }
 
+    private fun getCurrentDayTimeStamp(): String =
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Calendar.getInstance().time)
+
     private fun doBackup(destination: OutputStream) {
         roomDatabase!!.close()
         roomDatabase = null
-        copy(DATABASE_FILE, destination)
+        DATABASE_FILE.inputStream().copyTo(destination)
         if (enableLogDebug) Log.d(javaClass.name, "Backup done, and saved to $destination")
-        onCompleteListener?.onComplete(true, "success", OnCompleteListener.EXIT_CODE_SUCCESS)
+        onCompleteListener?.onComplete(true, OnCompleteListener.EXIT_CODE_SUCCESS)
     }
 
-    @PrereleaseSdkCheck
     fun restore() {
         if (initRoomBackup().not()) return
 
@@ -144,40 +194,6 @@ class RoomBackupTool(private val fragment: Fragment) {
 
         source.use { input -> DATABASE_FILE.outputStream().use { output -> input.copyTo(output) } }
         if (enableLogDebug) Log.d(javaClass.name, "Restore done, and restored from $source")
-        onCompleteListener?.onComplete(true, "success", OnCompleteListener.EXIT_CODE_SUCCESS)
+        onCompleteListener?.onComplete(true, OnCompleteListener.EXIT_CODE_SUCCESS)
     }
-
-    private val permissionRequestLauncher =
-        fragment.registerForActivityResult(RequestMultiplePermissions()) { permissions ->
-            if (permissions.entries.map { it.value }.all { it }.not()) {
-                onCompleteListener?.onComplete(
-                    false,
-                    "storage permissions are required, please allow!",
-                    EXIT_CODE_ERROR_STORAGE_PERMISSONS_NOT_GRANTED
-                )
-                return@registerForActivityResult
-            }
-
-            when (currentProcess) {
-                PROCESS_BACKUP -> openBackupFileCreator.launch(backupFilename)
-                PROCESS_RESTORE -> openBackupFileChooser.launch(arrayOf("application/octet-stream"))
-            }
-        }
-
-    private val openBackupFileChooser = fragment.registerForActivityResult(OpenDocument()) { result ->
-        if (result != null) {
-            fragment.requireActivity().contentResolver.openInputStream(result)?.let(::doRestore)
-            return@registerForActivityResult
-        }
-        onCompleteListener?.onComplete(false, "failure", EXIT_CODE_ERROR_BACKUP_FILE_CHOOSER)
-    }
-
-    private val openBackupFileCreator =
-        fragment.registerForActivityResult(CreateDocument("application/octet-stream")) { result ->
-            if (result != null) {
-                fragment.requireActivity().contentResolver.openOutputStream(result)?.let(::doBackup)
-                return@registerForActivityResult
-            }
-            onCompleteListener?.onComplete(false, "failure", EXIT_CODE_ERROR_BACKUP_FILE_CREATOR)
-        }
 }

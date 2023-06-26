@@ -8,14 +8,12 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-private const val BACKUP_SECRET_KEY = "shared_pref_backup_secret_key"
+private const val BACKUP_PASSWORD = "shared_pref_backup_password_key"
 
 class SecretKeyManager(private val sharedPrefs: SharedPreferences) {
     private fun getPasswordFrom(sharedPrefs: SharedPreferences): String =
-        sharedPrefs.getString(BACKUP_SECRET_KEY, null) ?: generatePassword().also {
-            sharedPrefs.edit().putString(
-                BACKUP_SECRET_KEY, it
-            ).apply()
+        sharedPrefs.getString(BACKUP_PASSWORD, null) ?: generatePassword().also {
+            sharedPrefs.edit().putString(BACKUP_PASSWORD, it).apply()
         }
 
     private fun generatePassword(): String {

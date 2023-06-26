@@ -15,7 +15,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
-    implementation 'com.google.guava:guava:31.0.1-jre'
 
     def room_version = "2.5.1"
     implementation "androidx.room:room-runtime:$room_version"
@@ -24,5 +23,4 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$room_version"
     implementation "androidx.room:room-guava:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
-
 }

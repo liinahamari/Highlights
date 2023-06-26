@@ -6,7 +6,7 @@
         android:name="dev.liinahamari.feature.db_backup.sample.App"
         android:label="DbBackupSample">
         <activity
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
             android:name="dev.liinahamari.feature.db_backup.sample.TestBackupActivity"
             android:exported="true">
             <intent-filter>

@@ -16,7 +16,7 @@ abstract class TestDb : RoomDatabase() {
 }
 
 @Entity
-data class Book(@PrimaryKey val id: Int = 0)
+data class Book(@PrimaryKey(autoGenerate = true) val id: Int = 0)
 
 @Dao
 interface BookDao {

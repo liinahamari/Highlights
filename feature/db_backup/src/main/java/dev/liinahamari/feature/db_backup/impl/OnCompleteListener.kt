@@ -1,7 +1,7 @@
 package dev.liinahamari.feature.db_backup.impl
 
 interface OnCompleteListener {
-    fun onComplete(success: Boolean, message: String, exitCode: Int)
+    fun onComplete(success: Boolean, exitCode: Int)
 
     companion object {
         const val EXIT_CODE_SUCCESS = 1
