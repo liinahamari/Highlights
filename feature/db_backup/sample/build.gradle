@@ -1,0 +1,26 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'dev.liinahamari.db_backup.sample'
+}
+
+setupDefaultModuleConfig(android)
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation "androidx.activity:activity-ktx:1.7.2"
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation project(":feature:db_backup")
+
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
+    implementation "androidx.room:room-rxjava3:2.6.0-alpha01"
+
+    def room_version = "2.5.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+}

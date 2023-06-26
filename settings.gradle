@@ -14,3 +14,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Highlights"
 include ':app'
+
+include ':feature:db_backup',
+        ':feature:db_backup:sample'

@@ -2,6 +2,8 @@ package dev.liinahamari.highlights.ui.single_entity
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.room.RoomDatabase
+import dev.liinahamari.highlights.db.EntriesDatabase
 import dev.liinahamari.highlights.db.daos.Book
 import dev.liinahamari.highlights.db.daos.BookDao
 import dev.liinahamari.highlights.db.daos.Documentary
