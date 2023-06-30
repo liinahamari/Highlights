@@ -23,7 +23,7 @@ class MovieGenreConverters {
 
     @TypeConverter
     fun toCategory(value: String): List<MovieGenre> =
-        Gson().fromJson(value, object : TypeToken<List<MovieGenre>>() {}.type)
+        Gson().fromJson(value.replace(' ', '_'), object : TypeToken<List<MovieGenre>>() {}.type)
 }
 
 class GameGenreConverters {
@@ -33,7 +33,7 @@ class GameGenreConverters {
 
     @TypeConverter
     fun toCategory(value: String): List<GameGenre> =
-        Gson().fromJson(value, object : TypeToken<List<GameGenre>>() {}.type)
+        Gson().fromJson(value.replace(' ', '_'), object : TypeToken<List<GameGenre>>() {}.type)
 }
 
 class BookGenreConverters {
@@ -43,12 +43,12 @@ class BookGenreConverters {
 
     @TypeConverter
     fun toCategory(value: String): List<BookGenre> =
-        Gson().fromJson(value, object : TypeToken<List<BookGenre>>() {}.type)
+        Gson().fromJson(value.replace(' ', '_'), object : TypeToken<List<BookGenre>>() {}.type)
 }
 
 class CountryConverter {
     @TypeConverter fun fromString(value: String): Array<String> =
-        Gson().fromJson(value, object : TypeToken<Array<String>>() {}.type/*fixme '_'*/)
+        Gson().fromJson(value.replace(' ', '_'), object : TypeToken<Array<String>>() {}.type/*fixme '_'*/)
 
     @TypeConverter fun fromArrayList(array: Array<String>): String = Gson().toJson(array)
 }

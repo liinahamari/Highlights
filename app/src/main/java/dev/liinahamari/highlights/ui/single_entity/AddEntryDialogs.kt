@@ -32,7 +32,7 @@ fun Fragment.showAddMovieDialog(category: EntityCategory, onSubmit: (movie: Movi
     var movie = movie ?: Movie("", listOf(), 0, category, "", arrayOf())
     getGenericAddEntryDialog(
         onSubmit = { onSubmit.invoke(movie) },
-        genresSelectionCallback = { items -> movie = movie.copy(genres = items.map { MovieGenre.valueOf(it) }) },
+        genresSelectionCallback = { items -> movie = movie.copy(genres = items.map { MovieGenre.valueOf(it.replace(' ', '_')) }) },
         countriesSelectionCallback = {
             movie = movie.copy(countryCodes = Locale.getISOCountries().slice(it.toList()).map { Locale("", it).country }
                 .toTypedArray())
@@ -82,7 +82,7 @@ fun Fragment.showAddGameDialog(category: EntityCategory, onSubmit: (game: Game) 
     var game = game ?: Game("", listOf(), 0, category, "", arrayOf())
     getGenericAddEntryDialog(onSubmit = { onSubmit.invoke(game) },
         countriesSelectionCallback = {}, genresSelectionCallback = {
-            game = game.copy(genres = it.map { GameGenre.valueOf(it.toString()) })
+            game = game.copy(genres = it.map { GameGenre.valueOf(it.replace(' ', '_')) })
         }, genres = GameGenre.values().map { it.toString().replace('_', ' ') }).apply {
         findViewById<Button>(R.id.countrySelectionBtn)?.isVisible = false
         findViewById<TextInputEditText>(R.id.nameEt)
@@ -100,7 +100,7 @@ fun Fragment.showAddBookDialog(category: EntityCategory, onSubmit: (book: Book) 
         book = book.copy(countryCodes = Locale.getISOCountries().slice(it.toList()).map { Locale("", it).country }
             .toTypedArray())
     }, genresSelectionCallback = {
-        book = book.copy(genres = it.map { BookGenre.valueOf(it) })
+        book = book.copy(genres = it.map { BookGenre.valueOf(it.replace(' ', '_')) })
     }, genres = BookGenre.values().map { it.toString().replace('_', ' ') }).apply {
         findViewById<TextInputEditText>(R.id.nameEt)
             ?.apply { setText(book.name) }
