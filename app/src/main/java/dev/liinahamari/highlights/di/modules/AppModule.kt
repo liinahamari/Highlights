@@ -1,9 +1,9 @@
 package dev.liinahamari.highlights.di.modules
 
+import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import dev.liinahamari.highlights.App
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -14,5 +14,5 @@ class AppModule {
     @Provides
     @Singleton
     @Named(APP_CONTEXT)
-    fun bindContext(app: App): Context = app.applicationContext
+    fun bindContext(app: Application): Context = app.applicationContext
 }

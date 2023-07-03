@@ -12,7 +12,6 @@ import dev.liinahamari.highlights.db.daos.MovieDao
 import javax.inject.Named
 import javax.inject.Singleton
 
-//todo backup
 private const val DATABASE_NAME = "entries-db"
 
 @Module
@@ -22,7 +21,9 @@ class DatabaseModule {
     fun database(@Named(APP_CONTEXT) context: Context): EntriesDatabase = Room.databaseBuilder(
         context,
         EntriesDatabase::class.java, DATABASE_NAME,
-    ).build()
+    )
+        .fallbackToDestructiveMigration()
+        .build()
 
     @Provides
     @Singleton

@@ -30,25 +30,27 @@ class FetchEntriesViewModel @Inject constructor(
     fun fetchEntries(entityType: EntityType, entityCategory: EntityCategory) {
         when (entityType) {
             EntityType.DOCUMENTARY -> documentaryDao.getAll(entityCategory)
-                .map { it.map { Entry(it.name, "Title: ${it.name}\n", it.posterUrl, Documentary::class.java) } }
+                .map { it.map { Entry(it.name, "Title: ${it.name}\nCountries: ${it.countryCodes}", it.posterUrl, Documentary::class.java) } }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _fetchEvent.value = FetchEvent.Failure }
                 .subscribeUi { entries -> _fetchEvent.value = FetchEvent.Success(entries) }
 
             EntityType.BOOK -> bookDao.getAll(entityCategory)
-                .map { it.map { Entry(it.name, "Title: ${it.name}\n", it.posterUrl, Book::class.java) } }
+                .map { it.map { Entry(it.name, "Title: ${it.name}\nCountries: ${it.countryCodes.contentToString()}\nGenres: ${it.genres}", it.posterUrl, Book::class.java) } }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _fetchEvent.value = FetchEvent.Failure }
                 .subscribeUi { entries -> _fetchEvent.value = FetchEvent.Success(entries) }
 
             EntityType.MOVIE -> movieDao.getAll(entityCategory)
-                .map { it.map { Entry(it.name, "Title: ${it.name}\n", it.posterUrl, Movie::class.java) } }
+                .map { it.map { Entry(it.name, "Title: ${it.name}\nCountries: ${it.countryCodes.contentToString()}\n" +
+                        "Genres: ${it.genres}", it.posterUrl, Movie::class.java) } }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _fetchEvent.value = FetchEvent.Failure }
                 .subscribeUi { entries -> _fetchEvent.value = FetchEvent.Success(entries) }
 
             EntityType.GAME -> gameDao.getAll(entityCategory)
-                .map { it.map { Entry(it.name, "Title: ${it.name}\n", it.posterUrl, Game::class.java) } }
+                .map { it.map { Entry(it.name, "Title: ${it.name}\nCountries: ${it.countryCodes.contentToString()}\n" +
+                        "Genres: ${it.genres}", it.posterUrl, Game::class.java) } }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _fetchEvent.value = FetchEvent.Failure }
                 .subscribeUi { entries -> _fetchEvent.value = FetchEvent.Success(entries) }

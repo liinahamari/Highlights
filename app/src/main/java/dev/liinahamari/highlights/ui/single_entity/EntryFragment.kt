@@ -16,8 +16,8 @@ import dev.liinahamari.highlights.db.daos.Book
 import dev.liinahamari.highlights.db.daos.Documentary
 import dev.liinahamari.highlights.db.daos.Game
 import dev.liinahamari.highlights.db.daos.Movie
-import dev.liinahamari.highlights.helper.appComponent
 import dev.liinahamari.highlights.helper.getParcelableOf
+import dev.liinahamari.highlights.ui.MainActivity
 import dev.liinahamari.highlights.ui.single_entity.EntityType.BOOK
 import dev.liinahamari.highlights.ui.single_entity.EntityType.DOCUMENTARY
 import dev.liinahamari.highlights.ui.single_entity.EntityType.GAME
@@ -36,7 +36,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     private val argumentEntityCategory: EntityCategory by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
 
     override fun onAttach(context: Context) {
-        appComponent?.inject(this)
+        (requireActivity() as MainActivity).appComponent.inject(this)
         super.onAttach(context)
     }
 

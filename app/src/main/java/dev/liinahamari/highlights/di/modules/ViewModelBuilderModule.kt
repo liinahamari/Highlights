@@ -6,6 +6,7 @@ import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
+import dev.liinahamari.highlights.ui.entries_list.EntriesViewModel
 import dev.liinahamari.highlights.ui.single_entity.DeleteEntryViewModel
 import dev.liinahamari.highlights.ui.single_entity.FetchEntriesViewModel
 import dev.liinahamari.highlights.ui.single_entity.SaveEntryViewModel
@@ -25,6 +26,11 @@ abstract class ViewModelBuilderModule {
     @IntoMap
     @ViewModelKey(SaveEntryViewModel::class)
     abstract fun saveEntryViewModel(viewModel: SaveEntryViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EntriesViewModel::class)
+    abstract fun entriesViewModel(viewModel: EntriesViewModel): ViewModel
 
     @Binds
     @IntoMap

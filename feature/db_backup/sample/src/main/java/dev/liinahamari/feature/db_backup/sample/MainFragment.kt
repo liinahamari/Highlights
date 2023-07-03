@@ -13,7 +13,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        backupTool = RoomBackupTool(this).apply {
+        backupTool = RoomBackupTool(requireContext()).apply {
             setDatabase((requireActivity().application as App).db)
             setApplicationId(BuildConfig.APPLICATION_ID)
         }
@@ -30,11 +30,11 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun View.setupOnClickListeners() {
         findViewById<Button>(R.id.backupButton).setOnClickListener {
-            backupTool!!.backup()
+//            backupTool!!.backup()
         }
 
         findViewById<Button>(R.id.restoreBtn).setOnClickListener {
-            backupTool!!.restore()
+//            backupTool!!.restore()
         }
     }
 }
