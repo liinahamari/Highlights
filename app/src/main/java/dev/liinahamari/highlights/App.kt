@@ -10,6 +10,6 @@ class App : Application() {
     override fun onCreate() {
         appComponent = DaggerMainComponent.builder().application(this).build()
         super.onCreate()
-        ANRWatchDog(3000).start()
+//        ANRWatchDog(3000).start()
     }
 }

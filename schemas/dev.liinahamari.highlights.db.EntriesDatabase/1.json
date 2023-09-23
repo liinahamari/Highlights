@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "76fde8706a6b72724f41e2545c6d239b",
+    "identityHash": "d3d74dfffdb0e97732b3a56761f638c6",
     "entities": [
       {
         "tableName": "Book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `genres` TEXT NOT NULL, `author` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `genres` TEXT NOT NULL, `author` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "name",
@@ -49,12 +49,18 @@
             "columnName": "countryCodes",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "name"
+            "id"
           ]
         },
         "indices": [],
@@ -62,7 +68,7 @@
       },
       {
         "tableName": "Documentary",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "name",
@@ -93,12 +99,18 @@
             "columnName": "countryCodes",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "name"
+            "id"
           ]
         },
         "indices": [],
@@ -106,7 +118,7 @@
       },
       {
         "tableName": "Movie",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `genres` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `genres` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "name",
@@ -143,12 +155,18 @@
             "columnName": "countryCodes",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "name"
+            "id"
           ]
         },
         "indices": [],
@@ -156,7 +174,7 @@
       },
       {
         "tableName": "Game",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `genres` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `genres` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "name",
@@ -193,12 +211,18 @@
             "columnName": "countryCodes",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "name"
+            "id"
           ]
         },
         "indices": [],
@@ -208,7 +232,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '76fde8706a6b72724f41e2545c6d239b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd3d74dfffdb0e97732b3a56761f638c6')"
     ]
   }
 }

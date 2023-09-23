@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.MenuCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import dev.liinahamari.highlights.ui.single_entity.EntityType.BOOK
 import dev.liinahamari.highlights.ui.single_entity.EntityType.DOCUMENTARY
 import dev.liinahamari.highlights.ui.single_entity.EntityType.GAME
 import dev.liinahamari.highlights.ui.single_entity.EntityType.MOVIE
+import me.saket.cascade.CascadePopupMenu
 import javax.inject.Inject
 
 class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
@@ -60,10 +62,20 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
         saveEntryViewModel.saveEvent.observe(viewLifecycleOwner) {
             fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
         }
-        fetchEntriesViewModel.fetchEvent.observe(viewLifecycleOwner) {
-            if (it is FetchEntriesViewModel.FetchEvent.Success) {
+        fetchEntriesViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
+            if (it is FetchEntriesViewModel.FetchAllEvent.Success) {
                 ui.entriesRv.adapter = EntryAdapter(it.entries.toMutableList(), this)
                     .apply { notifyDataSetChanged() }
+            }
+        }
+        fetchEntriesViewModel.fetchSingleEvent.observe(viewLifecycleOwner) {
+            if (it is FetchEntriesViewModel.FetchSingleEvent.Success) {
+                when (argumentEntityType) {
+                    BOOK -> showAddBookDialog(argumentEntityCategory, saveEntryViewModel::saveBook, book = it.entry as Book)
+                    GAME -> showAddGameDialog(argumentEntityCategory, saveEntryViewModel::saveGame, game = it.entry as Game)
+                    MOVIE -> showAddMovieDialog(argumentEntityCategory, saveEntryViewModel::saveMovie, movie = it.entry as Movie)
+                    DOCUMENTARY -> showAddDocumentaryDialog(argumentEntityCategory, saveEntryViewModel::saveDocumentary, documentary = it.entry as Documentary)
+                }
             }
         }
     }
@@ -89,17 +101,37 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     }
 
     override fun onLongClicked(id: String, clazz: Class<*>, position: Int) {
-        MaterialDialog(requireContext())
-            .message(R.string.sure_to_delete)
-            .negativeButton(R.string.yes)
-            .positiveButton {
-                when (clazz) {
-                    Book::class.java -> deleteEntryViewModel.deleteBook(id, position)
-                    Movie::class.java -> deleteEntryViewModel.deleteMovie(id, position)
-                    Documentary::class.java -> deleteEntryViewModel.deleteDocumentary(id, position)
-                    Game::class.java -> deleteEntryViewModel.deleteGame(id, position)
-                    else -> throw IllegalStateException()
+        with(CascadePopupMenu(requireContext(), requireView())) {
+            menu.apply {
+                MenuCompat.setGroupDividerEnabled(this, true)
+
+                add(getString(R.string.title_edit)).also {
+                    it.setOnMenuItemClickListener {
+                        fetchEntriesViewModel.fetchEntry(argumentEntityType, argumentEntityCategory, id)
+                        true
+                    }
+                    it.setIcon(R.drawable.baseline_edit_24)
                 }
-            }.show()
+                add(getString(R.string.delete)).also {
+                    it.setOnMenuItemClickListener {
+                        MaterialDialog(requireContext())
+                            .message(R.string.sure_to_delete)
+                            .negativeButton(android.R.string.cancel)
+                            .positiveButton {
+                                when (clazz) {
+                                    Book::class.java -> deleteEntryViewModel.deleteBook(id, position)
+                                    Movie::class.java -> deleteEntryViewModel.deleteMovie(id, position)
+                                    Documentary::class.java -> deleteEntryViewModel.deleteDocumentary(id, position)
+                                    Game::class.java -> deleteEntryViewModel.deleteGame(id, position)
+                                    else -> throw IllegalStateException()
+                                }
+                            }.show()
+                        true
+                    }
+                    it.setIcon(R.drawable.baseline_delete_24)
+                }
+            }
+            show()
+        }
     }
 }

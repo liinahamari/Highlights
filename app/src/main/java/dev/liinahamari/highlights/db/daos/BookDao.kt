@@ -1,20 +1,22 @@
 package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import dev.liinahamari.highlights.ui.single_entity.EntityCategory
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
 @Entity
 data class Book(
-    @PrimaryKey val name: String,
+    val name: String,
     val genres: List<BookGenre>,
     val author: String,
     override val year: Int,
     override val category: EntityCategory,
     override val posterUrl: String,
-    override val countryCodes: Array<String>
-): Entry {
+    override val countryCodes: Array<String>,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L
+) : Entry {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -52,13 +54,13 @@ interface BookDao {
     @Query("SELECT * FROM book WHERE category = :entityCategory")
     fun getAll(entityCategory: EntityCategory): Single<List<Book>>
 
-    @Query("SELECT * FROM book WHERE name LIKE :name LIMIT 1")
-    fun findByName(name: String): Single<Book>
+    @Query("SELECT * FROM book WHERE name LIKE :name and category = :entityCategory LIMIT 1")
+    fun findByName(entityCategory: EntityCategory, name: String): Single<Book>
 
     @Insert
     fun insertAll(vararg entries: Book): Completable
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insert(book: Book): Completable
 
     @Delete

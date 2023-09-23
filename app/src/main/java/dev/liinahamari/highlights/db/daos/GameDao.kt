@@ -1,18 +1,20 @@
 package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import dev.liinahamari.highlights.ui.single_entity.EntityCategory
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
 @Entity
 data class Game(
-    @PrimaryKey val name: String,
+    val name: String,
     val genres: List<GameGenre>,
     override val year: Int,
     override val category: EntityCategory,
     override val posterUrl: String,
-    override val countryCodes: Array<String>
+    override val countryCodes: Array<String>,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L
 ) : Entry {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -45,16 +47,17 @@ data class Game(
 interface GameDao {
     @Query("SELECT * FROM game")
     fun getAll(): Single<List<Game>>
+
     @Query("SELECT * FROM game WHERE category = :entityCategory")
     fun getAll(entityCategory: EntityCategory): Single<List<Game>>
 
-    @Query("SELECT * FROM game WHERE name LIKE :name LIMIT 1")
-    fun findByName(name: String): Single<Game>
+    @Query("SELECT * FROM game WHERE name LIKE :name and category = :entityCategory LIMIT 1")
+    fun findByName(entityCategory: EntityCategory, name: String): Single<Game>
 
     @Insert
     fun insertAll(vararg games: Game): Completable
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insert(game: Game): Completable
 
     @Delete

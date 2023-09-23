@@ -1,16 +1,20 @@
 package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import dev.liinahamari.highlights.ui.single_entity.EntityCategory
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
 @Entity
 data class Documentary(
-    @PrimaryKey val name: String, override val year: Int, override val category: EntityCategory,
+    val name: String,
+    override val year: Int,
+    override val category: EntityCategory,
     override val posterUrl: String,
-    override val countryCodes: Array<String>
-): Entry {
+    override val countryCodes: Array<String>,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L
+) : Entry {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -44,13 +48,13 @@ interface DocumentaryDao {
     @Query("SELECT * FROM documentary WHERE category = :entityCategory")
     fun getAll(entityCategory: EntityCategory): Single<List<Documentary>>
 
-    @Query("SELECT * FROM documentary WHERE name LIKE :name LIMIT 1")
-    fun findByName(name: String): Single<Documentary>
+    @Query("SELECT * FROM documentary WHERE category = :entityCategory and name LIKE :name LIMIT 1")
+    fun findByName(entityCategory: EntityCategory, name: String): Single<Documentary>
 
     @Insert
     fun insertAll(vararg documentaries: Documentary): Completable
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insert(documentary: Documentary): Completable
 
     @Delete

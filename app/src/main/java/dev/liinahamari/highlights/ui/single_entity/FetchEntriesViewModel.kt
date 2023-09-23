@@ -2,8 +2,6 @@ package dev.liinahamari.highlights.ui.single_entity
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.room.RoomDatabase
-import dev.liinahamari.highlights.db.EntriesDatabase
 import dev.liinahamari.highlights.db.daos.Book
 import dev.liinahamari.highlights.db.daos.BookDao
 import dev.liinahamari.highlights.db.daos.Documentary
@@ -24,43 +22,74 @@ class FetchEntriesViewModel @Inject constructor(
     private val documentaryDao: DocumentaryDao,
     private val gameDao: GameDao
 ) : ViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
-    private val _fetchEvent = SingleLiveEvent<FetchEvent>()
-    val fetchEvent: LiveData<FetchEvent> get() = _fetchEvent
+    private val _fetchAllEvent = SingleLiveEvent<FetchAllEvent>()
+    val fetchAllEvent: LiveData<FetchAllEvent> get() = _fetchAllEvent
+
+    private val _fetchSingleEvent = SingleLiveEvent<FetchSingleEvent>()
+    val fetchSingleEvent: LiveData<FetchSingleEvent> get() = _fetchSingleEvent
+
+    fun fetchEntry(entityType: EntityType, entityCategory: EntityCategory, id: String) {
+        when (entityType) {
+            EntityType.DOCUMENTARY -> documentaryDao.findByName(entityCategory, id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { _fetchSingleEvent.value = FetchSingleEvent.Failure }
+                .subscribeUi { entry -> _fetchSingleEvent.value = FetchSingleEvent.Success(entry) }
+
+            EntityType.BOOK -> bookDao.findByName(entityCategory, id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { _fetchSingleEvent.value = FetchSingleEvent.Failure }
+                .subscribeUi { entry -> _fetchSingleEvent.value = FetchSingleEvent.Success(entry) }
+
+            EntityType.MOVIE -> movieDao.findByName(entityCategory, id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { _fetchSingleEvent.value = FetchSingleEvent.Failure }
+                .subscribeUi { entry -> _fetchSingleEvent.value = FetchSingleEvent.Success(entry) }
+
+            EntityType.GAME -> gameDao.findByName(entityCategory, id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { _fetchSingleEvent.value = FetchSingleEvent.Failure }
+                .subscribeUi { entry -> _fetchSingleEvent.value = FetchSingleEvent.Success(entry) }
+        }
+    }
 
     fun fetchEntries(entityType: EntityType, entityCategory: EntityCategory) {
         when (entityType) {
             EntityType.DOCUMENTARY -> documentaryDao.getAll(entityCategory)
                 .map { it.map { Entry(it.name, "Title: ${it.name}\nCountries: ${it.countryCodes}", it.posterUrl, Documentary::class.java) } }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _fetchEvent.value = FetchEvent.Failure }
-                .subscribeUi { entries -> _fetchEvent.value = FetchEvent.Success(entries) }
+                .doOnError { _fetchAllEvent.value = FetchAllEvent.Failure }
+                .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
 
             EntityType.BOOK -> bookDao.getAll(entityCategory)
                 .map { it.map { Entry(it.name, "Title: ${it.name}\nCountries: ${it.countryCodes.contentToString()}\nGenres: ${it.genres}", it.posterUrl, Book::class.java) } }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _fetchEvent.value = FetchEvent.Failure }
-                .subscribeUi { entries -> _fetchEvent.value = FetchEvent.Success(entries) }
+                .doOnError { _fetchAllEvent.value = FetchAllEvent.Failure }
+                .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
 
             EntityType.MOVIE -> movieDao.getAll(entityCategory)
                 .map { it.map { Entry(it.name, "Title: ${it.name}\nCountries: ${it.countryCodes.contentToString()}\n" +
                         "Genres: ${it.genres}", it.posterUrl, Movie::class.java) } }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _fetchEvent.value = FetchEvent.Failure }
-                .subscribeUi { entries -> _fetchEvent.value = FetchEvent.Success(entries) }
+                .doOnError { _fetchAllEvent.value = FetchAllEvent.Failure }
+                .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
 
             EntityType.GAME -> gameDao.getAll(entityCategory)
                 .map { it.map { Entry(it.name, "Title: ${it.name}\nCountries: ${it.countryCodes.contentToString()}\n" +
                         "Genres: ${it.genres}", it.posterUrl, Game::class.java) } }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError { _fetchEvent.value = FetchEvent.Failure }
-                .subscribeUi { entries -> _fetchEvent.value = FetchEvent.Success(entries) }
+                .doOnError { _fetchAllEvent.value = FetchAllEvent.Failure }
+                .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
         }
     }
 
     override fun onCleared() = disposeSubscriptions()
 
-    sealed class FetchEvent {
-        data class Success(val entries: List<Entry>) : FetchEvent()
-        object Failure : FetchEvent()
+    sealed class FetchAllEvent {
+        data class Success(val entries: List<Entry>) : FetchAllEvent()
+        object Failure : FetchAllEvent()
+    }
+    sealed class FetchSingleEvent {
+        data class Success(val entry: Any) : FetchSingleEvent()
+        object Failure : FetchSingleEvent()
     }
 }

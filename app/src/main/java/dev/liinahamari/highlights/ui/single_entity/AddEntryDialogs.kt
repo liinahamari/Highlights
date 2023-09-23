@@ -39,10 +39,13 @@ fun Fragment.showAddMovieDialog(category: EntityCategory, onSubmit: (movie: Movi
         },
         genres = MovieGenre.values().map { it.toString().replace('_', ' ') }).apply {
         findViewById<TextInputEditText>(R.id.nameEt)
+            ?.apply { setText(movie.name) }
             ?.doOnTextChanged { text, _, _, _ -> movie = movie.copy(name = text.toString()) }
         findViewById<TextInputEditText>(R.id.yearEt)
+            ?.apply { setText(movie.year) }
             ?.doOnTextChanged { text, _, _, _ -> movie = movie.copy(year = text.toString().toInt()) }
         findViewById<TextInputEditText>(R.id.posterUrlEt)
+            ?.apply { setText(movie.posterUrl) }
             ?.doOnTextChanged { text, _, _, _ ->
                 Glide.with(this@showAddMovieDialog).load(text.toString()).downloadOnly(50, 50).toCompletable()
                     .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe({
@@ -70,10 +73,13 @@ fun Fragment.showAddDocumentaryDialog(
     ).apply {
         findViewById<Button>(R.id.genreBtn)?.isGone = true
         findViewById<TextInputEditText>(R.id.nameEt)
+            ?.apply { setText(documentary.name) }
             ?.doOnTextChanged { text, _, _, _ -> documentary = documentary.copy(name = text.toString()) }
         findViewById<TextInputEditText>(R.id.yearEt)
+            ?.apply { setText(documentary.year) }
             ?.doOnTextChanged { text, _, _, _ -> documentary = documentary.copy(year = text.toString().toInt()) }
         findViewById<TextInputEditText>(R.id.posterUrlEt)
+            ?.apply { setText(documentary.posterUrl) }
             ?.doOnTextChanged { text, _, _, _ -> documentary = documentary.copy(posterUrl = text.toString()) }
     }.show()
 }
@@ -86,10 +92,13 @@ fun Fragment.showAddGameDialog(category: EntityCategory, onSubmit: (game: Game) 
         }, genres = GameGenre.values().map { it.toString().replace('_', ' ') }).apply {
         findViewById<Button>(R.id.countrySelectionBtn)?.isVisible = false
         findViewById<TextInputEditText>(R.id.nameEt)
+            ?.apply { setText(game.name) }
             ?.doOnTextChanged { text, _, _, _ -> game = game.copy(name = text.toString()) }
         findViewById<TextInputEditText>(R.id.yearEt)
+            ?.apply { setText(game.year) }
             ?.doOnTextChanged { text, _, _, _ -> game = game.copy(year = text.toString().toInt()) }
         findViewById<TextInputEditText>(R.id.posterUrlEt)
+            ?.apply { setText(game.posterUrl) }
             ?.doOnTextChanged { text, _, _, _ -> game = game.copy(posterUrl = text.toString()) }
     }.show()
 }

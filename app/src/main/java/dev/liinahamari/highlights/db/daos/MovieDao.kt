@@ -1,18 +1,20 @@
 package dev.liinahamari.highlights.db.daos
 
 import androidx.room.*
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import dev.liinahamari.highlights.ui.single_entity.EntityCategory
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
 @Entity
 data class Movie(
-    @PrimaryKey val name: String,
+    val name: String,
     val genres: List<MovieGenre>,
     override val year: Int,
     override val category: EntityCategory,
     override val posterUrl: String,
-    override val countryCodes: Array<String>
+    override val countryCodes: Array<String>,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L
 ) : Entry {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -49,13 +51,13 @@ interface MovieDao {
     @Query("SELECT * FROM movie WHERE category = :entityCategory")
     fun getAll(entityCategory: EntityCategory): Single<List<Movie>>
 
-    @Query("SELECT * FROM movie WHERE name LIKE :name LIMIT 1")
-    fun findByName(name: String): Single<Movie>
+    @Query("SELECT * FROM movie WHERE name LIKE :name and category = :entityCategory LIMIT 1")
+    fun findByName(entityCategory: EntityCategory, name: String): Single<Movie>
 
     @Insert
     fun insertAll(vararg movies: Movie)
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insert(movie: Movie): Completable
 
     @Delete
