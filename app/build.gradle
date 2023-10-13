@@ -34,7 +34,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-rxjava3:2.6.0-alpha01"
+    implementation "androidx.room:room-rxjava3:$room_version"
 
     def materialDialogsVersion = '3.3.0'
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"

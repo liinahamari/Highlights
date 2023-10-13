@@ -14,6 +14,7 @@ import dev.liinahamari.highlights.ui.tabs.SectionsPagerAdapter
 import dev.liinahamari.highlights.ui.tabs.TAB_TITLES
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
+    private val tabEmoji = arrayOf("👍", "👎", "🌠")
     lateinit var appComponent: MainComponent
 
     private val ui by viewBinding(ActivityMainBinding::bind)
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun setupViewPager() {
         ui.pager.adapter = adapter
         TabLayoutMediator(ui.tabs, ui.pager, true, false) { tab, position ->
-            tab.text = TAB_TITLES[position].toString().replace('_', '-')
+            tab.text = tabEmoji[position]
         }.attach()
     }
 

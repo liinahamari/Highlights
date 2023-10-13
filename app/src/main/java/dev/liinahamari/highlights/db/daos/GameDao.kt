@@ -45,23 +45,14 @@ data class Game(
 
 @Dao
 interface GameDao {
-    @Query("SELECT * FROM game")
-    fun getAll(): Single<List<Game>>
-
     @Query("SELECT * FROM game WHERE category = :entityCategory")
     fun getAll(entityCategory: EntityCategory): Single<List<Game>>
 
     @Query("SELECT * FROM game WHERE name LIKE :name and category = :entityCategory LIMIT 1")
     fun findByName(entityCategory: EntityCategory, name: String): Single<Game>
 
-    @Insert
-    fun insertAll(vararg games: Game): Completable
-
     @Insert(onConflict = REPLACE)
     fun insert(game: Game): Completable
-
-    @Delete
-    fun delete(game: Game): Completable
 
     @Query("DELETE FROM game WHERE name = :id")
     fun delete(id: String): Completable

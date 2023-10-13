@@ -48,23 +48,14 @@ data class Book(
 
 @Dao
 interface BookDao {
-    @Query("SELECT * FROM book")
-    fun getAll(): Single<List<Book>>
-
     @Query("SELECT * FROM book WHERE category = :entityCategory")
     fun getAll(entityCategory: EntityCategory): Single<List<Book>>
 
     @Query("SELECT * FROM book WHERE name LIKE :name and category = :entityCategory LIMIT 1")
     fun findByName(entityCategory: EntityCategory, name: String): Single<Book>
 
-    @Insert
-    fun insertAll(vararg entries: Book): Completable
-
     @Insert(onConflict = REPLACE)
     fun insert(book: Book): Completable
-
-    @Delete
-    fun delete(book: Book): Completable
 
     @Query("DELETE FROM book WHERE name = :id")
     fun delete(id: String): Completable

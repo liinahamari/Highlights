@@ -27,6 +27,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.Locale
 
 //todo forbid adding default entries
+//todo checked on edit
 
 fun Fragment.showAddMovieDialog(category: EntityCategory, onSubmit: (movie: Movie) -> Unit, movie: Movie? = null) {
     var movie = movie ?: Movie("", listOf(), 0, category, "", arrayOf())
@@ -42,8 +43,8 @@ fun Fragment.showAddMovieDialog(category: EntityCategory, onSubmit: (movie: Movi
             ?.apply { setText(movie.name) }
             ?.doOnTextChanged { text, _, _, _ -> movie = movie.copy(name = text.toString()) }
         findViewById<TextInputEditText>(R.id.yearEt)
-            ?.apply { setText(movie.year) }
-            ?.doOnTextChanged { text, _, _, _ -> movie = movie.copy(year = text.toString().toInt()) }
+            ?.apply { setText(movie.year.toString()) }
+            ?.doOnTextChanged { text, _, _, _ -> movie = movie.copy(year = text.toString().ifEmpty { "0" }.toInt()) }
         findViewById<TextInputEditText>(R.id.posterUrlEt)
             ?.apply { setText(movie.posterUrl) }
             ?.doOnTextChanged { text, _, _, _ ->
@@ -76,8 +77,8 @@ fun Fragment.showAddDocumentaryDialog(
             ?.apply { setText(documentary.name) }
             ?.doOnTextChanged { text, _, _, _ -> documentary = documentary.copy(name = text.toString()) }
         findViewById<TextInputEditText>(R.id.yearEt)
-            ?.apply { setText(documentary.year) }
-            ?.doOnTextChanged { text, _, _, _ -> documentary = documentary.copy(year = text.toString().toInt()) }
+            ?.apply { setText(documentary.year.toString()) }
+            ?.doOnTextChanged { text, _, _, _ -> documentary = documentary.copy(year = text.toString().ifEmpty { "0" }.toInt()) }
         findViewById<TextInputEditText>(R.id.posterUrlEt)
             ?.apply { setText(documentary.posterUrl) }
             ?.doOnTextChanged { text, _, _, _ -> documentary = documentary.copy(posterUrl = text.toString()) }
@@ -95,8 +96,8 @@ fun Fragment.showAddGameDialog(category: EntityCategory, onSubmit: (game: Game) 
             ?.apply { setText(game.name) }
             ?.doOnTextChanged { text, _, _, _ -> game = game.copy(name = text.toString()) }
         findViewById<TextInputEditText>(R.id.yearEt)
-            ?.apply { setText(game.year) }
-            ?.doOnTextChanged { text, _, _, _ -> game = game.copy(year = text.toString().toInt()) }
+            ?.apply { setText(game.year.toString()) }
+            ?.doOnTextChanged { text, _, _, _ -> game = game.copy(year = text.toString().ifEmpty { "0" }.toInt()) }
         findViewById<TextInputEditText>(R.id.posterUrlEt)
             ?.apply { setText(game.posterUrl) }
             ?.doOnTextChanged { text, _, _, _ -> game = game.copy(posterUrl = text.toString()) }
@@ -120,7 +121,7 @@ fun Fragment.showAddBookDialog(category: EntityCategory, onSubmit: (book: Book) 
             ?.doOnTextChanged { text, _, _, _ -> book = book.copy(author = text.toString()) }
         findViewById<TextInputEditText>(R.id.yearEt)
             ?.apply { setText(book.year.toString()) }
-            ?.doOnTextChanged { text, _, _, _ -> book = book.copy(year = text.toString().toInt()) }
+            ?.doOnTextChanged { text, _, _, _ -> book = book.copy(year = text.toString().ifEmpty { "0" }.toInt()) }
         findViewById<TextInputEditText>(R.id.posterUrlEt)
             ?.apply { setText(book.posterUrl) }
             ?.doOnTextChanged { text, _, _, _ -> book = book.copy(posterUrl = text.toString()) }

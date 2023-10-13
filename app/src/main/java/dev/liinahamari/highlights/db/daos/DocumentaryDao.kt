@@ -42,23 +42,14 @@ data class Documentary(
 
 @Dao
 interface DocumentaryDao {
-    @Query("SELECT * FROM documentary")
-    fun getAll(): Single<List<Documentary>>
-
     @Query("SELECT * FROM documentary WHERE category = :entityCategory")
     fun getAll(entityCategory: EntityCategory): Single<List<Documentary>>
 
     @Query("SELECT * FROM documentary WHERE category = :entityCategory and name LIKE :name LIMIT 1")
     fun findByName(entityCategory: EntityCategory, name: String): Single<Documentary>
 
-    @Insert
-    fun insertAll(vararg documentaries: Documentary): Completable
-
     @Insert(onConflict = REPLACE)
     fun insert(documentary: Documentary): Completable
-
-    @Delete
-    fun delete(documentary: Documentary): Completable
 
     @Query("DELETE FROM documentary WHERE name = :id")
     fun delete(id: String): Completable

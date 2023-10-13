@@ -45,23 +45,14 @@ data class Movie(
 
 @Dao
 interface MovieDao {
-    @Query("SELECT * FROM movie")
-    fun getAll(): Single<List<Movie>>
-
     @Query("SELECT * FROM movie WHERE category = :entityCategory")
     fun getAll(entityCategory: EntityCategory): Single<List<Movie>>
 
     @Query("SELECT * FROM movie WHERE name LIKE :name and category = :entityCategory LIMIT 1")
     fun findByName(entityCategory: EntityCategory, name: String): Single<Movie>
 
-    @Insert
-    fun insertAll(vararg movies: Movie)
-
     @Insert(onConflict = REPLACE)
     fun insert(movie: Movie): Completable
-
-    @Delete
-    fun delete(movie: Movie): Completable
 
     @Query("DELETE FROM movie WHERE name = :id")
     fun delete(id: String): Completable
