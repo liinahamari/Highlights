@@ -3,14 +3,14 @@ package dev.liinahamari.impl.data.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import dev.liinahamari.impl.data.db.daos.Book
 import dev.liinahamari.impl.data.db.daos.BookDao
-import dev.liinahamari.impl.data.db.daos.Documentary
+import dev.liinahamari.impl.data.db.daos.models.Documentary
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
-import dev.liinahamari.impl.data.db.daos.Game
+import dev.liinahamari.impl.data.db.daos.models.Game
 import dev.liinahamari.impl.data.db.daos.GameDao
-import dev.liinahamari.impl.data.db.daos.Movie
+import dev.liinahamari.impl.data.db.daos.models.Movie
 import dev.liinahamari.impl.data.db.daos.MovieDao
+import dev.liinahamari.impl.data.db.daos.models.Book
 
 @TypeConverters(
     CategoryConverters::class,

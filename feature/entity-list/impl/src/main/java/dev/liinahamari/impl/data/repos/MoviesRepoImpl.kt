@@ -3,7 +3,7 @@ package dev.liinahamari.impl.data.repos
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.impl.data.db.daos.MovieDao
-import dev.liinahamari.impl.data.db.daos.toDomain
+import dev.liinahamari.impl.data.db.daos.models.toDomain
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
