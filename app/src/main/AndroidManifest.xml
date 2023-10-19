@@ -22,7 +22,7 @@
         android:theme="@style/Theme.Highlights"
         tools:targetApi="31">
         <activity
-            android:name=".ui.MainActivity"
+            android:name="dev.liinahamari.list_ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Material3.Dark.NoActionBar">
             <intent-filter>

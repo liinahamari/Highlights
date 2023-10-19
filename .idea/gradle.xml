@@ -12,9 +12,14 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/db_backup" />
             <option value="$PROJECT_DIR$/feature/db_backup/sample" />
+            <option value="$PROJECT_DIR$/feature/entity-list" />
+            <option value="$PROJECT_DIR$/feature/entity-list/api" />
+            <option value="$PROJECT_DIR$/feature/entity-list/impl" />
+            <option value="$PROJECT_DIR$/feature/entity-list/sample" />
           </set>
         </option>
       </GradleProjectSettings>

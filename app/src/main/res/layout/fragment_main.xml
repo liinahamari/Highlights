@@ -6,5 +6,5 @@
     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.tabs.ViewPagerPlaceholderFragment">
+    tools:context="dev.liinahamari.list_ui.tabs.ViewPagerPlaceholderFragment">
 </androidx.fragment.app.FragmentContainerView>

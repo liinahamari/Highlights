@@ -17,3 +17,9 @@ include ':app'
 
 include ':feature:db_backup',
         ':feature:db_backup:sample'
+include ':feature:entity-list',
+        ':feature:entity-list:api',
+        ':feature:entity-list:impl',
+        ':feature:entity-list:sample'
+//        ':feature:entity-list:list-ui'
+include ':core'
