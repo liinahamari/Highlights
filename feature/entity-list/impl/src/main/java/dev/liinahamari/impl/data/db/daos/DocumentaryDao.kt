@@ -12,12 +12,12 @@ interface DocumentaryDao {
     @Query("SELECT * FROM documentary WHERE category = :category")
     fun getAll(category: Category): Single<List<Documentary>>
 
-    @Query("SELECT * FROM documentary WHERE category = :category and name LIKE :name LIMIT 1")
-    fun findByName(category: Category, name: String): Single<Documentary>
+    @Query("SELECT * FROM documentary WHERE category = :category and id LIKE :id LIMIT 1")
+    fun findById(category: Category, id: Long): Single<Documentary>
 
     @Insert(onConflict = REPLACE)
     fun insert(documentary: Documentary): Completable
 
-    @Query("DELETE FROM documentary WHERE name = :id")
-    fun delete(id: String): Completable
+    @Query("DELETE FROM documentary WHERE id = :id")
+    fun delete(id: Long): Completable
 }

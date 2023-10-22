@@ -9,7 +9,14 @@ data class Book(
     val name: String,
     val genres: List<BookGenre>,
     val author: String
-)
+) {
+    companion object {
+        fun default(category: Category) = Book(
+            0L, category, 0, "", listOf(), "", listOf(), ""
+        )
+    }
+}
+
 
 enum class BookGenre {
     FICTION,

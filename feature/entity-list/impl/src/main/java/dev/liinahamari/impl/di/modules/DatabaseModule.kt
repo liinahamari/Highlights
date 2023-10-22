@@ -6,10 +6,18 @@ import androidx.room.Room
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dev.liinahamari.api.domain.usecases.GetAllBooksUseCase
-import dev.liinahamari.api.domain.usecases.GetAllDocumentariesUseCase
-import dev.liinahamari.api.domain.usecases.GetAllGamesUseCase
-import dev.liinahamari.api.domain.usecases.GetAllMoviesUseCase
+import dev.liinahamari.api.domain.usecases.delete.DeleteBookUseCase
+import dev.liinahamari.api.domain.usecases.delete.DeleteDocumentaryUseCase
+import dev.liinahamari.api.domain.usecases.delete.DeleteGameUseCase
+import dev.liinahamari.api.domain.usecases.delete.DeleteMovieUseCase
+import dev.liinahamari.api.domain.usecases.get.GetBooksUseCase
+import dev.liinahamari.api.domain.usecases.get.GetDocumentariesUseCase
+import dev.liinahamari.api.domain.usecases.get.GetGamesUseCase
+import dev.liinahamari.api.domain.usecases.get.GetMoviesUseCase
+import dev.liinahamari.api.domain.usecases.save.SaveBookUseCase
+import dev.liinahamari.api.domain.usecases.save.SaveDocumentaryUseCase
+import dev.liinahamari.api.domain.usecases.save.SaveGameUseCase
+import dev.liinahamari.api.domain.usecases.save.SaveMovieUseCase
 import dev.liinahamari.impl.data.db.EntriesDatabase
 import dev.liinahamari.impl.data.db.daos.BookDao
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
@@ -23,10 +31,18 @@ import dev.liinahamari.impl.data.repos.GamesRepo
 import dev.liinahamari.impl.data.repos.GamesRepoImpl
 import dev.liinahamari.impl.data.repos.MoviesRepo
 import dev.liinahamari.impl.data.repos.MoviesRepoImpl
-import dev.liinahamari.impl.domain.GetAllBooksUseCaseImpl
-import dev.liinahamari.impl.domain.GetAllDocumentariesUseCaseImpl
-import dev.liinahamari.impl.domain.GetAllGamesUseCaseImpl
-import dev.liinahamari.impl.domain.GetAllMoviesUseCaseImpl
+import dev.liinahamari.impl.domain.delete.DeleteBookUseCaseImpl
+import dev.liinahamari.impl.domain.delete.DeleteDocumentaryUseCaseImpl
+import dev.liinahamari.impl.domain.delete.DeleteGameUseCaseImpl
+import dev.liinahamari.impl.domain.delete.DeleteMovieUseCaseImpl
+import dev.liinahamari.impl.domain.get.GetBooksUseCaseImpl
+import dev.liinahamari.impl.domain.get.GetDocumentariesUseCaseImpl
+import dev.liinahamari.impl.domain.get.GetGamesUseCaseImpl
+import dev.liinahamari.impl.domain.get.GetMoviesUseCaseImpl
+import dev.liinahamari.impl.domain.save.SaveBookUseCaseImpl
+import dev.liinahamari.impl.domain.save.SaveDocumentaryUseCaseImpl
+import dev.liinahamari.impl.domain.save.SaveGameUseCaseImpl
+import dev.liinahamari.impl.domain.save.SaveMovieUseCaseImpl
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -64,45 +80,4 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun movieDao(db: EntriesDatabase): MovieDao = db.movieDao()
-}
-
-@Module
-interface UseCasesModule {
-    companion object {
-        @Provides
-        @JvmStatic
-        fun getAllMoviesUseCase(repo: MoviesRepo): GetAllMoviesUseCase = GetAllMoviesUseCaseImpl(repo)
-
-        @Provides
-        @JvmStatic
-        fun getAllDocumentariesUseCase(repo: DocumentariesRepo): GetAllDocumentariesUseCase =
-            GetAllDocumentariesUseCaseImpl(repo)
-
-        @Provides
-        @JvmStatic
-        fun getAllBooksUseCase(repo: BooksRepo): GetAllBooksUseCase = GetAllBooksUseCaseImpl(repo)
-
-        @Provides
-        @JvmStatic
-        fun getAllGamesUseCase(repo: GamesRepo): GetAllGamesUseCase = GetAllGamesUseCaseImpl(repo)
-    }
-}
-
-@Module
-interface RepoModule {
-    @Binds
-    @Singleton
-    fun moviesRepo(impl: MoviesRepoImpl): MoviesRepo
-
-    @Binds
-    @Singleton
-    fun gamesRepo(impl: GamesRepoImpl): GamesRepo
-
-    @Binds
-    @Singleton
-    fun documentariesRepo(impl: DocumentariesRepoImpl): DocumentariesRepo
-
-    @Binds
-    @Singleton
-    fun booksRepo(impl: BooksRepoImpl): BooksRepo
 }

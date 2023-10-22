@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Highlights</string>
+    <string name="tab_text_1">Не-хрень</string>
+    <string name="tab_text_2">Хрень</string>
+    <string name="genre">Genre</string>
+    <string name="name">Name</string>
+    <string name="year">Year</string>
+    <string name="poster_url">Poster URL</string>
+    <string name="save">Save</string>
+    <string name="author">Author</string>
+    <string name="url_is_not_valid">Url is not valid</string>
+    <string name="country">Country</string>
+    <string name="sure_to_delete">Are you sure to delete?</string>
+    <string name="yes">Yes</string>
+    <string name="title_app_needs_permission">Permission needed</string>
+    <string name="backup_permission_explanation">App needs permission to store backup</string>
+    <string name="restore_permission_explanation">App needs permission to restore backup</string>
+    <string name="title_edit">edit</string>
+    <string name="delete">delete</string>
+</resources>

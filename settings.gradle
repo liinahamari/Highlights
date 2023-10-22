@@ -20,6 +20,6 @@ include ':feature:db_backup',
 include ':feature:entity-list',
         ':feature:entity-list:api',
         ':feature:entity-list:impl',
-        ':feature:entity-list:sample'
-//        ':feature:entity-list:list-ui'
+        ':feature:entity-list:sample',
+        ':feature:entity-list:list-ui'
 include ':core'

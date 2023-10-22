@@ -8,7 +8,14 @@ data class Movie(
     val countryCodes: List<String>,
     val name: String,
     val genres: List<MovieGenre>,
-)
+) {
+    companion object{
+        fun default(category: Category) = Movie(
+            0L, category, 0, "", listOf(), "", listOf()
+        )
+    }
+}
+
 
 enum class MovieGenre {
     ARTHOUSE,

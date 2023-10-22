@@ -56,3 +56,14 @@ fun Book.toDomain(): dev.liinahamari.api.domain.entities.Book = dev.liinahamari.
     year = this.year,
     author = this.author
 )
+
+fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
+    id = this.id,
+    category = this.category,
+    countryCodes = this.countryCodes.toTypedArray(),
+    genres = this.genres,
+    name = this.name,
+    posterUrl = this.posterUrl,
+    year = this.year,
+    author = this.author
+)

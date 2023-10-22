@@ -48,3 +48,12 @@ fun Documentary.toDomain(): dev.liinahamari.api.domain.entities.Documentary =
         posterUrl = this.posterUrl,
         year = this.year
     )
+
+fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentary = Documentary(
+    id = this.id,
+    category = this.category,
+    countryCodes = this.countryCodes.toTypedArray(),
+    name = this.name,
+    posterUrl = this.posterUrl,
+    year = this.year
+)

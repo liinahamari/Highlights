@@ -52,3 +52,13 @@ fun Movie.toDomain(): dev.liinahamari.api.domain.entities.Movie = dev.liinahamar
     posterUrl = this.posterUrl,
     year = this.year
 )
+
+fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
+    id = this.id,
+    category = this.category,
+    countryCodes = this.countryCodes.toTypedArray(),
+    genres = this.genres,
+    name = this.name,
+    posterUrl = this.posterUrl,
+    year = this.year
+)

@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/feature/entity-list" />
             <option value="$PROJECT_DIR$/feature/entity-list/api" />
             <option value="$PROJECT_DIR$/feature/entity-list/impl" />
+            <option value="$PROJECT_DIR$/feature/entity-list/list-ui" />
             <option value="$PROJECT_DIR$/feature/entity-list/sample" />
           </set>
         </option>

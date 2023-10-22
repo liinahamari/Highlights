@@ -12,13 +12,13 @@ interface BookDao {
     @Query("SELECT * FROM book WHERE category = :ctg")
     fun getAll(ctg: Category): Single<List<Book>>
 
-    @Query("SELECT * FROM book WHERE name LIKE :name and category = :ctg LIMIT 1")
-    fun findByName(ctg: Category, name: String): Single<Book>
+    @Query("SELECT * FROM book WHERE id LIKE :id and category = :ctg LIMIT 1")
+    fun findById(ctg: Category, id: Long): Single<Book>
 
     @Insert(onConflict = REPLACE)
     fun insert(book: Book): Completable
 
-    @Query("DELETE FROM book WHERE name = :id")
-    fun delete(id: String): Completable
+    @Query("DELETE FROM book WHERE id = :id")
+    fun delete(id: Long): Completable
 }
 

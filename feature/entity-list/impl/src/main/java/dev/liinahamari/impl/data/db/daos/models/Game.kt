@@ -52,3 +52,13 @@ fun Game.toDomain(): dev.liinahamari.api.domain.entities.Game = dev.liinahamari.
     posterUrl = this.posterUrl,
     year = this.year
 )
+
+fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
+    id = this.id,
+    category = this.category,
+    countryCodes = this.countryCodes.toTypedArray(),
+    genres = this.genres,
+    name = this.name,
+    posterUrl = this.posterUrl,
+    year = this.year
+)

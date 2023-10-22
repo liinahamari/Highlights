@@ -8,7 +8,14 @@ data class Game(
     val countryCodes: List<String>,
     val name: String,
     val genres: List<GameGenre>,
-)
+){
+    companion object{
+        fun default(category: Category) = Game(
+            0L, category, 0, "", listOf(), "", listOf()
+        )
+    }
+}
+
 
 enum class GameGenre {
     ADVENTURE,
