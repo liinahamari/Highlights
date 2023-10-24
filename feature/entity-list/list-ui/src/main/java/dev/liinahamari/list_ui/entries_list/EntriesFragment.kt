@@ -15,12 +15,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.providePermissionExplanationDialog
 import dev.liinahamari.list_ui.MainActivity
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentEntriesBinding
-import dev.liinahamari.list_ui.single_entity.EntityCategory
 import dev.liinahamari.list_ui.single_entity.EntityType
 import dev.liinahamari.list_ui.single_entity.EntryFragment
 import java.io.InputStream
@@ -78,7 +78,7 @@ class EntriesFragment : Fragment(R.layout.fragment_entries) {
 
     companion object {
         const val ARG_CATEGORY = "arg_category"
-        @JvmStatic fun newInstance(category: EntityCategory) =
+        @JvmStatic fun newInstance(category: Category) =
             EntriesFragment().apply { arguments = bundleOf(ARG_CATEGORY to category) }
     }
 

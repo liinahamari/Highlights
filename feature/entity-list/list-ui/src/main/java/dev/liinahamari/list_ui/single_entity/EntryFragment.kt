@@ -113,7 +113,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     companion object {
         const val ARG_CATEGORY = "arg_category"
         const val ARG_TYPE = "arg_type"
-        @JvmStatic fun newInstance(entityCategory: EntityCategory, entityType: EntityType) =
+        @JvmStatic fun newInstance(entityCategory: Category, entityType: EntityType) =
             EntryFragment().apply {
                 arguments = bundleOf(ARG_CATEGORY to entityCategory, ARG_TYPE to entityType)
             }

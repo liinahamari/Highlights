@@ -3,9 +3,9 @@ package dev.liinahamari.list_ui.tabs
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import dev.liinahamari.list_ui.single_entity.EntityCategory
+import dev.liinahamari.api.domain.entities.Category
 
-val TAB_TITLES = arrayOf(EntityCategory.GOOD, EntityCategory.SO_SO, EntityCategory.WISH_LIST)
+val TAB_TITLES = arrayOf(Category.GOOD, Category.SO_SO, Category.WISHLIST)
 
 class SectionsPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
     override fun getItemCount(): Int = TAB_TITLES.size
