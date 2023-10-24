@@ -3,34 +3,12 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+setupDefaultModuleConfig(android)
+
 android {
-    namespace 'dev.liinahamari.api'
-    compileSdk 34
-
-    defaultConfig {
-        minSdk 24
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
+    namespace 'dev.liinahamari.entity_list.api'
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
 }

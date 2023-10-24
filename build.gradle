@@ -1,11 +1,8 @@
-import com.android.build.api.dsl.CommonExtension
-
 plugins {
     id 'com.android.application' version '8.1.2' apply false
     id 'com.android.library' version '8.1.2' apply false
     id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
 }
-
 
 ext {
     minSdkVersion = 24
@@ -14,10 +11,10 @@ ext {
 }
 
 
-def setupDefaultModuleConfig(CommonExtension it) {
-    it.compileSdkVersion rootProject.ext.compileSdkVersion
+def setupDefaultModuleConfig(android) {
+    android.compileSdkVersion rootProject.ext.compileSdkVersion
 
-    it.defaultConfig {
+    android.defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
 
@@ -31,24 +28,24 @@ def setupDefaultModuleConfig(CommonExtension it) {
         }
     }
 
-    it.buildTypes {
+    android.buildTypes {
         debug {
             minifyEnabled false
             debuggable true
         }
     }
 
-    it.compileOptions {
+    android.compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    it.kotlinOptions {
+    android.kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
         freeCompilerArgs = ['-Xjvm-default=all']
     }
 
-    it.testOptions {
+    android.testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
         unitTests.returnDefaultValues = true
         unitTests {
