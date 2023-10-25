@@ -7,6 +7,7 @@ import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.BuildCompat
 import androidx.core.os.bundleOf
@@ -23,9 +24,11 @@ import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentEntriesBinding
 import dev.liinahamari.list_ui.single_entity.EntityType
 import dev.liinahamari.list_ui.single_entity.EntryFragment
+import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
+
 
 private const val PROCESS_BACKUP = 1
 private const val PROCESS_RESTORE = 2
@@ -42,7 +45,7 @@ class EntriesFragment : Fragment(R.layout.fragment_entries) {
                 ).show()
             } else {
                 when (currentProcess) {
-                    PROCESS_BACKUP -> openBackupFileCreator.launch(entriesViewModel.getDatabaseName())
+                    PROCESS_BACKUP -> openBackupFileCreator.launch("entries-db")
                     PROCESS_RESTORE -> openBackupFileChooser.launch(arrayOf("application/octet-stream"))
                 }
             }
@@ -50,7 +53,53 @@ class EntriesFragment : Fragment(R.layout.fragment_entries) {
 
     private val openBackupFileChooser = registerForActivityResult(ActivityResultContracts.OpenDocument()) { result ->
         if (result != null) {
-            requireContext().contentResolver.openInputStream(result)?.let(entriesViewModel::restore)
+//            File("/data/data/dev.liinahamari.highlights/databases").mkdir()
+            requireContext().contentResolver.openInputStream(result)!!
+                .use { input ->
+//                    File("/data/data/dev.liinahamari.highlights/databases/entries-db").outputStream().use(input::copyTo)
+                    requireContext().getDatabasePath("entries-db")
+                        .outputStream().use(input::copyTo)
+                }
+            openBackupFileChooser2.launch(arrayOf("application/octet-stream"))
+        } else {
+            providePermissionExplanationDialog(
+                getString(R.string.title_app_needs_permission),
+                getString(R.string.restore_permission_explanation)
+            ).show()
+        }
+    }
+    private val openBackupFileChooser2 = registerForActivityResult(ActivityResultContracts.OpenDocument()) { result ->
+        if (result != null) {
+            requireContext().contentResolver.openInputStream(result)!!
+                .use { input ->
+                    requireContext().getDatabasePath("entries-db-shm")
+                        .outputStream().use(input::copyTo)
+                }
+            openBackupFileChooser3.launch(arrayOf("application/octet-stream"))
+        } else {
+            providePermissionExplanationDialog(
+                getString(R.string.title_app_needs_permission),
+                getString(R.string.restore_permission_explanation)
+            ).show()
+        }
+    }
+    private val openBackupFileChooser3 = registerForActivityResult(ActivityResultContracts.OpenDocument()) { result ->
+        if (result != null) {
+            requireContext().contentResolver.openInputStream(result)!!
+                .use { input ->
+                    requireContext().getDatabasePath("entries-db-wal")
+                        .outputStream()
+                        .use(input::copyTo)
+                }
+            Toast.makeText(requireContext(), "Import Completed", Toast.LENGTH_SHORT).show()
+            startActivity(
+                Intent(
+                    requireActivity(),
+                    MainActivity::class.java
+                ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+            requireActivity().finish()
+            Runtime.getRuntime().exit(0)
         } else {
             providePermissionExplanationDialog(
                 getString(R.string.title_app_needs_permission),
@@ -62,7 +111,42 @@ class EntriesFragment : Fragment(R.layout.fragment_entries) {
     private val openBackupFileCreator =
         registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { result ->
             if (result != null) {
-                requireContext().contentResolver.openOutputStream(result)?.let(entriesViewModel::backup)
+                File(requireContext().getDatabasePath("entries-db").absolutePath)
+                    .inputStream()
+                    .buffered()
+                    .use { requireContext().contentResolver.openOutputStream(result)!!.use(it::copyTo) }
+                openBackupFileCreator2.launch("entries-db-shm")
+            } else {
+                providePermissionExplanationDialog(
+                    getString(R.string.title_app_needs_permission),
+                    getString(R.string.backup_permission_explanation)
+                ).show()
+            }
+        }
+
+    private val openBackupFileCreator2 =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { result ->
+            if (result != null) {
+                File(requireContext().getDatabasePath("entries-db-shm").absolutePath)
+                    .inputStream()
+                    .buffered()
+                    .use { requireContext().contentResolver.openOutputStream(result)!!.use(it::copyTo) }
+                openBackupFileCreator3.launch("entries-db-wal")
+            } else {
+                providePermissionExplanationDialog(
+                    getString(R.string.title_app_needs_permission),
+                    getString(R.string.backup_permission_explanation)
+                ).show()
+            }
+        }
+    private val openBackupFileCreator3 =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { result ->
+            if (result != null) {
+                File(requireContext().getDatabasePath("entries-db-wal").absolutePath)
+                    .inputStream()
+                    .buffered()
+                    .use { requireContext().contentResolver.openOutputStream(result)!!.use(it::copyTo) }
+                Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
             } else {
                 providePermissionExplanationDialog(
                     getString(R.string.title_app_needs_permission),

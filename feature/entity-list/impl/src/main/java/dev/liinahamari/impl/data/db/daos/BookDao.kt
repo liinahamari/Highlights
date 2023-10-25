@@ -21,4 +21,3 @@ interface BookDao {
     @Query("DELETE FROM book WHERE id = :id")
     fun delete(id: Long): Completable
 }
-
