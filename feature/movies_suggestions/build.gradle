@@ -1,0 +1,15 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+setupDefaultModuleConfig(android)
+
+android {
+    namespace 'com.example.movies_suggestions'
+}
+
+dependencies {
+    api project(":feature:movies_suggestions:api")
+    implementation project(":feature:movies_suggestions:impl")
+}

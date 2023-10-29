@@ -23,3 +23,7 @@ include ':feature:entity-list',
         ':feature:entity-list:sample',
         ':feature:entity-list:list-ui'
 include ':core'
+include ':feature:movies_suggestions',
+        ':feature:movies_suggestions:api',
+        ':feature:movies_suggestions:impl',
+        ':feature:movies_suggestions:sample'
