@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater.from
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
@@ -29,3 +32,6 @@ inline fun <reified T> Bundle.getParcelableOf(key: String): T =
     } else {
         @Suppress("DEPRECATION") getParcelable(key)!!
     }
+
+fun AppCompatActivity.toast(text: String) = Toast.makeText(this, text, LENGTH_SHORT).show()
+fun Fragment.toast(text: String) = Toast.makeText(requireContext(), text, LENGTH_SHORT).show()

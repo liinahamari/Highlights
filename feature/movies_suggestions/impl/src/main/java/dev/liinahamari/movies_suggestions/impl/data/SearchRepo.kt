@@ -5,12 +5,11 @@ import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 interface SearchRepo {
-    fun multiSearch(searchParams: String): Single<List<Search>>
+    fun search(searchParams: String): Single<List<Search>>
 }
 
 class SearchRepoImpl @Inject constructor(
     private val api: SearchMovieApi
 ) : SearchRepo {
-    override fun multiSearch(searchParams: String): Single<List<Search>> =
-        api.multiSearch(searchParams).map { it.results }
+    override fun search(searchParams: String): Single<List<Search>> = api.search(searchParams).map { it.results }
 }

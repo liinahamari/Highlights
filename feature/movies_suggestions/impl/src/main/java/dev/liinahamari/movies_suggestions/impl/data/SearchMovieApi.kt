@@ -8,8 +8,8 @@ import retrofit2.http.Query
 
 interface SearchMovieApi {
     @GET("search/multi")
-    fun multiSearch(
-        @Query("query") searchParams: String,
+    fun search(
+        @Query("query") query: String,
         @Query("page") page: Int = 1,
         @Query("include_adult") includeAdult: Boolean = true,
         @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY,

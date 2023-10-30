@@ -7,5 +7,5 @@ import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class SearchMovieUseCaseImpl @Inject constructor(private val searchRepo: SearchRepo) : SearchMovieUseCase {
-    override fun search(searchParams: String): Single<List<Search>> = searchRepo.multiSearch(searchParams)
+    override fun search(searchParams: String): Single<List<Search>> = searchRepo.search(searchParams)
 }

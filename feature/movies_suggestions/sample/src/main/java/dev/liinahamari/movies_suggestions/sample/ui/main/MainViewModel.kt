@@ -9,6 +9,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.net.UnknownHostException
 
 class MainViewModel : ViewModel() {
     private val searchMovieUseCase by lazy { getApi().searchMovieUseCase }
@@ -17,18 +18,29 @@ class MainViewModel : ViewModel() {
     val searchMoviesEvent: LiveData<GetRemoteMovies> get() = _searchMoviesEvent
 
     private val disposable = CompositeDisposable()
+
     override fun onCleared() = disposable.clear()
-    fun searchForMovie(text: String) {
-        disposable += searchMovieUseCase.search(text)
+
+    fun searchForMovie(query: String) {
+        disposable += searchMovieUseCase.search(query)
             .concatMap { Single.just(it.map { it.title }) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnError { _searchMoviesEvent.value = GetRemoteMovies.Error }
-            .subscribe { titles -> _searchMoviesEvent.value = GetRemoteMovies.Success(titles) }
+            .map<GetRemoteMovies> { GetRemoteMovies.Success(it) }
+            .onErrorReturn {
+                when (it) {
+                    is UnknownHostException -> GetRemoteMovies.Error.NoInternetError
+                    else -> GetRemoteMovies.Error.CommonError
+                }
+            }
+            .subscribe { result -> _searchMoviesEvent.value = result }
     }
 }
 
 sealed interface GetRemoteMovies {
     data class Success(val titles: List<String>) : GetRemoteMovies
-    object Error : GetRemoteMovies
+    sealed interface Error : GetRemoteMovies {
+        object CommonError : Error
+        object NoInternetError : Error
+    }
 }
