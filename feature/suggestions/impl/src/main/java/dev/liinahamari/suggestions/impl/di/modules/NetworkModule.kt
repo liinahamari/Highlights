@@ -3,7 +3,9 @@ package dev.liinahamari.suggestions.impl.di.modules
 import dagger.Module
 import dagger.Provides
 import dev.liinahamari.suggestions.impl.BuildConfig
-import dev.liinahamari.suggestions.impl.data.SearchMovieApi
+import dev.liinahamari.suggestions.impl.data.apis.SearchBookApi
+import dev.liinahamari.suggestions.impl.data.apis.SearchGameApi
+import dev.liinahamari.suggestions.impl.data.apis.SearchMovieApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
@@ -16,6 +18,8 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 private const val BASE_URL_TMDB = "https://api.themoviedb.org/3/"
+private const val BASE_URL_IGDB = "https://api.themoviedb.org/3/"
+private const val BASE_URL_BDB = "https://api.themoviedb.org/3/"
 private const val DEFAULT_TIMEOUT_AMOUNT_IN_SEC = 15L
 private const val CONNECTION_TIMEOUT = "connection_timeout"
 
@@ -54,7 +58,7 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun providesAPIService(
+    fun providesMovieApiService(
         okHttpClient: OkHttpClient,
         converterFactory: Converter.Factory,
         callAdapterFactory: CallAdapter.Factory
@@ -66,4 +70,34 @@ class NetworkModule {
             .client(okHttpClient)
             .build()
             .create(SearchMovieApi::class.java)
+
+    @Singleton
+    @Provides
+    fun providesBookApiService(
+        okHttpClient: OkHttpClient,
+        converterFactory: Converter.Factory,
+        callAdapterFactory: CallAdapter.Factory
+    ): SearchBookApi =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL_BDB)
+            .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(callAdapterFactory)
+            .client(okHttpClient)
+            .build()
+            .create(SearchBookApi::class.java)
+
+    @Singleton
+    @Provides
+    fun providesGameApiService(
+        okHttpClient: OkHttpClient,
+        converterFactory: Converter.Factory,
+        callAdapterFactory: CallAdapter.Factory
+    ): SearchGameApi =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL_IGDB)
+            .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(callAdapterFactory)
+            .client(okHttpClient)
+            .build()
+            .create(SearchGameApi::class.java)
 }

@@ -2,11 +2,11 @@ package dev.liinahamari.suggestions.api.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Search(
+data class RemoteMovie(
     @SerializedName("backdrop_path")
     val backdropPath: String?,
     @SerializedName("genres")
-    val genres: List<Genre>?,
+    val genres: List<MovieGenre>?,
     @SerializedName("origin_country")
     val originCountry: List<String>?,
     @SerializedName("original_language")
