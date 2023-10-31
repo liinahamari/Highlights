@@ -21,10 +21,10 @@
             <option value="$PROJECT_DIR$/feature/entity-list/impl" />
             <option value="$PROJECT_DIR$/feature/entity-list/list-ui" />
             <option value="$PROJECT_DIR$/feature/entity-list/sample" />
-            <option value="$PROJECT_DIR$/feature/movies_suggestions" />
-            <option value="$PROJECT_DIR$/feature/movies_suggestions/api" />
-            <option value="$PROJECT_DIR$/feature/movies_suggestions/impl" />
-            <option value="$PROJECT_DIR$/feature/movies_suggestions/sample" />
+            <option value="$PROJECT_DIR$/feature/suggestions" />
+            <option value="$PROJECT_DIR$/feature/suggestions/api" />
+            <option value="$PROJECT_DIR$/feature/suggestions/impl" />
+            <option value="$PROJECT_DIR$/feature/suggestions/sample" />
           </set>
         </option>
       </GradleProjectSettings>
