@@ -1,7 +1,10 @@
 package dev.liinahamari.suggestions.api.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class RemoteMovie(
     @SerializedName("backdrop_path")
     val backdropPath: String?,
@@ -23,4 +26,4 @@ data class RemoteMovie(
     val releaseDate: String?,
     @SerializedName("title", alternate = ["name"])
     val title: String,
-)
+) : Parcelable

@@ -13,5 +13,5 @@ class BookRepoImpl @Inject constructor(
     private val api: SearchBookApi
 ) : BookRepo {
     override fun search(searchParams: String): Single<List<RemoteBook>> =
-        api.searchBookByTitle(searchParams).map { it.books }
+        api.searchBookByTitle(searchParams).map { it.docs }
 }

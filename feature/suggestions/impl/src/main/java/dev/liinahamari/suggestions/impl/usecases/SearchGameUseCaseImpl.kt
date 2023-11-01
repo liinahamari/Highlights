@@ -1,6 +1,6 @@
 package dev.liinahamari.suggestions.impl.usecases
 
-import dev.liinahamari.suggestions.api.SearchGameUseCase
+import dev.liinahamari.suggestions.api.usecases.SearchGameUseCase
 import dev.liinahamari.suggestions.api.model.RemoteGame
 import dev.liinahamari.suggestions.impl.data.repos.GameRepo
 import io.reactivex.rxjava3.core.Single

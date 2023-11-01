@@ -1,4 +1,4 @@
-package dev.liinahamari.suggestions.api
+package dev.liinahamari.suggestions.api.usecases
 
 import dev.liinahamari.suggestions.api.model.RemoteGame
 import io.reactivex.rxjava3.core.Single

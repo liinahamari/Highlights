@@ -2,9 +2,9 @@ package dev.liinahamari.suggestions.impl.di.modules
 
 import dagger.Binds
 import dagger.Module
-import dev.liinahamari.suggestions.api.SearchBookUseCase
-import dev.liinahamari.suggestions.api.SearchGameUseCase
-import dev.liinahamari.suggestions.api.SearchMovieUseCase
+import dev.liinahamari.suggestions.api.usecases.SearchBookUseCase
+import dev.liinahamari.suggestions.api.usecases.SearchGameUseCase
+import dev.liinahamari.suggestions.api.usecases.SearchMovieUseCase
 import dev.liinahamari.suggestions.impl.usecases.SearchBookUseCaseImpl
 import dev.liinahamari.suggestions.impl.usecases.SearchGameUseCaseImpl
 import dev.liinahamari.suggestions.impl.usecases.SearchMovieUseCaseImpl

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".ui.main.MainFragment"
+    android:layout_margin="10dp"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/posterIv"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        tools:background="@color/black"
+        tools:src="@drawable/ic_launcher_foreground"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/titleTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Sample Title"/>
+    <TextView
+        android:id="@+id/yearTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="2050"/>
+    <TextView
+        android:id="@+id/genresTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="ACTION"/>
+    <TextView
+        android:id="@+id/countriesTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="DE, RU, EE"/>
+</LinearLayout>

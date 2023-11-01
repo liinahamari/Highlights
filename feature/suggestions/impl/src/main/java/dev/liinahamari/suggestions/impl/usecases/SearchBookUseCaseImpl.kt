@@ -1,6 +1,6 @@
 package dev.liinahamari.suggestions.impl.usecases
 
-import dev.liinahamari.suggestions.api.SearchBookUseCase
+import dev.liinahamari.suggestions.api.usecases.SearchBookUseCase
 import dev.liinahamari.suggestions.api.model.RemoteBook
 import dev.liinahamari.suggestions.impl.data.repos.BookRepo
 import io.reactivex.rxjava3.core.Single

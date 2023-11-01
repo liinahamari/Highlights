@@ -19,7 +19,7 @@ import javax.inject.Singleton
 
 private const val BASE_URL_TMDB = "https://api.themoviedb.org/3/"
 private const val BASE_URL_IGDB = "https://api.themoviedb.org/3/"
-private const val BASE_URL_BDB = "https://api.themoviedb.org/3/"
+private const val BASE_URL_BDB = "https://openlibrary.org/"
 private const val DEFAULT_TIMEOUT_AMOUNT_IN_SEC = 15L
 private const val CONNECTION_TIMEOUT = "connection_timeout"
 
