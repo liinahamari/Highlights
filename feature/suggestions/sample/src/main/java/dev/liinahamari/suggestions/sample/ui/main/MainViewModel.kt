@@ -6,15 +6,16 @@ import com.example.suggestions.MovieSuggestionsListFactory.getApi
 import dev.liinahamari.core.SingleLiveEvent
 import dev.liinahamari.suggestions.api.model.RemoteMovie
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread
-import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.net.UnknownHostException
-import java.util.concurrent.TimeUnit.SECONDS
 
 class MainViewModel : ViewModel() {
+    private var initSearch = false
     private val searchMovieUseCase by lazy { getApi().searchMovieUseCase }
 
     private val _searchMoviesEvent = SingleLiveEvent<GetRemoteMovies>()
@@ -24,24 +25,28 @@ class MainViewModel : ViewModel() {
 
     override fun onCleared() = disposable.clear()
 
-    private val searchMovieSubject: Observer<String> = PublishSubject.create<String>().apply {
-        disposable += flatMapSingle(searchMovieUseCase::search)
-            .throttleFirst(1, SECONDS, io())
-            .observeOn(mainThread())
-            .map<GetRemoteMovies>(GetRemoteMovies::Success)
-            .onErrorReturn {
-                when (it) {
-                    is UnknownHostException -> GetRemoteMovies.Error.NoInternetError
-                    else -> GetRemoteMovies.Error.CommonError
-                }
-            }
-            .doOnNext { result -> _searchMoviesEvent.value = result }
-            .subscribe()
+    private val queryBridge = PublishSubject.create<String>()
+    fun searchMovie(movieTitle: String) {
+        if (movieTitle.isBlank()) return
+        if (initSearch.not()) {
+            disposable += Observable.defer { queryBridge.switchMapSingle(::searchForMovie) }
+                .subscribeOn(io())
+                .observeOn(mainThread())
+                .doOnNext { result -> _searchMoviesEvent.value = result }
+                .subscribe()
+            initSearch = true
+        }
+        queryBridge.onNext(movieTitle)
     }
 
-    fun searchForMovie(query: String) {
-        searchMovieSubject.onNext(query)
-    }
+    private fun searchForMovie(query: String): Single<GetRemoteMovies> = searchMovieUseCase.search(query)
+        .map<GetRemoteMovies>(GetRemoteMovies::Success)
+        .onErrorReturn {
+            when (it) {
+                is UnknownHostException -> GetRemoteMovies.Error.NoInternetError
+                else -> GetRemoteMovies.Error.CommonError
+            }
+        }
 }
 
 sealed interface GetRemoteMovies {

@@ -26,6 +26,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
 
     implementation project(":core")
+    api project(":feature:entity-list:api")
 
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
