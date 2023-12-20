@@ -6,13 +6,13 @@ import com.example.suggestions.MovieSuggestionsListFactory.getApi
 import dev.liinahamari.core.SingleLiveEvent
 import dev.liinahamari.suggestions.api.model.RemoteMovie
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.net.UnknownHostException
+import java.util.concurrent.TimeUnit
 
 class MainViewModel : ViewModel() {
     private var initSearch = false
@@ -29,7 +29,9 @@ class MainViewModel : ViewModel() {
     fun searchMovie(movieTitle: String) {
         if (movieTitle.isBlank()) return
         if (initSearch.not()) {
-            disposable += Observable.defer { queryBridge.switchMapSingle(::searchForMovie) }
+            disposable += queryBridge
+                .throttleLast(1, TimeUnit.SECONDS)
+                .switchMapSingle(::searchForMovie)
                 .subscribeOn(io())
                 .observeOn(mainThread())
                 .doOnNext { result -> _searchMoviesEvent.value = result }

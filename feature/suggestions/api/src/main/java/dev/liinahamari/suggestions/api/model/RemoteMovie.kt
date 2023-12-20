@@ -25,5 +25,5 @@ data class RemoteMovie(
     @SerializedName("release_date", alternate = ["first_air_date"])
     val releaseDate: String?,
     @SerializedName("title", alternate = ["name"])
-    val title: String,
+    val title: String?,
 ) : Parcelable

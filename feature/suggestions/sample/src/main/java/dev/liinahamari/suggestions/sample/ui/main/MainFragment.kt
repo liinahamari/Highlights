@@ -18,15 +18,12 @@ import dev.liinahamari.suggestions.api.model.RemoteMovie
 import dev.liinahamari.suggestions.sample.R
 import dev.liinahamari.suggestions.sample.databinding.FragmentMainBinding
 import dev.liinahamari.suggestions.sample.databinding.FragmentMoviePreviewBinding
+import java.time.Year
 
 class MainFragment : Fragment(R.layout.fragment_main) {
     private val fromCategory: Category by lazy { Category.GOOD }
     private val ui by viewBinding(FragmentMainBinding::bind)
-    private val suggestionsAdapter: ArrayAdapter<String> by lazy {
-        ArrayAdapter<String>(
-            requireContext(), android.R.layout.simple_dropdown_item_1line, emptyList()
-        ).apply { setNotifyOnChange(true) }
-    }
+    private val suggestionsAdapter: ArrayAdapter<RowItem> by lazy { PicturedArrayAdapter(requireContext()) }
 
     companion object {
         fun newInstance() = MainFragment()
@@ -53,7 +50,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 is GetRemoteMovies.Success -> {
                     with(suggestionsAdapter) {
                         clear()
-                        addAll(it.movies.map { it.title })
+                        addAll(it.movies.map {
+                            RowItem(
+                                posterUrl = it.posterPath,
+                                title = it.title ?: "",
+                                year = Year.of(it.releaseDate?.substring(0, 4)?.toInt() ?: 0)
+                            )
+                        })
                         filter.filter(null)
                     }
                     ui.enterMovieNameEt.setOnItemClickListener { _, _, position, _ ->
