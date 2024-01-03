@@ -27,3 +27,4 @@ include ':feature:suggestions',
         ':feature:suggestions:api',
         ':feature:suggestions:impl',
         ':feature:suggestions:sample'
+include ':feature:suggestions:suggestions-ui'

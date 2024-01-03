@@ -14,30 +14,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.2'
-    implementation 'androidx.fragment:fragment-ktx:1.6.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
-    implementation project(path: ':feature:suggestions')
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-
-    implementation project(":core")
-    api project(":feature:entity-list:api")
-
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
-    implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'
-
-    implementation 'com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.3'
-    implementation "com.github.bumptech.glide:glide:4.15.1"
-
-    def room_version = "2.5.1"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-rxjava3:$room_version"
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation project(path: ':feature:suggestions:suggestions-ui')
 }

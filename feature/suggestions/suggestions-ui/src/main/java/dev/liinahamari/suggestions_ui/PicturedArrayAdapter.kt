@@ -1,6 +1,6 @@
 @file:Suppress("NAME_SHADOWING")
 
-package dev.liinahamari.suggestions.sample.ui.main
+package dev.liinahamari.suggestions_ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -12,11 +12,10 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import dev.liinahamari.suggestions.sample.R
-import java.time.Year
+import dev.liinahamari.suggestions.api.model.RemoteMovie
 
 class PicturedArrayAdapter(private val context: Context) :
-    ArrayAdapter<RowItem>(context, R.layout.suggestions_list_item, emptyArray()) {
+    ArrayAdapter<RemoteMovie>(context, R.layout.suggestions_list_item, emptyArray()) {
     private inner class ViewHolder {
         var thumbIv: ImageView? = null
         var titleTv: TextView? = null
@@ -48,7 +47,7 @@ class PicturedArrayAdapter(private val context: Context) :
         }
         holder.titleTv!!.text = getItem(position)!!.title
         Glide.with(context)
-            .load("https://image.tmdb.org/t/p/w154${getItem(position)?.posterUrl}")
+            .load("https://image.tmdb.org/t/p/w154${getItem(position)?.posterPath}")
             .fallback(android.R.drawable.gallery_thumb)
             .error(android.R.drawable.gallery_thumb)
             .timeout(10_000)
@@ -57,5 +56,3 @@ class PicturedArrayAdapter(private val context: Context) :
         return convertView!!
     }
 }
-
-data class RowItem(val posterUrl: String?, val title: String, val year: Year?)

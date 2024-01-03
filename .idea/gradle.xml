@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/feature/suggestions/api" />
             <option value="$PROJECT_DIR$/feature/suggestions/impl" />
             <option value="$PROJECT_DIR$/feature/suggestions/sample" />
+            <option value="$PROJECT_DIR$/feature/suggestions/suggestions-ui" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
