@@ -36,6 +36,7 @@ dependencies {
     implementation "androidx.paging:paging-rxjava3:3.2.1"
 
     api project(path: ':feature:suggestions:api')
+    api project(path: ':feature:entity-list:api')
 
     def room_version = "2.5.1"
     implementation "androidx.room:room-runtime:$room_version"

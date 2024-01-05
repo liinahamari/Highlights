@@ -20,7 +20,7 @@ import javax.inject.Singleton
 private const val BASE_URL_TMDB = "https://api.themoviedb.org/3/"
 private const val BASE_URL_IGDB = "https://api.themoviedb.org/3/"
 private const val BASE_URL_BDB = "https://openlibrary.org/"
-private const val DEFAULT_TIMEOUT_AMOUNT_IN_SEC = 15L
+private const val DEFAULT_TIMEOUT_AMOUNT_IN_SEC = 20L
 private const val CONNECTION_TIMEOUT = "connection_timeout"
 
 @Module
@@ -32,12 +32,12 @@ class NetworkModule {
     @Singleton
     @Provides
     @Named(CONNECTION_TIMEOUT)
-    fun provideConnectionTimeout(): Long = if (BuildConfig.DEBUG) 3L else DEFAULT_TIMEOUT_AMOUNT_IN_SEC
+    fun provideConnectionTimeout(): Long = if (BuildConfig.DEBUG) 10L else DEFAULT_TIMEOUT_AMOUNT_IN_SEC
 
     @Singleton
     @Provides
     fun providesLoggingInterceptor(): HttpLoggingInterceptor =
-        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
+        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
     @Singleton
     @Provides

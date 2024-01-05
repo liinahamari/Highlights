@@ -8,8 +8,8 @@ import kotlinx.parcelize.Parcelize
 data class RemoteMovie(
     @SerializedName("backdrop_path")
     val backdropPath: String?,
-    @SerializedName("genres")
-    val genres: List<MovieGenre>?,
+    @SerializedName("genre_ids")
+    val ganreIds: List<Int>?,
     @SerializedName("origin_country")
     val originCountry: List<String>?,
     @SerializedName("original_language")

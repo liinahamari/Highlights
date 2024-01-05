@@ -5,6 +5,7 @@ import dagger.Provides
 import dev.liinahamari.suggestions.impl.data.apis.SearchBookApi
 import dev.liinahamari.suggestions.impl.data.apis.SearchGameApi
 import dev.liinahamari.suggestions.impl.data.apis.SearchMovieApi
+import dev.liinahamari.suggestions.impl.data.db.MovieGenreDao
 import dev.liinahamari.suggestions.impl.data.repos.BookRepo
 import dev.liinahamari.suggestions.impl.data.repos.BookRepoImpl
 import dev.liinahamari.suggestions.impl.data.repos.GameRepo
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 class RepoModule {
     @Singleton
     @Provides
-    fun provideMovieRepo(api: SearchMovieApi): MovieRepo = MovieRepoImpl(api)
+    fun provideMovieRepo(api: SearchMovieApi, genreDao: MovieGenreDao): MovieRepo = MovieRepoImpl(api, genreDao)
 
     @Singleton
     @Provides

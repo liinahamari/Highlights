@@ -12,10 +12,10 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import dev.liinahamari.suggestions.api.model.RemoteMovie
+import dev.liinahamari.api.domain.entities.Movie
 
 class PicturedArrayAdapter(private val context: Context) :
-    ArrayAdapter<RemoteMovie>(context, R.layout.suggestions_list_item, emptyArray()) {
+    ArrayAdapter<Movie>(context, R.layout.suggestions_list_item, emptyArray()) {
     private inner class ViewHolder {
         var thumbIv: ImageView? = null
         var titleTv: TextView? = null
@@ -23,6 +23,12 @@ class PicturedArrayAdapter(private val context: Context) :
 
     init {
         setNotifyOnChange(true)
+    }
+
+    fun replaceAll(movies: List<Movie>) {
+        clear()
+        addAll(movies)
+        filter.filter(null)
     }
 
     @SuppressLint("InflateParams")
@@ -45,9 +51,9 @@ class PicturedArrayAdapter(private val context: Context) :
         } else {
             holder = convertView!!.tag as ViewHolder
         }
-        holder.titleTv!!.text = getItem(position)!!.title
+        holder.titleTv!!.text = getItem(position)!!.name
         Glide.with(context)
-            .load("https://image.tmdb.org/t/p/w154${getItem(position)?.posterPath}")
+            .load("https://image.tmdb.org/t/p/w154${getItem(position)?.posterUrl}")
             .fallback(android.R.drawable.gallery_thumb)
             .error(android.R.drawable.gallery_thumb)
             .timeout(10_000)

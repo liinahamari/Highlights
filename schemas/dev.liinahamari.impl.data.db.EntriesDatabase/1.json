@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d3d74dfffdb0e97732b3a56761f638c6",
+    "identityHash": "0e870874f5b1228696af9f47047d910e",
     "entities": [
       {
         "tableName": "Book",
@@ -118,7 +118,7 @@
       },
       {
         "tableName": "Movie",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `genres` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT NOT NULL, `countryCodes` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `genres` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT, `countryCodes` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "name",
@@ -148,7 +148,7 @@
             "fieldPath": "posterUrl",
             "columnName": "posterUrl",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "countryCodes",
@@ -232,7 +232,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd3d74dfffdb0e97732b3a56761f638c6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0e870874f5b1228696af9f47047d910e')"
     ]
   }
 }

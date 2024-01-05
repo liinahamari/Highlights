@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import dev.liinahamari.list_ui.databinding.EntryRowItemBinding
 
-data class Entry(val id: Long, val description: String, val url: String, val clazz: Class<*>)
+data class Entry(val id: Long, val description: String, val url: String?, val clazz: Class<*>)
 
 private const val TIMEOUT_20_SEC = 20_000
 

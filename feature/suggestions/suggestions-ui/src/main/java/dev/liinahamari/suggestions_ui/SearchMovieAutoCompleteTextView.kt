@@ -2,7 +2,6 @@ package dev.liinahamari.suggestions_ui
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.ArrayAdapter
 import androidx.appcompat.R
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
@@ -12,9 +11,9 @@ import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.get
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.jakewharton.rxbinding4.widget.textChanges
+import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.suggestions.api.model.RemoteMovie
 import dev.liinahamari.suggestions_ui.SearchMoviesViewModel.GetRemoteMovies
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -32,16 +31,21 @@ class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
     defStyleAttr: Int = R.attr.autoCompleteTextViewStyle
 ) : MaterialAutoCompleteTextView(context, attributeSet, defStyleAttr) {
     private val viewModel by lazy { ViewModelProvider(findViewTreeViewModelStoreOwner()!!).get<SearchMoviesViewModel>() }
-    private val suggestionsAdapter: ArrayAdapter<RemoteMovie> by lazy { PicturedArrayAdapter(context) }
+    private val suggestionsAdapter: PicturedArrayAdapter by lazy { PicturedArrayAdapter(context) }
     private val disposable = CompositeDisposable()
+    private val categoryArg: Category by lazy {
+        findFragment<Fragment>().requireArguments().getParcelableOf(ARG_CATEGORY)
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         setAdapter(suggestionsAdapter)
+        viewModel.fetchMovieGenres()
         disposable.add(textChanges()
-            .throttleLast(1, TimeUnit.SECONDS)
+            .filter { it.isBlank().not() }
             .map { it.toString() }
-            .flatMapSingle(viewModel::searchForMovie)
+            .throttleLast(1300, TimeUnit.MILLISECONDS)
+            .switchMap { viewModel.searchForMovie(it, categoryArg) }
             .subscribe())
 
         setupViewModelSubscriptions()
@@ -54,16 +58,9 @@ class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
                 is GetRemoteMovies.Error.NoInternetError -> context.toast("Check the Internet connection")
 
                 is GetRemoteMovies.Success -> {
-                    with(suggestionsAdapter) {
-                        clear()
-                        addAll(it.movies)
-                        filter.filter(null)
-                    }
+                    suggestionsAdapter.replaceAll(it.movies)
                     setOnItemClickListener { _, _, position, _ ->
-                        RemoteMoviePreviewFragment.newInstance(
-                            it.movies[position],
-                            findFragment<Fragment>().requireArguments().getParcelableOf(ARG_CATEGORY)
-                        )
+                        RemoteMoviePreviewFragment.newInstance(it.movies[position], categoryArg)
                             .show(findFragment<Fragment>().childFragmentManager, "abc")
                     }
                 }
@@ -75,6 +72,7 @@ class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
         disposable.dispose()
         super.onDetachedFromWindow()
     }
+
     override fun replaceText(text: CharSequence?) = Unit
     override fun dismissDropDown() = Unit
 }
