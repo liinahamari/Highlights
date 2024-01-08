@@ -1,6 +1,7 @@
 package dev.liinahamari.list_ui.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Documentary
@@ -12,7 +13,6 @@ import dev.liinahamari.api.domain.usecases.save.SaveGameUseCase
 import dev.liinahamari.api.domain.usecases.save.SaveMovieUseCase
 import dev.liinahamari.core.RxSubscriptionDelegateImpl
 import dev.liinahamari.core.RxSubscriptionsDelegate
-import dev.liinahamari.core.SingleLiveEvent
 import javax.inject.Inject
 
 class SaveEntryViewModel @Inject constructor(
@@ -21,7 +21,7 @@ class SaveEntryViewModel @Inject constructor(
     private val saveMovieUseCase: SaveMovieUseCase,
     private val saveBookUseCase: SaveBookUseCase
 ) : ViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
-    private val _saveEvent = SingleLiveEvent<SaveEvent>()
+    private val _saveEvent = MutableLiveData<SaveEvent>()
     val saveEvent: LiveData<SaveEvent> get() = _saveEvent
 
     fun saveMovie(movie: Movie) {

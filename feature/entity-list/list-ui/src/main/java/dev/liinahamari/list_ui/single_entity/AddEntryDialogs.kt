@@ -17,44 +17,12 @@ import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.GameGenre
-import dev.liinahamari.api.domain.entities.Movie
-import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.list_ui.R
 import java.util.Locale
 import java.util.Locale.getISOCountries
 
 //todo forbid adding default entries
 //todo checked on edit
-
-fun Fragment.showAddMovieDialog(
-    category: Category,
-    onSubmit: (movie: Movie) -> Unit,
-    movie: Movie? = null
-) {
-    var movie = movie ?: Movie.default(category)
-    getGenericAddEntryDialog(
-        onSubmit = { onSubmit.invoke(movie) },
-        genresSelectionCallback = { items ->
-            movie = movie.copy(genres = items.map { MovieGenre.valueOf(it.replace(' ', '_')) })
-        },
-        countriesSelectionCallback = {
-            movie = movie.copy(countryCodes = getISOCountries().slice(it.toList()).map { Locale("", it).country })
-        },
-        genres = MovieGenre.values().map { it.toString().replace('_', ' ') }).apply {
-        findViewById<TextInputEditText>(R.id.nameEt)
-            ?.apply { setText(movie.name) }
-            ?.doOnTextChanged { text, _, _, _ -> movie = movie.copy(name = text.toString()) }
-        findViewById<TextInputEditText>(R.id.yearEt)
-            ?.apply { setText(movie.year.toString()) }
-            ?.doOnTextChanged { text, _, _, _ -> movie = movie.copy(year = text.toString().ifEmpty { "0" }.toInt()) }
-        findViewById<TextInputEditText>(R.id.posterUrlEt)
-            ?.apply { setText(movie.posterUrl) }
-            ?.doOnTextChanged { text, _, _, _ ->
-                findViewById<TextInputLayout>(R.id.posterUrlInputLayout)?.error = null
-                movie = movie.copy(posterUrl = text.toString())
-            }
-    }.show()
-}
 
 fun Fragment.showAddDocumentaryDialog(
     category: Category,
@@ -140,7 +108,7 @@ private fun Fragment.getGenericAddEntryDialog(
     genres: List<String>?
 ): AlertDialog =
     AlertDialog.Builder(requireContext()).apply {
-        setView(R.layout.add_entry_dialog)
+        setView(R.layout.fragment_add_entry)
         create()
         setPositiveButton(android.R.string.ok) { _, _ -> onSubmit.invoke() }
     }.show().apply {
@@ -176,4 +144,3 @@ private fun Fragment.getGenericAddEntryDialog(
                     .show()
             }
     }
-/*todo validation sm kupi*/

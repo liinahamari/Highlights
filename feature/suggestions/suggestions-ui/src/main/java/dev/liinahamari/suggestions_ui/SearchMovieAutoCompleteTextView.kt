@@ -12,6 +12,7 @@ import androidx.lifecycle.get
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.suggestions_ui.SearchMoviesViewModel.GetRemoteMovies
@@ -37,6 +38,12 @@ class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
         findFragment<Fragment>().requireArguments().getParcelableOf(ARG_CATEGORY)
     }
 
+    private lateinit var movieObserver: MovieObserver
+
+    fun setOnItemChosenListener(mo: MovieObserver) {
+        this.movieObserver = mo
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         setAdapter(suggestionsAdapter)
@@ -59,10 +66,7 @@ class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
 
                 is GetRemoteMovies.Success -> {
                     suggestionsAdapter.replaceAll(it.movies)
-                    setOnItemClickListener { _, _, position, _ ->
-                        RemoteMoviePreviewFragment.newInstance(it.movies[position], categoryArg)
-                            .show(findFragment<Fragment>().childFragmentManager, "abc")
-                    }
+                    setOnItemClickListener { _, _, position, _ -> movieObserver.onChosen(it.movies[position]) }
                 }
             }
         }
@@ -73,6 +77,9 @@ class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
-    override fun replaceText(text: CharSequence?) = Unit
-    override fun dismissDropDown() = Unit
+    interface MovieObserver {
+        fun onChosen(mov: Movie)
+    }
+
+    override fun convertSelectionToString(selectedItem: Any?): CharSequence = (selectedItem as Movie).name
 }

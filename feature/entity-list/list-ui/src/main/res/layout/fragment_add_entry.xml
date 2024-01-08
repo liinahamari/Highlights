@@ -6,7 +6,8 @@
     android:layout_marginBottom="10dp"
     android:orientation="vertical">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <dev.liinahamari.suggestions_ui.SearchMovieAutoCompleteTextView
+        android:id="@+id/nameEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -17,13 +18,8 @@
         app:hintAnimationEnabled="true"
         app:hintEnabled="true">
         <requestFocus />
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nameEt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textCapWords" />
-    </com.google.android.material.textfield.TextInputLayout>
+    </dev.liinahamari.suggestions_ui.SearchMovieAutoCompleteTextView>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/authorEtContainer"
         android:layout_width="match_parent"
@@ -100,4 +96,13 @@
         android:layout_marginEnd="4dp"
         app:cornerRadius="3dp"
         android:text="@string/genre" />
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        app:cornerRadius="3dp"
+        android:text="@string/save" />
 </LinearLayout>

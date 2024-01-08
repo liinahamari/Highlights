@@ -8,7 +8,7 @@ import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.list_ui.OnBackPressedListener
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.entries_list.EntriesFragment
-import dev.liinahamari.list_ui.single_entity.EntryFragment.Companion.ARG_CATEGORY
+import dev.liinahamari.suggestions_ui.ARG_CATEGORY
 
 class ViewPagerPlaceholderFragment : Fragment(R.layout.fragment_main), OnBackPressedListener {
     override fun onCreate(savedInstanceState: Bundle?) {

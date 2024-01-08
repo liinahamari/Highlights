@@ -82,6 +82,6 @@ fun RemoteMovie.toDomain(category: Category, genres: List<dev.liinahamari.api.do
         countryCodes = originCountry.orEmpty(),
         genres = genres,
         name = this.title!!,
-        posterUrl = this.posterPath,
+        posterUrl = "https://image.tmdb.org/t/p/w500${this.posterPath}",
         year = if (this.releaseDate.isNullOrBlank()) 0 else this.releaseDate?.substring(0, 4)!!.toInt()
     )

@@ -14,7 +14,7 @@ data class Movie(
     val genres: List<MovieGenre>,
 ): Parcelable {
     companion object{
-        fun default(category: Category) = Movie(
+        fun default(category: Category = Category.GOOD) = Movie(
             0L, category, 0, "", listOf(), "", listOf()
         )
     }

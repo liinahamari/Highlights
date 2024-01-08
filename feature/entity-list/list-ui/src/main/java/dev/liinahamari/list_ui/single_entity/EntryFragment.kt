@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.MenuCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -23,10 +24,12 @@ import dev.liinahamari.list_ui.single_entity.EntityType.BOOK
 import dev.liinahamari.list_ui.single_entity.EntityType.DOCUMENTARY
 import dev.liinahamari.list_ui.single_entity.EntityType.GAME
 import dev.liinahamari.list_ui.single_entity.EntityType.MOVIE
+import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.DeleteEvent
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
+import dev.liinahamari.suggestions_ui.ARG_CATEGORY
 import me.saket.cascade.CascadePopupMenu
 import javax.inject.Inject
 
@@ -35,7 +38,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val fetchEntriesViewModel: FetchEntriesViewModel by viewModels { viewModelFactory }
-    private val saveEntryViewModel: SaveEntryViewModel by viewModels { viewModelFactory }
+    private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
     private val deleteEntryViewModel: DeleteEntryViewModel by viewModels { viewModelFactory }
 
     private val argumentEntityType: EntityType by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
@@ -83,11 +86,9 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
                         game = it.entry as Game
                     )
 
-                    MOVIE -> showAddMovieDialog(
-                        argumentEntityCategory,
-                        saveEntryViewModel::saveMovie,
-                        movie = it.entry as Movie
-                    )
+                    MOVIE -> AddMovieDialogFragment
+                        .newInstance(argumentEntityCategory)
+                        .show(childFragmentManager, "abc")
 
                     DOCUMENTARY -> showAddDocumentaryDialog(
                         argumentEntityCategory,
@@ -104,14 +105,16 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
             when (argumentEntityType) {
                 BOOK -> showAddBookDialog(argumentEntityCategory, saveEntryViewModel::saveBook)
                 GAME -> showAddGameDialog(argumentEntityCategory, saveEntryViewModel::saveGame)
-                MOVIE -> showAddMovieDialog(argumentEntityCategory, saveEntryViewModel::saveMovie)
+                MOVIE -> AddMovieDialogFragment
+                    .newInstance(argumentEntityCategory)
+                    .show(childFragmentManager, "abc")
+
                 DOCUMENTARY -> showAddDocumentaryDialog(argumentEntityCategory, saveEntryViewModel::saveDocumentary)
             }
         }
     }
 
     companion object {
-        const val ARG_CATEGORY = "arg_category"
         const val ARG_TYPE = "arg_type"
         @JvmStatic fun newInstance(entityCategory: Category, entityType: EntityType) =
             EntryFragment().apply {

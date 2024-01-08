@@ -38,6 +38,8 @@ dependencies {
 
     implementation project(":core")
     implementation project(":feature:entity-list")
+    implementation project(":feature:suggestions:suggestions-ui")
+
     def room_version = "2.5.1"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
