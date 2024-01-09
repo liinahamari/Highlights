@@ -34,9 +34,7 @@ class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
     private val viewModel by lazy { ViewModelProvider(findViewTreeViewModelStoreOwner()!!).get<SearchMoviesViewModel>() }
     private val suggestionsAdapter: PicturedArrayAdapter by lazy { PicturedArrayAdapter(context) }
     private val disposable = CompositeDisposable()
-    private val categoryArg: Category by lazy {
-        findFragment<Fragment>().requireArguments().getParcelableOf(ARG_CATEGORY)
-    }
+    var categoryArg: Category = Category.GOOD
 
     private lateinit var movieObserver: MovieObserver
 

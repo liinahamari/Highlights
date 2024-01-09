@@ -88,7 +88,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
 
                     MOVIE -> AddMovieDialogFragment
                         .newInstance(argumentEntityCategory)
-                        .show(childFragmentManager, "abc")
+                        .show(childFragmentManager, null)
 
                     DOCUMENTARY -> showAddDocumentaryDialog(
                         argumentEntityCategory,
@@ -107,7 +107,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
                 GAME -> showAddGameDialog(argumentEntityCategory, saveEntryViewModel::saveGame)
                 MOVIE -> AddMovieDialogFragment
                     .newInstance(argumentEntityCategory)
-                    .show(childFragmentManager, "abc")
+                    .show(childFragmentManager, null) //todo check if dialog showing
 
                 DOCUMENTARY -> showAddDocumentaryDialog(argumentEntityCategory, saveEntryViewModel::saveDocumentary)
             }

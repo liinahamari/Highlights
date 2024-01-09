@@ -1,13 +1,14 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
+import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.webkit.URLUtil
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import by.kirich1409.viewbindingdelegate.viewBinding
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.getParcelableOf
@@ -21,14 +22,13 @@ import dev.liinahamari.suggestions_ui.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.SearchMovieAutoCompleteTextView
 import javax.inject.Inject
 
+
 //fixme leak?
-//todo toAlertDialog()?
 class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
-    private val ui: FragmentAddEntryBinding by viewBinding(FragmentAddEntryBinding::bind)
+    private lateinit var ui: FragmentAddEntryBinding
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
-    private val argumentEntityCategory: Category by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
 
     private var movie = Movie.default()
 
@@ -38,24 +38,30 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onAttach(context: Context) {
         (requireActivity() as MainActivity).listUiComponent.inject(this)
+        super.onAttach(context)
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext())
+        .setView((FragmentAddEntryBinding.inflate(layoutInflater)).also { ui = it }.root)
+        .setPositiveButton(R.string.save) { _, _ -> saveEntryViewModel.saveMovie(movie) }
+        .create()
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUi()
         setupViewModelSubscriptions()
     }
 
-    private fun setupViewModelSubscriptions() {
-        saveEntryViewModel.saveEvent.observe(this) {
-            when (it) {
-                is SaveEvent.Failure -> toast("Failed to save movie")
-                is SaveEvent.Success -> dismiss()
-            }
+    private fun setupViewModelSubscriptions() = saveEntryViewModel.saveEvent.observe(this) {
+        when (it) {
+            is SaveEvent.Failure -> toast("Failed to save movie")
+            is SaveEvent.Success -> dismiss()
         }
     }
 
     private fun setupUi() {
-        ui.saveBtn.setOnClickListener { saveEntryViewModel.saveMovie(movie.copy(category = argumentEntityCategory)) }
         ui.countrySelectionBtn.setOnClickListener {
             requireContext().showCountrySelectionDialog { movie = movie.copy(countryCodes = it) }
         }
@@ -63,16 +69,7 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
             requireContext().showMovieGenreSelectionDialog { movie = movie.copy(genres = it) }
         }
 
-        //todo to URL validating custom View
-        ui.posterUrlEt.setOnFocusChangeListener { _, hasFocus: Boolean ->
-            if (ui.posterUrlEt.text.isNullOrEmpty() || hasFocus) return@setOnFocusChangeListener
-            if (URLUtil.isNetworkUrl(ui.posterUrlEt.text.toString())) {
-                ui.posterUrlInputLayout.error = null
-            } else {
-                ui.posterUrlInputLayout.error = getString(R.string.url_is_not_valid)
-            }
-        }
-
+        ui.nameEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.nameEt.setOnItemChosenListener(object : SearchMovieAutoCompleteTextView.MovieObserver {
             override fun onChosen(mov: Movie) {
                 ui.yearEt.setText(mov.year.toString())
