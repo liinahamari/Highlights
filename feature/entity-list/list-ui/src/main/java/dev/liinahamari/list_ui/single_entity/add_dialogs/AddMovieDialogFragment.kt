@@ -25,7 +25,8 @@ import javax.inject.Inject
 
 //fixme leak?
 class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
-    private lateinit var ui: FragmentAddEntryBinding
+    private var _ui: FragmentAddEntryBinding? = null
+    private val ui: FragmentAddEntryBinding by lazy { _ui!! }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
@@ -44,7 +45,7 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext())
-        .setView((FragmentAddEntryBinding.inflate(layoutInflater)).also { ui = it }.root)
+        .setView((FragmentAddEntryBinding.inflate(layoutInflater)).also { _ui = it }.root)
         .setPositiveButton(R.string.save) { _, _ -> saveEntryViewModel.saveMovie(movie) }
         .create()
 
@@ -54,10 +55,15 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
         setupViewModelSubscriptions()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _ui = null
+    }
+
     private fun setupViewModelSubscriptions() = saveEntryViewModel.saveEvent.observe(this) {
         when (it) {
             is SaveEvent.Failure -> toast("Failed to save movie")
-            is SaveEvent.Success -> dismiss()
+            is SaveEvent.Success -> requireActivity().supportFragmentManager.popBackStackImmediate()
         }
     }
 
