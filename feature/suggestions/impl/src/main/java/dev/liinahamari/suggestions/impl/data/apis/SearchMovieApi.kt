@@ -8,7 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface SearchMovieApi {
-    @GET("search/multi")
+    @GET("search/movie")
     fun search(
         @Query("query") query: String,
         @Query("page") page: Int = 1,
