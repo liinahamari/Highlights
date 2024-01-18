@@ -9,7 +9,7 @@ data class RemoteMovie(
     @SerializedName("backdrop_path")
     val backdropPath: String?,
     @SerializedName("genre_ids")
-    val ganreIds: List<Int>?,
+    val genreIds: List<Int>?,
     @SerializedName("origin_country")
     val originCountry: List<String>?,
     @SerializedName("original_language")
