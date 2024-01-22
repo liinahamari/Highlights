@@ -2,8 +2,10 @@ package dev.liinahamari.list_ui.single_entity
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import dev.liinahamari.list_ui.custom_views.PopupImageDialog
 import dev.liinahamari.list_ui.databinding.EntryRowItemBinding
 
 data class Entry(val id: Long, val description: String, val url: String?, val clazz: Class<*>)
@@ -14,7 +16,11 @@ interface LongClickListener {
     fun onLongClicked(id: Long, clazz: Class<*>, position: Int)
 }
 
-class EntryAdapter(val dataSet: MutableList<Entry>, private val longClickListener: LongClickListener) :
+class EntryAdapter(
+    val dataSet: MutableList<Entry>,
+    private val longClickListener: LongClickListener,
+    private val fragmentManager: FragmentManager
+) :
     RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
     inner class ViewHolder(private val ui: EntryRowItemBinding) : RecyclerView.ViewHolder(ui.root) {
         fun bind(entry: Entry) {
@@ -28,7 +34,7 @@ class EntryAdapter(val dataSet: MutableList<Entry>, private val longClickListene
                 .timeout(TIMEOUT_20_SEC)
                 .into(ui.posterIv)
             ui.posterIv.setOnClickListener {
-                dev.liinahamari.list_ui.custom_views.PopupImage(it.context).show(entry.url, it)
+                PopupImageDialog(entry.url!!).show(fragmentManager, null)
             }
         }
     }

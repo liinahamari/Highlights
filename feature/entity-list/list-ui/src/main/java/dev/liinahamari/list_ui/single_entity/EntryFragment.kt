@@ -67,7 +67,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
         }
         fetchEntriesViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
             if (it is FetchEntriesViewModel.FetchAllEvent.Success) {
-                ui.entriesRv.adapter = EntryAdapter(it.entries.toMutableList(), this)
+                ui.entriesRv.adapter = EntryAdapter(it.entries.toMutableList(), this, childFragmentManager)
                     .apply { notifyDataSetChanged() }
             }
         }

@@ -1,6 +1,8 @@
 package dev.liinahamari.core.ext
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater.from
@@ -35,3 +37,11 @@ inline fun <reified T> Bundle.getParcelableOf(key: String): T =
 
 fun Context.toast(text: String) = Toast.makeText(this, text, LENGTH_SHORT).show()
 fun Fragment.toast(text: String) = requireContext().toast(text)
+
+fun Context.getActivity(): Activity? = if (this is ContextWrapper) {
+    if (this is Activity) {
+        this
+    } else {
+        baseContext?.getActivity()
+    }
+} else null

@@ -33,7 +33,7 @@ internal class SearchMoviesViewModel(application: Application) : AndroidViewMode
     fun searchForMovie(query: String, category: Category): Observable<GetRemoteMovies> =
         searchMovieUseCase.search(query)
             .flatMapObservable { Observable.fromIterable(it) }
-            .flatMapSingle { movie -> getMovieGenres(movie.ganreIds.orEmpty()).map { movie.toDomain(category, it) } }
+            .flatMapSingle { movie -> getMovieGenres(movie.genreIds.orEmpty()).map { movie.toDomain(category, it) } }
             .toList()
             .map<GetRemoteMovies>(GetRemoteMovies::Success)
             .onErrorReturn {
