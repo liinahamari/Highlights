@@ -8,11 +8,12 @@ data class Book(
     val countryCodes: List<String>,
     val name: String,
     val genres: List<BookGenre>,
-    val author: String
+    val author: String,
+    val description: String
 ) {
     companion object {
         fun default(category: Category) = Book(
-            0L, category, 0, "", listOf(), "", listOf(), ""
+            0L, category, 0, "", listOf(), "", listOf(), "", ""
         )
     }
 }

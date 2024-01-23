@@ -22,7 +22,6 @@ import dev.liinahamari.suggestions_ui.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.SearchMovieAutoCompleteTextView
 import javax.inject.Inject
 
-
 //fixme leak?
 class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
     private var _ui: FragmentAddEntryBinding? = null

@@ -57,7 +57,7 @@ class FetchEntriesViewModel @Inject constructor(
                     it.map {
                         Entry(
                             it.id,
-                            "Title: ${it.name}\nCountries: ${it.countryCodes}",
+                            "Title: ${it.name}\nDescription: ${it.description}\nCountries: ${it.countryCodes}",
                             it.posterUrl,
                             Documentary::class.java
                         )
@@ -71,7 +71,7 @@ class FetchEntriesViewModel @Inject constructor(
                     it.map {
                         Entry(
                             it.id,
-                            "Title: ${it.name}\nCountries: ${it.countryCodes}\nGenres: ${it.genres}",
+                            "Title: ${it.name}\nDescription: ${it.description}\nCountries: ${it.countryCodes}\nGenres: ${it.genres}",
                             it.posterUrl,
                             Book::class.java
                         )
@@ -85,7 +85,7 @@ class FetchEntriesViewModel @Inject constructor(
                     it.map {
                         Entry(
                             it.id,
-                            "Title: ${it.name}\nCountries: ${it.countryCodes}\n" +
+                            "Title: ${it.name}\nDescription: ${it.description}\nCountries: ${it.countryCodes}\n" +
                                     "Genres: ${it.genres}",
                             it.posterUrl,
                             Movie::class.java
@@ -100,7 +100,8 @@ class FetchEntriesViewModel @Inject constructor(
                     it.map {
                         Entry(
                             it.id,
-                            "Title: ${it.name}\nCountries: ${it.countryCodes}\n" +
+                            "Title: ${it.name}\n" +
+                                    "Description: ${it.description}\nCountries: ${it.countryCodes}\n" +
                                     "Genres: ${it.genres}",
                             it.posterUrl,
                             Game::class.java

@@ -7,4 +7,5 @@ interface Entry {
     val year: Int
     val posterUrl: String?
     val countryCodes: Array<String>
+    val description: String
 }

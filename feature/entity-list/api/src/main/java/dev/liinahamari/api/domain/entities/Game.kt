@@ -8,10 +8,11 @@ data class Game(
     val countryCodes: List<String>,
     val name: String,
     val genres: List<GameGenre>,
+    val description: String
 ){
     companion object{
         fun default(category: Category) = Game(
-            0L, category, 0, "", listOf(), "", listOf()
+            0L, category, 0, "", listOf(), "", listOf(), ""
         )
     }
 }

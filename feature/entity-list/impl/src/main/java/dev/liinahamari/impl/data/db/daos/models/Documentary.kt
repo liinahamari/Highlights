@@ -8,6 +8,7 @@ import dev.liinahamari.impl.data.db.daos.Entry
 @Entity
 data class Documentary(
     val name: String,
+    override val description: String,
     override val year: Int,
     override val category: Category,
     override val posterUrl: String,
@@ -24,9 +25,7 @@ data class Documentary(
         if (year != other.year) return false
         if (category != other.category) return false
         if (posterUrl != other.posterUrl) return false
-        if (!countryCodes.contentEquals(other.countryCodes)) return false
-
-        return true
+        return countryCodes.contentEquals(other.countryCodes)
     }
 
     override fun hashCode(): Int {
@@ -46,7 +45,8 @@ fun Documentary.toDomain(): dev.liinahamari.api.domain.entities.Documentary =
         countryCodes = this.countryCodes.toList(),
         name = this.name,
         posterUrl = this.posterUrl,
-        year = this.year
+        year = this.year,
+        description = this.description
     )
 
 fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentary = Documentary(
@@ -55,5 +55,6 @@ fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentary = Docu
     countryCodes = this.countryCodes.toTypedArray(),
     name = this.name,
     posterUrl = this.posterUrl,
-    year = this.year
+    year = this.year,
+    description = this.description
 )

@@ -12,6 +12,7 @@ data class Book(
     val genres: List<BookGenre>,
     val author: String,
     override val year: Int,
+    override val description: String,
     override val category: Category,
     override val posterUrl: String,
     override val countryCodes: Array<String>,
@@ -29,9 +30,7 @@ data class Book(
         if (year != other.year) return false
         if (category != other.category) return false
         if (posterUrl != other.posterUrl) return false
-        if (!countryCodes.contentEquals(other.countryCodes)) return false
-
-        return true
+        return countryCodes.contentEquals(other.countryCodes)
     }
 
     override fun hashCode(): Int {
@@ -54,7 +53,8 @@ fun Book.toDomain(): dev.liinahamari.api.domain.entities.Book = dev.liinahamari.
     name = this.name,
     posterUrl = this.posterUrl,
     year = this.year,
-    author = this.author
+    author = this.author,
+    description = this.description
 )
 
 fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
@@ -65,5 +65,6 @@ fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
     name = this.name,
     posterUrl = this.posterUrl,
     year = this.year,
-    author = this.author
+    author = this.author,
+    description = this.description
 )

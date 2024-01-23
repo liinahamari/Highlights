@@ -10,6 +10,7 @@ import dev.liinahamari.impl.data.db.daos.Entry
 data class Game(
     val name: String,
     val genres: List<GameGenre>,
+    override val description: String,
     override val year: Int,
     override val category: Category,
     override val posterUrl: String,
@@ -27,9 +28,7 @@ data class Game(
         if (year != other.year) return false
         if (category != other.category) return false
         if (posterUrl != other.posterUrl) return false
-        if (!countryCodes.contentEquals(other.countryCodes)) return false
-
-        return true
+        return countryCodes.contentEquals(other.countryCodes)
     }
 
     override fun hashCode(): Int {
@@ -50,7 +49,8 @@ fun Game.toDomain(): dev.liinahamari.api.domain.entities.Game = dev.liinahamari.
     genres = this.genres,
     name = this.name,
     posterUrl = this.posterUrl,
-    year = this.year
+    year = this.year,
+    description = this.description
 )
 
 fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
@@ -60,5 +60,6 @@ fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
     genres = this.genres,
     name = this.name,
     posterUrl = this.posterUrl,
-    year = this.year
+    year = this.year,
+    description = this.description
 )
