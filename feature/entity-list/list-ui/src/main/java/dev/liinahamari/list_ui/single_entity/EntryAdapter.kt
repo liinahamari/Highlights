@@ -8,7 +8,15 @@ import com.bumptech.glide.Glide
 import dev.liinahamari.list_ui.custom_views.PopupImageDialog
 import dev.liinahamari.list_ui.databinding.EntryRowItemBinding
 
-data class Entry(val id: Long, val description: String, val url: String?, val clazz: Class<*>)
+data class Entry(
+    val id: Long,
+    val title: String,
+    val countries: String,
+    val genres: String,
+    val description: String,
+    val url: String?,
+    val clazz: Class<*>
+)
 
 private const val TIMEOUT_20_SEC = 20_000
 
@@ -28,7 +36,11 @@ class EntryAdapter(
                 longClickListener.onLongClicked(entry.id, entry.clazz, bindingAdapterPosition)
                 true
             }
-            ui.entryNameTv.text = entry.description
+            ui.entryNameTv.text = entry.title
+            ui.entryGenresTv.text = entry.genres
+            ui.entryCountriesTv.text = entry.countries
+            ui.entryDescriptionTv.text = entry.description
+
             Glide.with(ui.posterIv.context)
                 .load(entry.url)
                 .timeout(TIMEOUT_20_SEC)

@@ -57,9 +57,12 @@ class FetchEntriesViewModel @Inject constructor(
                     it.map {
                         Entry(
                             it.id,
-                            "Title: ${it.name}\nDescription: ${it.description}\nCountries: ${it.countryCodes}",
-                            it.posterUrl,
-                            Documentary::class.java
+                            title = it.name,
+                            description = it.description,
+                            genres = "",
+                            countries = it.countryCodes.toString(),
+                            url = it.posterUrl,
+                            clazz = Documentary::class.java
                         )
                     }
                 }
@@ -71,9 +74,12 @@ class FetchEntriesViewModel @Inject constructor(
                     it.map {
                         Entry(
                             it.id,
-                            "Title: ${it.name}\nDescription: ${it.description}\nCountries: ${it.countryCodes}\nGenres: ${it.genres}",
-                            it.posterUrl,
-                            Book::class.java
+                            title = it.name,
+                            genres = it.genres.toString(),
+                            description = it.description,
+                            countries = it.countryCodes.toString(),
+                            url = it.posterUrl,
+                            clazz = Book::class.java
                         )
                     }
                 }
@@ -85,10 +91,12 @@ class FetchEntriesViewModel @Inject constructor(
                     it.map {
                         Entry(
                             it.id,
-                            "Title: ${it.name}\nDescription: ${it.description}\nCountries: ${it.countryCodes}\n" +
-                                    "Genres: ${it.genres}",
-                            it.posterUrl,
-                            Movie::class.java
+                            title = it.name,
+                            genres = it.genres.toString(),
+                            description = it.description,
+                            countries = it.countryCodes.toString(),
+                            url = it.posterUrl,
+                            clazz = Movie::class.java
                         )
                     }
                 }
@@ -100,11 +108,12 @@ class FetchEntriesViewModel @Inject constructor(
                     it.map {
                         Entry(
                             it.id,
-                            "Title: ${it.name}\n" +
-                                    "Description: ${it.description}\nCountries: ${it.countryCodes}\n" +
-                                    "Genres: ${it.genres}",
-                            it.posterUrl,
-                            Game::class.java
+                            title = it.name,
+                            genres = it.genres.toString(),
+                            description = it.description,
+                            countries = it.countryCodes.toString(),
+                            url = it.posterUrl,
+                            clazz = Game::class.java
                         )
                     }
                 }
