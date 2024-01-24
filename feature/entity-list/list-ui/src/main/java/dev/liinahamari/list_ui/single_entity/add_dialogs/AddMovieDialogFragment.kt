@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
+import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.MainActivity
@@ -67,11 +68,22 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
     }
 
     private fun setupUi() {
+        var selectedCountries = listOf<String>()
+        var selectedGenres = listOf<MovieGenre>()
+
         ui.countrySelectionBtn.setOnClickListener {
-            requireContext().showCountrySelectionDialog { movie = movie.copy(countryCodes = it) }
+            requireContext().showCountrySelectionDialog(selectedCountries) {
+                selectedCountries = it
+                movie = movie.copy(countryCodes = it)
+                ui.countrySelectionBtn.text = it.toString()
+            }
         }
         ui.genreBtn.setOnClickListener {
-            requireContext().showMovieGenreSelectionDialog { movie = movie.copy(genres = it) }
+            requireContext().showMovieGenreSelectionDialog(selectedGenres) {
+                selectedGenres = it
+                movie = movie.copy(genres = it)
+                ui.genreBtn.text = it.toString()
+            }
         }
 
         ui.nameEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
@@ -81,6 +93,10 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
                 ui.posterUrlEt.setText(mov.posterUrl)
 
                 movie = mov
+                selectedCountries = mov.countryCodes
+                ui.countrySelectionBtn.text = mov.countryCodes.toString()
+                selectedGenres = mov.genres
+                ui.genreBtn.text = mov.genres.toString()
             }
         })
     }
