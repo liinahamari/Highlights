@@ -1,7 +1,10 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
 import android.app.Dialog
+import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.ACTION_WEB_SEARCH
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -22,6 +25,7 @@ import dev.liinahamari.list_ui.viewmodels.SaveEvent
 import dev.liinahamari.suggestions_ui.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.SearchMovieAutoCompleteTextView
 import javax.inject.Inject
+
 
 //fixme leak?
 class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
@@ -46,8 +50,20 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_entry) {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext())
         .setView((FragmentAddEntryBinding.inflate(layoutInflater)).also { _ui = it }.root)
+        .setNeutralButton(R.string.internet_search) { _, _ -> }
         .setPositiveButton(R.string.save) { _, _ -> saveEntryViewModel.saveMovie(movie) }
         .create()
+        .apply {
+            setOnShowListener {
+                (dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEUTRAL)
+                    .setOnClickListener {
+                        startActivity(
+                            Intent(ACTION_WEB_SEARCH)
+                                .putExtra(SearchManager.QUERY, ui.nameEt.text.toString() + " film (${ui.yearEt.text})")
+                        )
+                    }
+            }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
