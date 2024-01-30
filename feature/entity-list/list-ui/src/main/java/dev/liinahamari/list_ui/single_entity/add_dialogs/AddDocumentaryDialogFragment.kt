@@ -14,30 +14,31 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.Movie
-import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.MainActivity
 import dev.liinahamari.list_ui.R
-import dev.liinahamari.list_ui.databinding.FragmentAddMovieBinding
+import dev.liinahamari.list_ui.databinding.FragmentAddDocumentaryBinding
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEvent
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView
 import javax.inject.Inject
 
-class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_movie) {
-    private var _ui: FragmentAddMovieBinding? = null
-    private val ui: FragmentAddMovieBinding by lazy { _ui!! }
+//todo ancestor AddEntityFragment
+class AddDocumentaryDialogFragment : DialogFragment(R.layout.fragment_add_documentary) {
+    private var _ui: FragmentAddDocumentaryBinding? = null
+    private val ui: FragmentAddDocumentaryBinding by lazy { _ui!! }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
 
-    private var movie = Movie.default()
+    private var documentary = Documentary.default(Category.GOOD)
 
     companion object {
-        fun newInstance(category: Category): AddMovieDialogFragment = AddMovieDialogFragment().apply {
+        fun newInstance(category: Category): AddDocumentaryDialogFragment = AddDocumentaryDialogFragment().apply {
             arguments = bundleOf(ARG_CATEGORY to category)
         }
     }
@@ -48,9 +49,9 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_movie) {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext())
-        .setView((FragmentAddMovieBinding.inflate(layoutInflater)).also { _ui = it }.root)
+        .setView((FragmentAddDocumentaryBinding.inflate(layoutInflater)).also { _ui = it }.root)
         .setNeutralButton(R.string.internet_search) { _, _ -> }
-        .setPositiveButton(R.string.save) { _, _ -> saveEntryViewModel.saveMovie(movie) }
+        .setPositiveButton(R.string.save) { _, _ -> saveEntryViewModel.saveDocumentary(documentary) }
         .create()
         .apply {
             setOnShowListener {
@@ -58,7 +59,7 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_movie) {
                     .setOnClickListener {
                         startActivity(
                             Intent(ACTION_WEB_SEARCH)
-                                .putExtra(QUERY, ui.titleEt.text.toString() + " film (${ui.yearEt.text})")
+                                .putExtra(QUERY, ui.titleEt.text.toString() + " documentary (${ui.yearEt.text})")
                         )
                     }
             }
@@ -77,27 +78,19 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_movie) {
 
     private fun setupViewModelSubscriptions() = saveEntryViewModel.saveEvent.observe(this) {
         when (it) {
-            is SaveEvent.Failure -> toast("Failed to save movie")
+            is SaveEvent.Failure -> toast("Failed to save documentary")
             is SaveEvent.Success -> requireActivity().supportFragmentManager.popBackStackImmediate()
         }
     }
 
     private fun setupUi() {
         var selectedCountries = listOf<String>()
-        var selectedGenres = listOf<MovieGenre>()
 
         ui.countrySelectionBtn.setOnClickListener {
             requireContext().showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
-                movie = movie.copy(countryCodes = it)
+                documentary = documentary.copy(countryCodes = it)
                 ui.countrySelectionBtn.text = it.toString()
-            }
-        }
-        ui.genreBtn.setOnClickListener {
-            requireContext().showMovieGenreSelectionDialog(selectedGenres) {
-                selectedGenres = it
-                movie = movie.copy(genres = it)
-                ui.genreBtn.text = it.toString()
             }
         }
 
@@ -107,12 +100,19 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_movie) {
                 ui.yearEt.setText(mov.year.toString())
                 ui.posterUrlEt.setText(mov.posterUrl)
 
-                movie = mov
+                documentary = Documentary(
+                    id = 0L,//todo check in DB viewer
+                    category = mov.category,
+                    year = mov.year,
+                    posterUrl = mov.posterUrl,
+                    countryCodes = mov.countryCodes,
+                    name = mov.name,
+                    description = mov.description
+                )
                 selectedCountries = mov.countryCodes
                 ui.countrySelectionBtn.text = mov.countryCodes.toString()
-                selectedGenres = mov.genres
-                ui.genreBtn.text = mov.genres.toString()
             }
         })
     }
 }
+

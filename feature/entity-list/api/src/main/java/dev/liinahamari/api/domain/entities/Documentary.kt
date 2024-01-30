@@ -4,7 +4,7 @@ data class Documentary(
     val id: Long,
     val category: Category,
     val year: Int,
-    val posterUrl: String,
+    val posterUrl: String?,
     val countryCodes: List<String>,
     val name: String,
     val description: String

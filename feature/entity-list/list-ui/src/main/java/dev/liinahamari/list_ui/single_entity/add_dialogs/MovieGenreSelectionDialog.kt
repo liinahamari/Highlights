@@ -13,7 +13,7 @@ fun Context.showMovieGenreSelectionDialog(
     .listItemsMultiChoice(
         items = MovieGenre.values().map { toString().replace("_", " ") },
         initialSelection = MovieGenre.values().getSelectedIndices(selected),
-        selection = { _: MaterialDialog, _: IntArray, items: List<CharSequence>/*todo check _ handles fine*/ ->
+        selection = { _: MaterialDialog, _: IntArray, items: List<CharSequence> ->
             genresSelectionCallback.invoke(items.map { it.toString() }.map { MovieGenre.valueOf(it.replace(' ', '_')) })
         })
     .positiveButton()

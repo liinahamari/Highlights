@@ -1,4 +1,4 @@
-package dev.liinahamari.suggestions_ui
+package dev.liinahamari.suggestions_ui.movie
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -16,9 +16,9 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.net.UnknownHostException
 
-internal class SearchMoviesViewModel(application: Application) : AndroidViewModel(application) {
+open class SearchMoviesViewModel(application: Application) : AndroidViewModel(application) {
     private val disposable = CompositeDisposable()
-    private val _searchMoviesEvent = SingleLiveEvent<GetRemoteMovies>()
+    protected val _searchMoviesEvent = SingleLiveEvent<GetRemoteMovies>()
     val searchMoviesResultEvent: LiveData<GetRemoteMovies> get() = _searchMoviesEvent
 
     private val api by lazy { MovieSuggestionsListFactory.getApi(object : MovieSuggestionsDependencies {
@@ -27,11 +27,11 @@ internal class SearchMoviesViewModel(application: Application) : AndroidViewMode
         })
     }
 
-    private val searchMovieUseCase by lazy { api.searchMovieUseCase }
+    protected val searchMovieUseCase by lazy { api.searchMovieUseCase }
     private val movieGenresUseCase by lazy { api.getMovieGenresUseCase }
 
     fun searchForMovie(query: String, category: Category): Observable<GetRemoteMovies> =
-        searchMovieUseCase.search(query)
+        searchMovieUseCase.search(query)//TODO move to usecase
             .flatMapObservable { Observable.fromIterable(it) }
             .flatMapSingle { movie -> getMovieGenres(movie.genreIds.orEmpty()).map { movie.toDomain(category, it) } }
             .toList()

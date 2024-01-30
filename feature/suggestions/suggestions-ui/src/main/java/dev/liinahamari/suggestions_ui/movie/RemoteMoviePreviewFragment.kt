@@ -1,4 +1,4 @@
-package dev.liinahamari.suggestions_ui
+package dev.liinahamari.suggestions_ui.movie
 
 import android.os.Bundle
 import android.view.View
@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.getParcelableOf
+import dev.liinahamari.suggestions_ui.R
 import dev.liinahamari.suggestions_ui.databinding.FragmentMoviePreviewBinding
 
 class RemoteMoviePreviewFragment : DialogFragment(R.layout.fragment_movie_preview) {

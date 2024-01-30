@@ -24,12 +24,13 @@ import dev.liinahamari.list_ui.single_entity.EntityType.BOOK
 import dev.liinahamari.list_ui.single_entity.EntityType.DOCUMENTARY
 import dev.liinahamari.list_ui.single_entity.EntityType.GAME
 import dev.liinahamari.list_ui.single_entity.EntityType.MOVIE
+import dev.liinahamari.list_ui.single_entity.add_dialogs.AddDocumentaryDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.DeleteEvent
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
-import dev.liinahamari.suggestions_ui.ARG_CATEGORY
+import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import me.saket.cascade.CascadePopupMenu
 import javax.inject.Inject
 
@@ -90,11 +91,9 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
                         .newInstance(argumentEntityCategory)
                         .show(childFragmentManager, null)
 
-                    DOCUMENTARY -> showAddDocumentaryDialog(
-                        argumentEntityCategory,
-                        saveEntryViewModel::saveDocumentary,
-                        documentary = it.entry as Documentary
-                    )
+                    DOCUMENTARY -> AddDocumentaryDialogFragment
+                        .newInstance(argumentEntityCategory)
+                        .show(childFragmentManager, null)
                 }
             }
         }
@@ -109,7 +108,9 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
                     .newInstance(argumentEntityCategory)
                     .show(childFragmentManager, null) //todo check if dialog showing
 
-                DOCUMENTARY -> showAddDocumentaryDialog(argumentEntityCategory, saveEntryViewModel::saveDocumentary)
+                DOCUMENTARY -> AddDocumentaryDialogFragment
+                    .newInstance(argumentEntityCategory)
+                    .show(childFragmentManager, null)
             }
         }
     }

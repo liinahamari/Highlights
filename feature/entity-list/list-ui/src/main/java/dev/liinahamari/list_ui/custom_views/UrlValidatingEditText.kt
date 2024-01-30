@@ -1,4 +1,4 @@
-package dev.liinahamari.list_ui.single_entity.add_dialogs
+package dev.liinahamari.list_ui.custom_views
 
 import android.content.Context
 import android.util.AttributeSet

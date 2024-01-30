@@ -1,4 +1,4 @@
-package dev.liinahamari.suggestions_ui
+package dev.liinahamari.suggestions_ui.movie
 
 import androidx.lifecycle.ViewModel
 import dev.liinahamari.api.domain.entities.Category

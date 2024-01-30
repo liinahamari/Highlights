@@ -11,7 +11,7 @@ data class Documentary(
     override val description: String,
     override val year: Int,
     override val category: Category,
-    override val posterUrl: String,
+    override val posterUrl: String?,
     override val countryCodes: Array<String>,
     @PrimaryKey(autoGenerate = true) var id: Long = 0L
 ) : Entry {
