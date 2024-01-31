@@ -10,14 +10,14 @@ import java.util.Locale.getISOCountries
 //todo move to first launch and cache
 
 fun Context.showCountrySelectionDialog(selected: List<String>, onCountrySelected: (List<String>) -> Unit) {
-    val allLocales = getISOCountries().sorted().map { Locale("", it) }
+    val allLocales = getISOCountries().map { Locale("", it) }.sortedBy { it.displayCountry }
 
     MaterialDialog(this)
         .positiveButton(res = android.R.string.ok) { }
         .listItemsMultiChoice(items = allLocales.map { it.displayCountry },
-            initialSelection = getISOCountries().getSelectedIndices(selected),
+            initialSelection = allLocales.map { it.country }.getSelectedIndices(selected),
             selection = { _: MaterialDialog, indices: IntArray, _: List<CharSequence> ->
-                onCountrySelected.invoke(getISOCountries().slice(indices.toList()).map { Locale("", it).country })
+                onCountrySelected.invoke(allLocales.slice(indices.toList()).map { it.country })
             })
         .show()
 }
