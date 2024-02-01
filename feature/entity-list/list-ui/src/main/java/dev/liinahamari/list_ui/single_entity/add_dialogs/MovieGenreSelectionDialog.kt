@@ -11,7 +11,7 @@ fun Context.showMovieGenreSelectionDialog(
     genresSelectionCallback: (List<MovieGenre>) -> Unit
 ) = MaterialDialog(this)
     .listItemsMultiChoice(
-        items = MovieGenre.values().map { toString().replace("_", " ") },
+        items = MovieGenre.values().map { it.name.replace("_", " ") },
         initialSelection = MovieGenre.values().getSelectedIndices(selected),
         selection = { _: MaterialDialog, _: IntArray, items: List<CharSequence> ->
             genresSelectionCallback.invoke(items.map { it.toString() }.map { MovieGenre.valueOf(it.replace(' ', '_')) })
