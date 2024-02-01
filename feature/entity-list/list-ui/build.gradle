@@ -32,6 +32,8 @@ dependencies {
 
     implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
 
+    implementation "com.google.android.material:material:1.11.0"
+
     def materialDialogsVersion = '3.3.0'
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
