@@ -1,5 +1,6 @@
 package dev.liinahamari.list_ui.single_entity
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
@@ -25,11 +26,24 @@ interface LongClickListener {
 }
 
 class EntryAdapter(
-    val dataSet: MutableList<Entry>,
     private val longClickListener: LongClickListener,
     private val fragmentManager: FragmentManager
 ) :
     RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
+    private var entries: MutableList<Entry> = mutableListOf()
+    private var filteredEntries: MutableList<Entry> = entries
+
+    @SuppressLint("NotifyDataSetChanged") fun replaceDataset(dataSet: List<Entry>) {
+        this.entries = dataSet.toMutableList()
+        this.filteredEntries = dataSet.toMutableList()
+        notifyDataSetChanged()
+    }
+
+    fun removeItem(position: Int) {
+        filteredEntries.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     inner class ViewHolder(private val ui: EntryRowItemBinding) : RecyclerView.ViewHolder(ui.root) {
         fun bind(entry: Entry) {
             ui.root.setOnLongClickListener {
@@ -54,6 +68,11 @@ class EntryAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(EntryRowItemBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false))
 
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) = viewHolder.bind(dataSet[position])
-    override fun getItemCount() = dataSet.size
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) = viewHolder.bind(filteredEntries[position])
+    override fun getItemCount() = filteredEntries.size
+
+    @SuppressLint("NotifyDataSetChanged") fun filter(text: String) {
+        filteredEntries = entries.filter { it.title.contains(text, true) }.toMutableList()
+        notifyDataSetChanged()
+    }
 }

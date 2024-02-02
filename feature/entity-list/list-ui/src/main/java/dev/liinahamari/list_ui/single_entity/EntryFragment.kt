@@ -3,6 +3,7 @@ package dev.liinahamari.list_ui.single_entity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.core.view.MenuCompat
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.getParcelableOf
+import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.MainActivity
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentCategoryBinding
@@ -45,11 +47,23 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     private val argumentEntityType: EntityType by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
     private val argumentEntityCategory: Category by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
 
+    private val entriesAdapter: EntryAdapter by lazy { EntryAdapter(this, childFragmentManager) }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as MainActivity).listUiComponent.inject(this)
         setupViewModelSubscriptions()
-        setupFab()
+        setupViews()
+
         fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+    }
+
+    private fun setupViews() {
+        ui.entriesRv.adapter = entriesAdapter
+        setupFab()
+        ui.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean = false
+            override fun onQueryTextChange(newText: String) = false.also { entriesAdapter.filter(newText) }
+        })
     }
 
     private fun setupViewModelSubscriptions() {
@@ -57,9 +71,8 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
             when (it) {
                 is DeleteEvent.Failure -> Toast.makeText(context, "Failed to delete", Toast.LENGTH_SHORT).show()
                 is DeleteEvent.Success -> {
-                    Toast.makeText(context, "Successfully deleted", Toast.LENGTH_SHORT).show()
-                    (ui.entriesRv.adapter as EntryAdapter).dataSet.removeAt(it.position)
-                    ui.entriesRv.adapter?.notifyItemRemoved(it.position)
+                    toast("Successfully deleted")
+                    entriesAdapter.removeItem(it.position)
                 }
             }
         }
@@ -68,8 +81,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
         }
         fetchEntriesViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
             if (it is FetchEntriesViewModel.FetchAllEvent.Success) {
-                ui.entriesRv.adapter = EntryAdapter(it.entries.toMutableList(), this, childFragmentManager)
-                    .apply { notifyDataSetChanged() }
+                entriesAdapter.replaceDataset(it.entries)
             }
         }
         fetchEntriesViewModel.findEntityEvent.observe(viewLifecycleOwner) {
