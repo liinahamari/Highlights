@@ -1,5 +1,6 @@
 package dev.liinahamari.api
 
+import dev.liinahamari.api.domain.usecases.CloseDbUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteBookUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteDocumentaryUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteGameUseCase
@@ -28,6 +29,8 @@ interface EntityListApi {
     val deleteMovieUseCase: DeleteMovieUseCase
     val deleteGameUseCase: DeleteGameUseCase
     val deleteDocumentaryUseCase: DeleteDocumentaryUseCase
+
+    val closeDbUseCase: CloseDbUseCase
 
     companion object
 }

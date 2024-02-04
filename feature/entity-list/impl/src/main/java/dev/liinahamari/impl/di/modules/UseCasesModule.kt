@@ -2,6 +2,7 @@ package dev.liinahamari.impl.di.modules
 
 import dagger.Module
 import dagger.Provides
+import dev.liinahamari.api.domain.usecases.CloseDbUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteBookUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteDocumentaryUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteGameUseCase
@@ -14,10 +15,12 @@ import dev.liinahamari.api.domain.usecases.save.SaveBookUseCase
 import dev.liinahamari.api.domain.usecases.save.SaveDocumentaryUseCase
 import dev.liinahamari.api.domain.usecases.save.SaveGameUseCase
 import dev.liinahamari.api.domain.usecases.save.SaveMovieUseCase
+import dev.liinahamari.impl.data.db.EntriesDatabase
 import dev.liinahamari.impl.data.repos.BooksRepo
 import dev.liinahamari.impl.data.repos.DocumentariesRepo
 import dev.liinahamari.impl.data.repos.GamesRepo
 import dev.liinahamari.impl.data.repos.MoviesRepo
+import dev.liinahamari.impl.domain.CloseDbUseCaseImpl
 import dev.liinahamari.impl.domain.delete.DeleteBookUseCaseImpl
 import dev.liinahamari.impl.domain.delete.DeleteDocumentaryUseCaseImpl
 import dev.liinahamari.impl.domain.delete.DeleteGameUseCaseImpl
@@ -85,5 +88,8 @@ interface UseCasesModule {
         @JvmStatic
         fun deleteGameUseCase(repo: GamesRepo): DeleteGameUseCase = DeleteGameUseCaseImpl(repo)
 
+        @Provides
+        @JvmStatic
+        fun closeDbUseCase(db: EntriesDatabase): CloseDbUseCase = CloseDbUseCaseImpl(db)
     }
 }

@@ -1,8 +1,11 @@
 package dev.liinahamari.core.ext
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater.from
@@ -11,9 +14,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
+import java.io.File
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int): View = from(context).inflate(layoutRes, this, false)
 
@@ -45,3 +50,17 @@ fun Context.getActivity(): Activity? = if (this is ContextWrapper) {
         baseContext?.getActivity()
     }
 } else null
+
+fun Fragment.getDatabasePath(dbName: String): File = requireContext().getDatabasePath(dbName)
+
+/** Implied that app had implemented single activity pattern */
+fun Fragment.restartApp(mainActivityClass: Class<out AppCompatActivity>) {
+    requireActivity().apply {
+        startActivity(Intent(this, mainActivityClass).addFlags(FLAG_ACTIVITY_NEW_TASK))
+        finish()
+        Runtime.getRuntime().exit(0)
+    }
+}
+
+val Fragment.contentResolver: ContentResolver
+    get() = requireContext().contentResolver
