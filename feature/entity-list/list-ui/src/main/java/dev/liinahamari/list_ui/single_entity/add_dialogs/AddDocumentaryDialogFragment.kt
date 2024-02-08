@@ -87,7 +87,7 @@ class AddDocumentaryDialogFragment : DialogFragment(R.layout.fragment_add_docume
         var selectedCountries = listOf<String>()
 
         ui.countrySelectionBtn.setOnClickListener {
-            requireContext().showCountrySelectionDialog(selectedCountries) {
+            showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
                 documentary = documentary.copy(countryCodes = it)
                 ui.countrySelectionBtn.text = it.toString()
