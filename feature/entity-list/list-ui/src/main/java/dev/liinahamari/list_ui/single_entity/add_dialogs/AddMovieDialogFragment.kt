@@ -87,14 +87,14 @@ class AddMovieDialogFragment : DialogFragment(R.layout.fragment_add_movie) {
         var selectedGenres = listOf<MovieGenre>()
 
         ui.countrySelectionBtn.setOnClickListener {
-            requireContext().showCountrySelectionDialog(selectedCountries) {
+            showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
                 movie = movie.copy(countryCodes = it)
                 ui.countrySelectionBtn.text = it.toString()
             }
         }
         ui.genreBtn.setOnClickListener {
-            requireContext().showMovieGenreSelectionDialog(selectedGenres) {
+            showMovieGenreSelectionDialog(selectedGenres) {
                 selectedGenres = it
                 movie = movie.copy(genres = it)
                 ui.genreBtn.text = it.toString()

@@ -149,7 +149,7 @@ class EntriesFragment : Fragment(R.layout.fragment_entries) {
                 R.id.pagerContainer,
                 EntryFragment.newInstance(requireArguments().getParcelableOf(ARG_CATEGORY), entityType)
             )
-            .addToBackStack("123")
+            .addToBackStack(null)
             .commit()
     }
 }

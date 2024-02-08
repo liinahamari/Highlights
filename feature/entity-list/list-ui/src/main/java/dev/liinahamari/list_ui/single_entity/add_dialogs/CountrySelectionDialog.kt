@@ -1,12 +1,12 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
@@ -27,7 +27,7 @@ fun Context.showCountrySelectionDialog(preselectedLocales: List<String>, onCount
         } else chosenLocales.remove(countryCode)
     }
 
-    MaterialDialog(this)
+    MaterialDialog(requireContext())
         .positiveButton(res = android.R.string.ok) {
             onCountrySelected(chosenLocales)
         }
