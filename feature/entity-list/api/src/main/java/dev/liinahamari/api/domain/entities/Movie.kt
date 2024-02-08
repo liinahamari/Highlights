@@ -13,8 +13,8 @@ data class Movie(
     val name: String,
     val genres: List<MovieGenre>,
     val description: String
-): Parcelable {
-    companion object{
+) : Parcelable {
+    companion object {
         fun default(category: Category = Category.GOOD) = Movie(
             0L, category, 0, "", listOf(), "", listOf(), ""
         )

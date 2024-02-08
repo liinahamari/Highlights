@@ -18,4 +18,5 @@
     <string name="title_edit">edit</string>
     <string name="delete">delete</string>
     <string name="internet_search">Internet Search</string>
+    <string name="countries_placeholder">"Countries: %s"</string>
 </resources>

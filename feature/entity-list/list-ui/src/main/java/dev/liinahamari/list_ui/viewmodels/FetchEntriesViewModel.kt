@@ -16,6 +16,7 @@ import dev.liinahamari.core.RxSubscriptionsDelegate
 import dev.liinahamari.core.SingleLiveEvent
 import dev.liinahamari.list_ui.single_entity.EntityType
 import dev.liinahamari.list_ui.single_entity.Entry
+import java.util.Locale
 import javax.inject.Inject
 
 class FetchEntriesViewModel @Inject constructor(
@@ -60,7 +61,7 @@ class FetchEntriesViewModel @Inject constructor(
                             title = it.name,
                             description = it.description,
                             genres = "",
-                            countries = it.countryCodes.toString(),
+                            countries = it.countryCodes.map { Locale("", it).displayCountry },
                             url = it.posterUrl,
                             clazz = Documentary::class.java
                         )
@@ -77,7 +78,7 @@ class FetchEntriesViewModel @Inject constructor(
                             title = it.name,
                             genres = it.genres.toString(),
                             description = it.description,
-                            countries = it.countryCodes.toString(),
+                            countries = it.countryCodes.map { Locale("", it).displayCountry },
                             url = it.posterUrl,
                             clazz = Book::class.java
                         )
@@ -94,7 +95,7 @@ class FetchEntriesViewModel @Inject constructor(
                             title = it.name,
                             genres = it.genres.toString(),
                             description = it.description,
-                            countries = it.countryCodes.toString(),
+                            countries = it.countryCodes.map { Locale("", it).displayCountry },
                             url = it.posterUrl,
                             clazz = Movie::class.java
                         )
@@ -111,7 +112,7 @@ class FetchEntriesViewModel @Inject constructor(
                             title = it.name,
                             genres = it.genres.toString(),
                             description = it.description,
-                            countries = it.countryCodes.toString(),
+                            countries = it.countryCodes.map { Locale("", it).displayCountry },
                             url = it.posterUrl,
                             clazz = Game::class.java
                         )

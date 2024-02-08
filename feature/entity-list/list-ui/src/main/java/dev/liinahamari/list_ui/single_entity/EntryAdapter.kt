@@ -6,13 +6,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.custom_views.PopupImageDialog
 import dev.liinahamari.list_ui.databinding.EntryRowItemBinding
 
 data class Entry(
     val id: Long,
     val title: String,
-    val countries: String,
+    val countries: List<String>,
     val genres: String,
     val description: String,
     val url: String?,
@@ -50,9 +51,9 @@ class EntryAdapter(
                 longClickListener.onLongClicked(entry.id, entry.clazz, bindingAdapterPosition)
                 true
             }
-            ui.entryNameTv.text = entry.title
+            ui.titleTv.text = entry.title
             ui.entryGenresTv.text = entry.genres
-            ui.entryCountriesTv.text = entry.countries
+            ui.entryCountriesTv.text = ui.root.context.getString(R.string.countries_placeholder, entry.countries)
             ui.entryDescriptionTv.text = entry.description
 
             Glide.with(ui.posterIv.context)
