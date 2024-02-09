@@ -21,7 +21,8 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
     protected val _searchMoviesEvent = SingleLiveEvent<GetRemoteMovies>()
     val searchMoviesResultEvent: LiveData<GetRemoteMovies> get() = _searchMoviesEvent
 
-    private val api by lazy { MovieSuggestionsListFactory.getApi(object : MovieSuggestionsDependencies {
+    private val api by lazy {
+        MovieSuggestionsListFactory.getApi(object : MovieSuggestionsDependencies {
             override val application: Application
                 get() = application
         })
@@ -33,6 +34,7 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
     fun searchForMovie(query: String, category: Category): Observable<GetRemoteMovies> =
         searchMovieUseCase.search(query)//TODO move to usecase
             .flatMapObservable { Observable.fromIterable(it) }
+            .filter { (it.posterPath.isNullOrBlank() || it.posterPath == "null").not() && it.releaseDate != "0" }
             .flatMapSingle { movie -> getMovieGenres(movie.genreIds.orEmpty()).map { movie.toDomain(category, it) } }
             .toList()
             .map<GetRemoteMovies>(GetRemoteMovies::Success)

@@ -18,6 +18,8 @@ class PicturedArrayAdapter(private val context: Context) :
         var veilLayout: VeilLayout = view.findViewById(R.id.veilLayout)
         var thumbIv: ImageView = view.findViewById(R.id.thumbnail)
         var titleTv: TextView = view.findViewById(R.id.titleTv)
+        var yearTv: TextView = view.findViewById(R.id.yearTv)
+        var genresTv: TextView = view.findViewById(R.id.genresTv)
     }
 
     init {
@@ -35,6 +37,8 @@ class PicturedArrayAdapter(private val context: Context) :
         context.layoutInflater.inflate(R.layout.suggestions_list_item, null).apply {
             ViewHolder(this).apply {
                 titleTv.text = getItem(position)!!.name
+                yearTv.text = getItem(position)!!.year.toString()
+                genresTv.text = getItem(position)!!.genres.joinToString { it.name.replace("_", " ").lowercase() }
                 Glide.with(context)
                     .load("https://image.tmdb.org/t/p/w154${getItem(position)?.posterUrl}")
                     .fallback(android.R.drawable.gallery_thumb)
