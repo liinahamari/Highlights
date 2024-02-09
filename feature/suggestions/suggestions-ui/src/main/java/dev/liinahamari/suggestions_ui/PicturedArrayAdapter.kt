@@ -41,7 +41,7 @@ class PicturedArrayAdapter(private val context: Context) :
                     .error(android.R.drawable.gallery_thumb)
                     .timeout(10_000)
                     .override(100, 100)
-//                    .listener(UnveilRequestListener { veilLayout.unVeil() })
+                    .listener(UnveilRequestListener { veilLayout.unVeil() })
                     .into(thumbIv)
             }
         }
