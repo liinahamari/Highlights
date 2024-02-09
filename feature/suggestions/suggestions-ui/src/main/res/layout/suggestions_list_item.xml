@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:layout_marginBottom="1dp"
+    android:orientation="horizontal"
     tools:ignore="MissingDefaultResource">
 
-    <ImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="100dp"
-        android:layout_height="100dp"/>
+    <com.skydoves.androidveil.VeilLayout
+        android:id="@+id/veilLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:veilLayout_baseAlpha="0.6"
+        app:veilLayout_baseColor="@android:color/black"
+        app:veilLayout_dropOff="0.5"
+        app:veilLayout_highlightAlpha="1.0"
+        app:veilLayout_highlightColor="@android:color/holo_green_light"
+        app:veilLayout_radius="6dp"
+        app:veilLayout_shimmerEnable="true"
+        app:veilLayout_veiled="true">
 
-    <TextView
-        android:id="@+id/titleTv"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+
+        <TextView
+            android:id="@+id/titleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </com.skydoves.androidveil.VeilLayout>
 </LinearLayout>

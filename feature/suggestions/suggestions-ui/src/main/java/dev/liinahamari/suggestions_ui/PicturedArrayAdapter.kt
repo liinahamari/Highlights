@@ -1,24 +1,23 @@
-@file:Suppress("NAME_SHADOWING")
-
 package dev.liinahamari.suggestions_ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.skydoves.androidveil.VeilLayout
 import dev.liinahamari.api.domain.entities.Movie
+import dev.liinahamari.core.ext.layoutInflater
 
 class PicturedArrayAdapter(private val context: Context) :
     ArrayAdapter<Movie>(context, R.layout.suggestions_list_item, emptyArray()) {
-    private inner class ViewHolder {
-        var thumbIv: ImageView? = null
-        var titleTv: TextView? = null
+    private inner class ViewHolder(view: View) {
+        var veilLayout: VeilLayout = view.findViewById(R.id.veilLayout)
+        var thumbIv: ImageView = view.findViewById(R.id.thumbnail)
+        var titleTv: TextView = view.findViewById(R.id.titleTv)
     }
 
     init {
@@ -31,34 +30,19 @@ class PicturedArrayAdapter(private val context: Context) :
         filter.filter(null)
     }
 
-    @SuppressLint("InflateParams")
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var holder: ViewHolder
-        var convertView = convertView
-        if (convertView == null) {
-            with(
-                (context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
-                    R.layout.suggestions_list_item,
-                    null
-                )
-            ) {
-                convertView = this
-                holder = ViewHolder()
-                holder.titleTv = findViewById(R.id.titleTv)
-                holder.thumbIv = findViewById(R.id.thumbnail)
-                tag = holder
+    @SuppressLint("ViewHolder", "InflateParams")
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+        context.layoutInflater.inflate(R.layout.suggestions_list_item, null).apply {
+            ViewHolder(this).apply {
+                titleTv.text = getItem(position)!!.name
+                Glide.with(context)
+                    .load("https://image.tmdb.org/t/p/w154${getItem(position)?.posterUrl}")
+                    .fallback(android.R.drawable.gallery_thumb)
+                    .error(android.R.drawable.gallery_thumb)
+                    .timeout(10_000)
+                    .override(100, 100)
+//                    .listener(UnveilRequestListener { veilLayout.unVeil() })
+                    .into(thumbIv)
             }
-        } else {
-            holder = convertView!!.tag as ViewHolder
         }
-        holder.titleTv!!.text = getItem(position)!!.name
-        Glide.with(context)
-            .load("https://image.tmdb.org/t/p/w154${getItem(position)?.posterUrl}")
-            .fallback(android.R.drawable.gallery_thumb)
-            .error(android.R.drawable.gallery_thumb)
-            .timeout(10_000)
-            .override(100, 100)
-            .into(holder.thumbIv!!)
-        return convertView!!
-    }
 }

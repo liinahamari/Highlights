@@ -49,7 +49,7 @@ open class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
             .filter { it.isBlank().not() }
             .map { it.toString() }
             .throttleLast(1300, TimeUnit.MILLISECONDS)
-            .switchMap { searchMovie(it) }
+            .switchMap(::searchMovie)
             .subscribe())
 
         setupViewModelSubscriptions()

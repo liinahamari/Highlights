@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.LayoutInflater.from
 import android.view.View
 import android.view.ViewGroup
@@ -64,3 +65,6 @@ fun Fragment.restartApp(mainActivityClass: Class<out AppCompatActivity>) {
 
 val Fragment.contentResolver: ContentResolver
     get() = requireContext().contentResolver
+
+val Context.layoutInflater: LayoutInflater
+    get() = getSystemService(Activity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
