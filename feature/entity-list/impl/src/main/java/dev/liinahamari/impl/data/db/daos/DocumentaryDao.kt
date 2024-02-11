@@ -20,4 +20,7 @@ interface DocumentaryDao {
 
     @Query("DELETE FROM documentary WHERE id = :id")
     fun delete(id: Long): Completable
+
+    @Query("SELECT COUNT(id) FROM documentary")
+    fun getRowCount(): Single<Int>
 }

@@ -1,7 +1,9 @@
 package dev.liinahamari.impl.data.db.daos
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
+import androidx.room.Query
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.impl.data.db.daos.models.Game
 import io.reactivex.rxjava3.core.Completable
@@ -20,4 +22,7 @@ interface GameDao {
 
     @Query("DELETE FROM game WHERE id = :id")
     fun delete(id: Long): Completable
+
+    @Query("SELECT COUNT(id) FROM game")
+    fun getRowCount(): Single<Int>
 }

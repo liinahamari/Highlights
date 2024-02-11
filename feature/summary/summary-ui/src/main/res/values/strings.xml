@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="total_entries">Total:</string>
+    <string name="total_movies">Movies: </string>
+    <string name="total_games">Games: </string>
+    <string name="total_books">Books: </string>
+    <string name="total_documentaries">Documentaries: </string>
+</resources>

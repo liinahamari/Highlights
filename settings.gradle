@@ -14,6 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Highlights"
 include ':app'
+include ':core'
 
 include ':feature:db_backup',
         ':feature:db_backup:sample'
@@ -22,9 +23,10 @@ include ':feature:entity-list',
         ':feature:entity-list:impl',
         ':feature:entity-list:sample',
         ':feature:entity-list:list-ui'
-include ':core'
 include ':feature:suggestions',
         ':feature:suggestions:api',
         ':feature:suggestions:impl',
-        ':feature:suggestions:sample'
-include ':feature:suggestions:suggestions-ui'
+        ':feature:suggestions:sample',
+        ':feature:suggestions:suggestions-ui'
+include ':feature:summary:summary-ui',
+        ':feature:summary:sample'
