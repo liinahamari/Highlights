@@ -11,7 +11,7 @@ data class Game(
     val description: String
 ){
     companion object{
-        fun default(category: Category) = Game(
+        fun default(category: Category= Category.GOOD) = Game(
             0L, category, 0, "", listOf(), "", listOf(), ""
         )
     }

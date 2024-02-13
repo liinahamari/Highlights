@@ -3,10 +3,9 @@ package dev.liinahamari.summary_ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
+import dev.liinahamari.api.domain.usecases.Entity
 import dev.liinahamari.core.SingleLiveEvent
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class DatabaseCounterCalculationViewModel @Inject constructor(private val databaseCountersUseCase: DatabaseCountersUseCase) :
@@ -22,37 +21,26 @@ class DatabaseCounterCalculationViewModel @Inject constructor(private val databa
     private val _gamesAmount = SingleLiveEvent<String>()
     val gamesAmount: LiveData<String> get() = _gamesAmount
 
+    private val _combinedChartData = SingleLiveEvent<List<Entity>>()
+    val combinedChartData: LiveData<List<Entity>> get() = _combinedChartData
+
+
     private val disposable = CompositeDisposable()
-    fun getTotalAmount() {
-        disposable.add(databaseCountersUseCase.getTotalAmount().map { it.toString() }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { it -> _totalAmount.value = it })
-    }
-
-    fun getMoviesAmount() {
-        disposable.add(databaseCountersUseCase.getMoviesAmount().map { it.toString() }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { it -> _moviesAmount.value = it })
-    }
-
-    fun getDocumentariesAmount() {
-        disposable.add(databaseCountersUseCase.getDocumentariesAmount().map { it.toString() }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { it -> _documentariesAmount.value = it })
-    }
-
-    fun getBooksAmount() {
-        disposable.add(databaseCountersUseCase.getBooksAmount().map { it.toString() }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { it -> _booksAmount.value = it })
-    }
-
-    fun getGamesAmount() {
-        disposable.add(databaseCountersUseCase.getGamesAmount().map { it.toString() }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { it -> _gamesAmount.value = it })
-    }
-
     override fun onCleared() = disposable.dispose()
+
+    fun getDatabaseCounters() {
+        disposable.add(
+            databaseCountersUseCase.getAllDatabaseCounters().subscribe { it ->
+                it.entities.forEach {
+                    when (it) {
+                        is Entity.Books -> _booksAmount.value = it.counter.toInt().toString()
+                        is Entity.Games -> _gamesAmount.value = it.counter.toInt().toString()
+                        is Entity.Documentaries -> _documentariesAmount.value = it.counter.toInt().toString()
+                        is Entity.Movies -> _moviesAmount.value = it.counter.toInt().toString()
+                    }
+                }
+                _totalAmount.value = it.totalCounter
+                _combinedChartData.value = it.entities
+            })
+    }
 }

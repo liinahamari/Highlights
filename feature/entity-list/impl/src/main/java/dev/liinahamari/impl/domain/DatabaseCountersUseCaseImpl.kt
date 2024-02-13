@@ -1,11 +1,15 @@
 package dev.liinahamari.impl.domain
 
+import dev.liinahamari.api.domain.usecases.DatabaseCounters
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
+import dev.liinahamari.api.domain.usecases.Entity
 import dev.liinahamari.impl.data.db.daos.BookDao
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
 import dev.liinahamari.impl.data.db.daos.GameDao
 import dev.liinahamari.impl.data.db.daos.MovieDao
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class DatabaseCountersUseCaseImpl @Inject constructor(
@@ -14,19 +18,34 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
     private val gameDao: GameDao,
     private val documentariesDao: DocumentaryDao
 ) : DatabaseCountersUseCase {
-    override fun getTotalAmount(): Single<Int> =
-        Single.zip(
-            bookDao.getRowCount(),
-            movieDao.getRowCount(),
-            gameDao.getRowCount(),
-            documentariesDao.getRowCount()
-        ) { t1, t2, t3, t4 -> t1 + t2 + t3 + t4 }
+    override fun getAllDatabaseCounters(): Single<DatabaseCounters> = Single.zip(
+        getGamesAmount(),
+        getMoviesAmount(),
+        getBooksAmount(),
+        getDocumentariesAmount()
+    ) { gamesCounter, moviesCounter, booksCounter, documentariesCounter ->
+        DatabaseCounters(
+            entities = listOf(
+                Entity.Games(gamesCounter.toFloat()), Entity.Documentaries(documentariesCounter.toFloat()),
+                Entity.Movies(moviesCounter.toFloat()),
+                Entity.Books(booksCounter.toFloat())
+            ), totalCounter = (gamesCounter + moviesCounter + booksCounter + documentariesCounter).toString()
+        )
+    }
 
-    override fun getMoviesAmount(): Single<Int> = movieDao.getRowCount()
+    private fun getMoviesAmount(): Single<Int> = movieDao.getRowCount()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 
-    override fun getDocumentariesAmount(): Single<Int> = documentariesDao.getRowCount()
+    private fun getDocumentariesAmount(): Single<Int> = documentariesDao.getRowCount()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 
-    override fun getBooksAmount(): Single<Int> = bookDao.getRowCount()
+    private fun getBooksAmount(): Single<Int> = bookDao.getRowCount()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 
-    override fun getGamesAmount(): Single<Int> = gameDao.getRowCount()
+    private fun getGamesAmount(): Single<Int> = gameDao.getRowCount()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 }

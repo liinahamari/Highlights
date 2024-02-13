@@ -21,9 +21,9 @@ interface EntityListApi {
     val getGamesUseCase: GetGamesUseCase
     val getMoviesUseCase: GetMoviesUseCase
 
-    val saveBookUseCase: SaveGameUseCase
+    val saveGameUseCase: SaveGameUseCase
     val saveDocumentaryUseCase: SaveDocumentaryUseCase
-    val saveGameUseCase: SaveBookUseCase
+    val saveBookUseCase: SaveBookUseCase
     val saveMovieUseCase: SaveMovieUseCase
 
     val deleteBookUseCase: DeleteBookUseCase

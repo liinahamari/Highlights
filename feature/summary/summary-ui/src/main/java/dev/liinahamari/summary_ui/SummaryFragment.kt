@@ -24,6 +24,7 @@ import com.github.mikephil.charting.utils.ColorTemplate.VORDIPLOM_COLORS
 import com.github.mikephil.charting.utils.ColorTemplate.getHoloBlue
 import com.github.mikephil.charting.utils.MPPointF
 import dev.liinahamari.api.EntityListDependencies
+import dev.liinahamari.api.domain.usecases.Entity
 import dev.liinahamari.entity_list.EntityListFactory
 import dev.liinahamari.summary.summary_ui.R
 import dev.liinahamari.summary.summary_ui.databinding.FragmentSummaryBinding
@@ -41,7 +42,8 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         summaryComponent = DaggerSummaryComponent.builder().databaseCountersUseCase(EntityListFactory.getApi(object :
-            EntityListDependencies {/*todo check it's singleton*/
+            EntityListDependencies {
+            /*todo check it's singleton*/
             override val application: Application
                 get() = requireActivity().application
         }).databaseCountersUseCase).build()
@@ -54,22 +56,11 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         super.onViewCreated(view, savedInstanceState)
         setupViewModelSubscriptions()
 
-        with(databaseCounterCalculationViewModel) {
-            getTotalAmount()
-            getMoviesAmount()
-            getDocumentariesAmount()
-            getBooksAmount()
-            getGamesAmount()
-        }
-        renderEntriesTotalStatisticsChart(100f, 30f, 10f, 0f)
+        renderEntriesTotalStatisticsChart()
+        databaseCounterCalculationViewModel.getDatabaseCounters()
     }
 
-    private fun renderEntriesTotalStatisticsChart(
-        totalMovies: Float,
-        totalDocumentaries: Float,
-        totalBooks: Float,
-        totalGames: Float
-    ) {
+    private fun renderEntriesTotalStatisticsChart() { // todo filter empty
         ui.entityRatioChart.setUsePercentValues(true)
         ui.entityRatioChart.description.isEnabled = false
         ui.entityRatioChart.setExtraOffsets(5f, 10f, 5f, 5f)
@@ -106,16 +97,10 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         ui.entityRatioChart.setEntryLabelColor(BLACK)
         ui.entityRatioChart.setEntryLabelTypeface(MONOSPACE)
         ui.entityRatioChart.setEntryLabelTextSize(12f)
-        setData(totalMovies, totalDocumentaries, totalBooks, totalGames)
     }
 
-    private fun setData(totalMovies: Float, totalDocumentaries: Float, totalBooks: Float, totalGames: Float) {
-        val entries = setOf(
-            "Movies" to totalMovies,
-            "Documentaries" to totalDocumentaries,
-            "Games" to totalGames,
-            "Books" to totalBooks
-        ).map { PieEntry(it.second, it.first) }
+    private fun setChartData(chartData: List<Entity>) {
+        val entries = chartData.map { PieEntry(it.counter, it::class.java.simpleName) }
 
         ui.entityRatioChart.data = PieDataSet(entries, "Total").apply {
             setDrawIcons(false)
@@ -142,5 +127,6 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         documentariesAmount.observe(viewLifecycleOwner, ui.totalDocumentariesAmountTv::append)
         booksAmount.observe(viewLifecycleOwner, ui.totalBooksAmountTv::append)
         gamesAmount.observe(viewLifecycleOwner, ui.totalGamesAmountTv::append)
+        combinedChartData.observe(viewLifecycleOwner, ::setChartData)
     }
 }

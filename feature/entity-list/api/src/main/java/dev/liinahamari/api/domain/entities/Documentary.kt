@@ -10,7 +10,7 @@ data class Documentary(
     val description: String
 ) {
     companion object {
-        fun default(category: Category) = Documentary(
+        fun default(category: Category=Category.GOOD) = Documentary(
             0L, category, 0, "", listOf(), "", ""
         )
     }
