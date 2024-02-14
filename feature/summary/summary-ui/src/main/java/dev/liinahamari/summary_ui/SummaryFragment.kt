@@ -86,16 +86,6 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         }
     }
 
-    private fun setChartData(chartData: DatabaseCounters) = when (chartData) {
-        is DatabaseCounters.Empty -> {
-            ui.noDataTv.isVisible = true
-            ui.entityRatioChart.isVisible = false
-        }
-
-        is DatabaseCounters.DatabaseCorruptionError -> toast("Something wrong with database!")
-        is DatabaseCounters.Success -> renderChart(chartData)
-    }
-
     private fun renderChart(chartData: DatabaseCounters.Success) {
         val entries = chartData.entities.map { PieEntry(it.counter, it.label) }
         ui.entityRatioChart.centerText = chartData.titleInCenterOfChart
@@ -121,6 +111,12 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         ui.entityRatioChart.invalidate()
     }
 
-    private fun setupViewModelSubscriptions() =
-        databaseCounterCalculationViewModel.combinedChartData.observe(viewLifecycleOwner, ::setChartData)
+    private fun setupViewModelSubscriptions() {
+        databaseCounterCalculationViewModel.errorEvent.observe(viewLifecycleOwner, ::toast)
+        databaseCounterCalculationViewModel.emptyViewEvent.observe(viewLifecycleOwner) {
+            ui.noDataTv.isVisible = true
+            ui.entityRatioChart.isVisible = false
+        }
+        databaseCounterCalculationViewModel.chartDataEvent.observe(viewLifecycleOwner, ::renderChart)
+    }
 }
