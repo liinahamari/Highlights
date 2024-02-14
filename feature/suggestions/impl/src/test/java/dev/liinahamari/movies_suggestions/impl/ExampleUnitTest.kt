@@ -1,4 +1,4 @@
-package dev.liinahamari.suggestions.impl
+package dev.liinahamari.movies_suggestions.impl
 
 import org.junit.Test
 

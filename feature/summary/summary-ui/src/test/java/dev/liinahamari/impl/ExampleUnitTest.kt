@@ -1,5 +1,7 @@
 package dev.liinahamari.impl
 
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -12,6 +14,6 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        Maybe.concat(Maybe.just(true).filter { !it }, Maybe.just(true)).toList().subscribe { it -> println("aaa $it") }
     }
 }
