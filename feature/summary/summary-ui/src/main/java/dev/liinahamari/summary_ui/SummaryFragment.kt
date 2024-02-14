@@ -6,6 +6,7 @@ import android.graphics.Color.WHITE
 import android.graphics.Typeface.MONOSPACE
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +25,7 @@ import com.github.mikephil.charting.utils.ColorTemplate.getHoloBlue
 import com.github.mikephil.charting.utils.MPPointF
 import dev.liinahamari.api.EntityListDependencies
 import dev.liinahamari.api.domain.entities.DatabaseCounters
+import dev.liinahamari.core.ext.toast
 import dev.liinahamari.entity_list.EntityListFactory
 import dev.liinahamari.summary.summary_ui.R
 import dev.liinahamari.summary.summary_ui.databinding.FragmentSummaryBinding
@@ -84,7 +86,17 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         }
     }
 
-    private fun setChartData(chartData: DatabaseCounters) {
+    private fun setChartData(chartData: DatabaseCounters) = when (chartData) {
+        is DatabaseCounters.Empty -> {
+            ui.noDataTv.isVisible = true
+            ui.entityRatioChart.isVisible = false
+        }
+
+        is DatabaseCounters.DatabaseCorruptionError -> toast("Something wrong with database!")
+        is DatabaseCounters.Success -> renderChart(chartData)
+    }
+
+    private fun renderChart(chartData: DatabaseCounters.Success) {
         val entries = chartData.entities.map { PieEntry(it.counter, it.label) }
         ui.entityRatioChart.centerText = chartData.titleInCenterOfChart
 
@@ -108,7 +120,6 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         ui.entityRatioChart.highlightValues(null)
         ui.entityRatioChart.invalidate()
     }
-
 
     private fun setupViewModelSubscriptions() =
         databaseCounterCalculationViewModel.combinedChartData.observe(viewLifecycleOwner, ::setChartData)

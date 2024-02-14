@@ -5,4 +5,5 @@
     <string name="total_games">Games: </string>
     <string name="total_books">Books: </string>
     <string name="total_documentaries">Documentaries: </string>
+    <string name="no_data_found">No data found</string>
 </resources>

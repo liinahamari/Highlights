@@ -1,10 +1,16 @@
 package dev.liinahamari.api.domain.entities
 
-data class DatabaseCounters(
-    val entities: List<Entity>,
-    val totalCounter: String,
-    val titleInCenterOfChart: String
-)
+sealed interface DatabaseCounters {
+    data class Success(
+        val entities: List<Entity>,
+        val totalCounter: String,
+        val titleInCenterOfChart: String
+    ) : DatabaseCounters
+
+    object Empty : DatabaseCounters
+    sealed interface Error : DatabaseCounters
+    object DatabaseCorruptionError : Error
+}
 
 sealed interface Entity {
     val counter: Float
