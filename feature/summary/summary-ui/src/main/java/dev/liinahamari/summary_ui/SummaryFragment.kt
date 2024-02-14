@@ -11,7 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.mikephil.charting.animation.Easing
-import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -24,7 +23,7 @@ import com.github.mikephil.charting.utils.ColorTemplate.VORDIPLOM_COLORS
 import com.github.mikephil.charting.utils.ColorTemplate.getHoloBlue
 import com.github.mikephil.charting.utils.MPPointF
 import dev.liinahamari.api.EntityListDependencies
-import dev.liinahamari.api.domain.usecases.Entity
+import dev.liinahamari.api.domain.entities.DatabaseCounters
 import dev.liinahamari.entity_list.EntityListFactory
 import dev.liinahamari.summary.summary_ui.R
 import dev.liinahamari.summary.summary_ui.databinding.FragmentSummaryBinding
@@ -56,51 +55,38 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         super.onViewCreated(view, savedInstanceState)
         setupViewModelSubscriptions()
 
-        renderEntriesTotalStatisticsChart()
+        setupTotalStatisticsChart()
         databaseCounterCalculationViewModel.getDatabaseCounters()
     }
 
-    private fun renderEntriesTotalStatisticsChart() { // todo filter empty
-        ui.entityRatioChart.setUsePercentValues(true)
-        ui.entityRatioChart.description.isEnabled = false
-        ui.entityRatioChart.setExtraOffsets(5f, 10f, 5f, 5f)
-        ui.entityRatioChart.dragDecelerationFrictionCoef = 0.95f
-        ui.entityRatioChart.setCenterTextTypeface(MONOSPACE)
-        ui.entityRatioChart.centerText = "Movies"
-        ui.entityRatioChart.setCenterTextColor(WHITE)
-        ui.entityRatioChart.isDrawHoleEnabled = true
-        ui.entityRatioChart.setHoleColor(BLACK)
-        ui.entityRatioChart.setTransparentCircleColor(WHITE)
-        ui.entityRatioChart.setTransparentCircleAlpha(110)
-        ui.entityRatioChart.holeRadius = 58f
-        ui.entityRatioChart.transparentCircleRadius = 61f
-        ui.entityRatioChart.setDrawCenterText(true)
-        ui.entityRatioChart.rotationAngle = 0f
-        ui.entityRatioChart.isRotationEnabled = true
-        ui.entityRatioChart.isHighlightPerTapEnabled = true
-
-//        ui.entityRatioChart.setOnChartValueSelectedListener(this)
-
-        ui.entityRatioChart.animateY(1400, Easing.EaseInOutQuad)
-
-        ui.entityRatioChart.legend.apply {
-            verticalAlignment = Legend.LegendVerticalAlignment.TOP
-            horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
-            orientation = Legend.LegendOrientation.VERTICAL
-            setDrawInside(false)
-            textColor = WHITE
-            xEntrySpace = 7f
-            yEntrySpace = 0f
-            yOffset = 0f
+    private fun setupTotalStatisticsChart() { // todo filter empty
+        ui.entityRatioChart.apply {
+            setUsePercentValues(true)
+            description.isEnabled = false
+            setExtraOffsets(5f, 10f, 5f, 5f)
+            dragDecelerationFrictionCoef = 0.95f
+            setCenterTextTypeface(MONOSPACE)
+            setCenterTextColor(WHITE)
+            isDrawHoleEnabled = true
+            setHoleColor(BLACK)
+            setTransparentCircleColor(WHITE)
+            setTransparentCircleAlpha(110)
+            holeRadius = 58f
+            transparentCircleRadius = 61f
+            setDrawCenterText(true)
+            rotationAngle = 0f
+            isRotationEnabled = true
+            isHighlightPerTapEnabled = true
+            animateY(1400, Easing.EaseInOutQuad)
+            setEntryLabelColor(BLACK)
+            setEntryLabelTypeface(MONOSPACE)
+            setEntryLabelTextSize(12f)
         }
-
-        ui.entityRatioChart.setEntryLabelColor(BLACK)
-        ui.entityRatioChart.setEntryLabelTypeface(MONOSPACE)
-        ui.entityRatioChart.setEntryLabelTextSize(12f)
     }
 
-    private fun setChartData(chartData: List<Entity>) {
-        val entries = chartData.map { PieEntry(it.counter, it::class.java.simpleName) }
+    private fun setChartData(chartData: DatabaseCounters) {
+        val entries = chartData.entities.map { PieEntry(it.counter, it.label) }
+        ui.entityRatioChart.centerText = chartData.titleInCenterOfChart
 
         ui.entityRatioChart.data = PieDataSet(entries, "Total").apply {
             setDrawIcons(false)
@@ -110,7 +96,10 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
             colors = VORDIPLOM_COLORS.toList() + JOYFUL_COLORS.toList() + COLORFUL_COLORS.toList() +
                     LIBERTY_COLORS.toList() + PASTEL_COLORS.toList() + getHoloBlue()
         }.let(::PieData).apply {
-            setValueFormatter(PercentFormatter())
+            setValueFormatter(object : PercentFormatter() {
+                override fun getPieLabel(value: Float, pieEntry: PieEntry?): String =
+                    "${String.format("%.2f", value)}% (${pieEntry?.value?.toInt()})"
+            })
             setValueTextSize(11f)
             setValueTextColor(BLACK)
             setValueTypeface(MONOSPACE)
@@ -121,12 +110,6 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
     }
 
 
-    private fun setupViewModelSubscriptions() = databaseCounterCalculationViewModel.apply {
-        totalAmount.observe(viewLifecycleOwner, ui.totalEntriesAmountTv::append)
-        moviesAmount.observe(viewLifecycleOwner, ui.totalMoviesAmountTv::append)
-        documentariesAmount.observe(viewLifecycleOwner, ui.totalDocumentariesAmountTv::append)
-        booksAmount.observe(viewLifecycleOwner, ui.totalBooksAmountTv::append)
-        gamesAmount.observe(viewLifecycleOwner, ui.totalGamesAmountTv::append)
-        combinedChartData.observe(viewLifecycleOwner, ::setChartData)
-    }
+    private fun setupViewModelSubscriptions() =
+        databaseCounterCalculationViewModel.combinedChartData.observe(viewLifecycleOwner, ::setChartData)
 }

@@ -1,8 +1,8 @@
 package dev.liinahamari.impl.domain
 
-import dev.liinahamari.api.domain.usecases.DatabaseCounters
+import dev.liinahamari.api.domain.entities.DatabaseCounters
+import dev.liinahamari.api.domain.entities.Entity
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
-import dev.liinahamari.api.domain.usecases.Entity
 import dev.liinahamari.impl.data.db.daos.BookDao
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
 import dev.liinahamari.impl.data.db.daos.GameDao
@@ -24,12 +24,15 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
         getBooksAmount(),
         getDocumentariesAmount()
     ) { gamesCounter, moviesCounter, booksCounter, documentariesCounter ->
+        val sum = gamesCounter + moviesCounter + booksCounter + documentariesCounter
         DatabaseCounters(
             entities = listOf(
-                Entity.Games(gamesCounter.toFloat()), Entity.Documentaries(documentariesCounter.toFloat()),
+                Entity.Games(gamesCounter.toFloat()),
+                Entity.Documentaries(documentariesCounter.toFloat()),
                 Entity.Movies(moviesCounter.toFloat()),
                 Entity.Books(booksCounter.toFloat())
-            ), totalCounter = (gamesCounter + moviesCounter + booksCounter + documentariesCounter).toString()
+            ), totalCounter = sum.toString(),
+            titleInCenterOfChart = "Total ($sum)"
         )
     }
 
