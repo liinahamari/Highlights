@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
+import dev.liinahamari.api.DATABASE_NAME
 import dev.liinahamari.impl.data.db.EntriesDatabase
 import dev.liinahamari.impl.data.db.daos.BookDao
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
@@ -13,8 +14,7 @@ import dev.liinahamari.impl.data.db.daos.MovieDao
 import javax.inject.Named
 import javax.inject.Singleton
 
-private const val DATABASE_NAME = "entries-db"
-private const val APP_CONTEXT = "app_ctx"
+internal const val APP_CONTEXT = "app_ctx"
 
 @Module
 class DatabaseModule {

@@ -1,7 +1,8 @@
 package dev.liinahamari.api
 
-import dev.liinahamari.api.domain.usecases.CloseDbUseCase
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
+import dev.liinahamari.api.domain.usecases.RestoreDatabaseUseCase
+import dev.liinahamari.api.domain.usecases.SaveDatabaseUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteBookUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteDocumentaryUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteGameUseCase
@@ -31,7 +32,8 @@ interface EntityListApi {
     val deleteGameUseCase: DeleteGameUseCase
     val deleteDocumentaryUseCase: DeleteDocumentaryUseCase
 
-    val closeDbUseCase: CloseDbUseCase
+    val saveDatabaseUseCase: SaveDatabaseUseCase
+    val restoreDatabaseUseCase: RestoreDatabaseUseCase
 
     val databaseCountersUseCase: DatabaseCountersUseCase
 

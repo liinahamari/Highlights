@@ -1,9 +1,11 @@
 package dev.liinahamari.impl.di.modules
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
-import dev.liinahamari.api.domain.usecases.CloseDbUseCase
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
+import dev.liinahamari.api.domain.usecases.RestoreDatabaseUseCase
+import dev.liinahamari.api.domain.usecases.SaveDatabaseUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteBookUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteDocumentaryUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteGameUseCase
@@ -25,8 +27,9 @@ import dev.liinahamari.impl.data.repos.BooksRepo
 import dev.liinahamari.impl.data.repos.DocumentariesRepo
 import dev.liinahamari.impl.data.repos.GamesRepo
 import dev.liinahamari.impl.data.repos.MoviesRepo
-import dev.liinahamari.impl.domain.CloseDbUseCaseImpl
 import dev.liinahamari.impl.domain.DatabaseCountersUseCaseImpl
+import dev.liinahamari.impl.domain.RestoreDatabaseUseCaseImpl
+import dev.liinahamari.impl.domain.SaveDatabaseUseCaseImpl
 import dev.liinahamari.impl.domain.delete.DeleteBookUseCaseImpl
 import dev.liinahamari.impl.domain.delete.DeleteDocumentaryUseCaseImpl
 import dev.liinahamari.impl.domain.delete.DeleteGameUseCaseImpl
@@ -39,6 +42,7 @@ import dev.liinahamari.impl.domain.save.SaveBookUseCaseImpl
 import dev.liinahamari.impl.domain.save.SaveDocumentaryUseCaseImpl
 import dev.liinahamari.impl.domain.save.SaveGameUseCaseImpl
 import dev.liinahamari.impl.domain.save.SaveMovieUseCaseImpl
+import javax.inject.Named
 
 @Module
 interface UseCasesModule {
@@ -96,7 +100,13 @@ interface UseCasesModule {
 
         @Provides
         @JvmStatic
-        fun closeDbUseCase(db: EntriesDatabase): CloseDbUseCase = CloseDbUseCaseImpl(db)
+        fun saveDbUseCase(@Named(APP_CONTEXT) context: Context, db: EntriesDatabase): SaveDatabaseUseCase =
+            SaveDatabaseUseCaseImpl(context, db)
+
+        @Provides
+        @JvmStatic
+        fun restoreDbUseCase(@Named(APP_CONTEXT) context: Context, db: EntriesDatabase): RestoreDatabaseUseCase =
+            RestoreDatabaseUseCaseImpl(context, db)
 
         @Provides
         @JvmStatic
