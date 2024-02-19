@@ -63,6 +63,7 @@ class FetchEntriesViewModel @Inject constructor(
                             genres = "",
                             countries = it.countryCodes.map { Locale("", it).displayCountry },
                             url = it.posterUrl,
+                            year = it.year,
                             clazz = Documentary::class.java
                         )
                     }
@@ -80,6 +81,7 @@ class FetchEntriesViewModel @Inject constructor(
                             description = it.description,
                             countries = it.countryCodes.map { Locale("", it).displayCountry },
                             url = it.posterUrl,
+                            year = it.year,
                             clazz = Book::class.java
                         )
                     }
@@ -97,6 +99,7 @@ class FetchEntriesViewModel @Inject constructor(
                             description = it.description,
                             countries = it.countryCodes.map { Locale("", it).displayCountry },
                             url = it.posterUrl,
+                            year = it.year,
                             clazz = Movie::class.java
                         )
                     }
@@ -114,6 +117,7 @@ class FetchEntriesViewModel @Inject constructor(
                             description = it.description,
                             countries = it.countryCodes.map { Locale("", it).displayCountry },
                             url = it.posterUrl,
+                            year = it.year,
                             clazz = Game::class.java
                         )
                     }

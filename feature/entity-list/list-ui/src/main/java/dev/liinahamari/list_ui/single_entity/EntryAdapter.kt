@@ -84,6 +84,7 @@ class EntryAdapter(
             }
 
             ui.titleTv.text = entry.title
+            ui.yearTv.text = ui.root.context.getString(R.string.years_placeholder, entry.year)
             ui.entryGenresTv.text = entry.genres
             ui.entryCountriesTv.text = ui.root.context.getString(R.string.countries_placeholder, entry.countries)
             ui.entryDescriptionTv.text = entry.description
