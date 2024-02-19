@@ -47,7 +47,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     private val argumentEntityType: EntityType by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
     private val argumentEntityCategory: Category by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
 
-    private val entriesAdapter: EntryAdapter by lazy { EntryAdapter(this, childFragmentManager) }
+    private var entriesAdapter: EntryAdapter? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as MainActivity).listUiComponent.inject(this)
@@ -58,11 +58,12 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     }
 
     private fun setupViews() {
+        entriesAdapter = EntryAdapter(this, childFragmentManager, ui.entriesRv)
         ui.entriesRv.adapter = entriesAdapter
         setupFab()
         ui.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean = false
-            override fun onQueryTextChange(newText: String) = false.also { entriesAdapter.filter(newText) }
+            override fun onQueryTextChange(newText: String) = false.also { entriesAdapter!!.filter(newText) }
         })
     }
 
@@ -72,7 +73,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
                 is DeleteEvent.Failure -> Toast.makeText(context, "Failed to delete", Toast.LENGTH_SHORT).show()
                 is DeleteEvent.Success -> {
                     toast("Successfully deleted")
-                    entriesAdapter.removeItem(it.position)
+                    entriesAdapter!!.removeItem(it.position)
                 }
             }
         }
@@ -81,7 +82,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
         }
         fetchEntriesViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
             if (it is FetchEntriesViewModel.FetchAllEvent.Success) {
-                entriesAdapter.replaceDataset(it.entries)
+                entriesAdapter!!.replaceDataset(it.entries)
             }
         }
         fetchEntriesViewModel.findEntityEvent.observe(viewLifecycleOwner) {

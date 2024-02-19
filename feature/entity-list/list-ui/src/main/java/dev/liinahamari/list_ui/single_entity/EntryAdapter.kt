@@ -3,18 +3,21 @@ package dev.liinahamari.list_ui.single_entity
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.custom_views.PopupImageDialog
 import dev.liinahamari.list_ui.databinding.EntryRowItemBinding
+import net.cachapa.expandablelayout.ExpandableLayout.OnExpansionUpdateListener
 
 data class Entry(
     val id: Long,
     val title: String,
     val countries: List<String>,
     val genres: String,
+    val year: Int,
     val description: String,
     val url: String?,
     val clazz: Class<*>
@@ -28,11 +31,16 @@ interface LongClickListener {
 
 class EntryAdapter(
     private val longClickListener: LongClickListener,
-    private val fragmentManager: FragmentManager
+    private val fragmentManager: FragmentManager,
+    private val recyclerView: RecyclerView
 ) :
     RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
     private var entries: MutableList<Entry> = mutableListOf()
     private var filteredEntries: MutableList<Entry> = entries
+
+    private val UNSELECTED = -1
+    private var selectedItems = mutableListOf<Int>()
+    private var selectedItem = UNSELECTED //fixme filtered
 
     @SuppressLint("NotifyDataSetChanged") fun replaceDataset(dataSet: List<Entry>) {
         this.entries = dataSet.toMutableList()
@@ -45,12 +53,36 @@ class EntryAdapter(
         notifyItemRemoved(position)
     }
 
-    inner class ViewHolder(private val ui: EntryRowItemBinding) : RecyclerView.ViewHolder(ui.root) {
+    inner class ViewHolder(private val ui: EntryRowItemBinding) : RecyclerView.ViewHolder(ui.root),
+        OnExpansionUpdateListener {
+
         fun bind(entry: Entry) {
-            ui.root.setOnLongClickListener {
-                longClickListener.onLongClicked(entry.id, entry.clazz, bindingAdapterPosition)
-                true
+            ui.expandableLayout.apply {
+                setInterpolator(OvershootInterpolator())
+                setOnExpansionUpdateListener(this@ViewHolder)
+                isExpanded = adapterPosition in selectedItems
             }
+
+            ui.root.apply {
+                setOnClickListener {
+                    if (recyclerView.findViewHolderForAdapterPosition(selectedItems.firstOrNull { it == adapterPosition } ?: UNSELECTED) as ViewHolder? != null) {
+                        ui.expandableLayout.collapse(false)
+                    }
+
+                    if (adapterPosition in selectedItems) {
+                        selectedItems.remove(adapterPosition)
+                    } else {
+                        ui.expandableLayout.expand()
+                        selectedItems.add(adapterPosition)
+                    }
+                }
+
+                setOnLongClickListener {
+                    longClickListener.onLongClicked(entry.id, entry.clazz, bindingAdapterPosition)
+                    true
+                }
+            }
+
             ui.titleTv.text = entry.title
             ui.entryGenresTv.text = entry.genres
             ui.entryCountriesTv.text = ui.root.context.getString(R.string.countries_placeholder, entry.countries)
@@ -64,6 +96,12 @@ class EntryAdapter(
                 PopupImageDialog(entry.url!!).show(fragmentManager, null)
             }
         }
+
+        override fun onExpansionUpdate(expansionFraction: Float, state: Int) {/*
+            if (state == EXPANDING) {
+                recyclerView.smoothScrollToPosition(adapterPosition)
+            }
+        */}
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder =

@@ -50,5 +50,7 @@ dependencies {
 
     implementation 'com.squareup:seismic:1.0.2'
     implementation project(":feature:summary:summary-ui")
+
+    implementation 'com.github.cachapa:ExpandableLayout:2.9.2'
 }
 
