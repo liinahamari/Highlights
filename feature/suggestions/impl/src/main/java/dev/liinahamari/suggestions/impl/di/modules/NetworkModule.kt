@@ -1,7 +1,5 @@
 package dev.liinahamari.suggestions.impl.di.modules
 
-import com.google.gson.FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dev.liinahamari.suggestions.impl.BuildConfig
@@ -43,11 +41,7 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideConverterFactory(): Converter.Factory = GsonConverterFactory.create(
-        GsonBuilder()
-            .setFieldNamingPolicy(LOWER_CASE_WITH_UNDERSCORES)
-            .create()
-    )
+    fun provideConverterFactory(): Converter.Factory = GsonConverterFactory.create()
 
     @Singleton
     @Provides
