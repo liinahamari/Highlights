@@ -10,7 +10,24 @@
     <dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:completionThreshold="1">
+        android:completionThreshold="1"
+        android:hint="movie"
+        tools:ignore="HardcodedText">
+
         <requestFocus />
     </dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView>
+
+    <dev.liinahamari.suggestions_ui.book.SearchBookAutoCompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:completionThreshold="1"
+        android:hint="book"
+        tools:ignore="HardcodedText" />
+
+    <dev.liinahamari.suggestions_ui.documentary.SearchDocumentaryAutoCompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:completionThreshold="1"
+        android:hint="documentary"
+        tools:ignore="HardcodedText" />
 </LinearLayout>

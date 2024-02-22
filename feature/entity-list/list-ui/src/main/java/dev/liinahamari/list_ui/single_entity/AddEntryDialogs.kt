@@ -45,33 +45,6 @@ fun Fragment.showAddGameDialog(
     }.show()
 }
 
-fun Fragment.showAddBookDialog(
-    category: Category,
-    onSubmit: (book: Book) -> Unit,
-    book: Book? = null
-) {
-    var book = book ?: Book.default(category)
-    getGenericAddEntryDialog(onSubmit = { onSubmit.invoke(book) }, countriesSelectionCallback = {
-        book = book.copy(countryCodes = getISOCountries().slice(it.toList()).map { Locale("", it).country })
-    }, genresSelectionCallback = {
-        book = book.copy(genres = it.map { BookGenre.valueOf(it.replace(' ', '_')) })
-    }, genres = BookGenre.values().map { it.toString().replace('_', ' ') }).apply {
-        findViewById<TextInputEditText>(R.id.titleEt)
-            ?.apply { setText(book.name) }
-            ?.doOnTextChanged { text, _, _, _ -> book = book.copy(name = text.toString()) }
-        findViewById<TextInputLayout>(R.id.authorEtContainer)?.isVisible = true
-        findViewById<TextInputEditText>(R.id.authorEt)
-            ?.apply { setText(book.author) }
-            ?.doOnTextChanged { text, _, _, _ -> book = book.copy(author = text.toString()) }
-        findViewById<TextInputEditText>(R.id.yearEt)
-            ?.apply { setText(book.year.toString()) }
-            ?.doOnTextChanged { text, _, _, _ -> book = book.copy(year = text.toString().ifEmpty { "0" }.toInt()) }
-        findViewById<TextInputEditText>(R.id.posterUrlEt)
-            ?.apply { setText(book.posterUrl) }
-            ?.doOnTextChanged { text, _, _, _ -> book = book.copy(posterUrl = text.toString()) }
-    }.show()
-}
-
 private fun Fragment.getGenericAddEntryDialog(
     onSubmit: () -> Unit,
     countriesSelectionCallback: (IntArray) -> Unit,

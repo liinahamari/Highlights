@@ -1,5 +1,7 @@
 package dev.liinahamari.suggestions.impl.di.modules
 
+import com.google.gson.FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dev.liinahamari.suggestions.impl.BuildConfig
@@ -8,6 +10,7 @@ import dev.liinahamari.suggestions.impl.data.apis.SearchGameApi
 import dev.liinahamari.suggestions.impl.data.apis.SearchMovieApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -36,12 +39,15 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun providesLoggingInterceptor(): HttpLoggingInterceptor =
-        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+    fun providesLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(BODY)
 
     @Singleton
     @Provides
-    fun provideConverterFactory(): Converter.Factory = GsonConverterFactory.create()
+    fun provideConverterFactory(): Converter.Factory = GsonConverterFactory.create(
+        GsonBuilder()
+            .setFieldNamingPolicy(LOWER_CASE_WITH_UNDERSCORES)
+            .create()
+    )
 
     @Singleton
     @Provides

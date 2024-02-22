@@ -12,6 +12,7 @@ import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.toast
+import dev.liinahamari.suggestions_ui.SuggestionUi
 import dev.liinahamari.suggestions_ui.PicturedArrayAdapter
 import dev.liinahamari.suggestions_ui.movie.SearchMoviesViewModel.GetRemoteMovies
 import io.reactivex.rxjava3.core.Observable
@@ -64,7 +65,14 @@ open class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
                 is GetRemoteMovies.Error.NoInternetError -> context.toast("Check the Internet connection")
 
                 is GetRemoteMovies.Success -> {
-                    suggestionsAdapter.replaceAll(it.movies)
+                    suggestionsAdapter.replaceAll(it.movies.map {
+                        SuggestionUi(
+                            title = it.name,
+                            year = it.year,
+                            genres = it.genres.map { it.name.replace("_", " ").lowercase() },
+                            posterUrl = it.posterUrl!!
+                        )
+                    })
                     setOnItemClickListener { _, _, position, _ -> movieObserver.onChosen(it.movies[position]) }
                 }
             }
@@ -80,5 +88,5 @@ open class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
         fun onChosen(mov: Movie)
     }
 
-    override fun convertSelectionToString(selectedItem: Any?): CharSequence = (selectedItem as Movie).name
+    override fun convertSelectionToString(selectedItem: Any?): CharSequence = (selectedItem as SuggestionUi).title
 }

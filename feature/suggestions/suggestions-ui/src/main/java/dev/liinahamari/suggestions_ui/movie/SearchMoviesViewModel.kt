@@ -35,7 +35,9 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
         searchMovieUseCase.search(query)//TODO move to usecase
             .flatMapObservable { Observable.fromIterable(it) }
             .filter { (it.posterPath.isNullOrBlank() || it.posterPath == "null").not() && it.releaseDate != "0" }
-            .flatMapSingle { movie -> getMovieGenres(movie.genreIds.orEmpty()).map { movie.toDomain(category, it) } }
+            .flatMapSingle { movie ->
+                getMovieGenres(movie.genreIds.orEmpty()).map { movie.toDomain(category, it) }
+            }
             .toList()
             .map<GetRemoteMovies>(GetRemoteMovies::Success)
             .onErrorReturn {

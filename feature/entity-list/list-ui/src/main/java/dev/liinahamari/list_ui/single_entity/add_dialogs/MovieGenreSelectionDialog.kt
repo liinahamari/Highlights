@@ -3,6 +3,7 @@ package dev.liinahamari.list_ui.single_entity.add_dialogs
 import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
+import dev.liinahamari.api.domain.entities.BookGenre
 import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.core.ext.getSelectedIndices
 
@@ -15,6 +16,19 @@ fun Fragment.showMovieGenreSelectionDialog(
         initialSelection = MovieGenre.values().getSelectedIndices(selected),
         selection = { _: MaterialDialog, _: IntArray, items: List<CharSequence> ->
             genresSelectionCallback.invoke(items.map { it.toString() }.map { MovieGenre.valueOf(it.replace(' ', '_')) })
+        })
+    .positiveButton()
+    .show()
+
+fun Fragment.showBookGenreSelectionDialog(
+    selected: List<BookGenre>,
+    genresSelectionCallback: (List<BookGenre>) -> Unit
+) = MaterialDialog(requireContext())
+    .listItemsMultiChoice(
+        items = BookGenre.values().map { it.name.replace("_", " ") },
+        initialSelection = BookGenre.values().getSelectedIndices(selected),
+        selection = { _: MaterialDialog, _: IntArray, items: List<CharSequence> ->
+            genresSelectionCallback.invoke(items.map { it.toString() }.map { BookGenre.valueOf(it.replace(' ', '_')) })
         })
     .positiveButton()
     .show()

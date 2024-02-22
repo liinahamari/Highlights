@@ -26,6 +26,7 @@ import dev.liinahamari.list_ui.single_entity.EntityType.BOOK
 import dev.liinahamari.list_ui.single_entity.EntityType.DOCUMENTARY
 import dev.liinahamari.list_ui.single_entity.EntityType.GAME
 import dev.liinahamari.list_ui.single_entity.EntityType.MOVIE
+import dev.liinahamari.list_ui.single_entity.add_dialogs.AddBookDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddDocumentaryDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
@@ -88,11 +89,9 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
         fetchEntriesViewModel.findEntityEvent.observe(viewLifecycleOwner) {
             if (it is FetchEntriesViewModel.FindEntityEvent.Success) {
                 when (argumentEntityType) {
-                    BOOK -> showAddBookDialog(
-                        argumentEntityCategory,
-                        saveEntryViewModel::saveBook,
-                        book = it.entry as Book
-                    )
+                    BOOK -> AddBookDialogFragment
+                        .newInstance(argumentEntityCategory)
+                        .show(childFragmentManager, null)
 
                     GAME -> showAddGameDialog(
                         argumentEntityCategory,
@@ -115,8 +114,12 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     private fun setupFab() {
         ui.fab.setOnClickListener {
             when (argumentEntityType) {
-                BOOK -> showAddBookDialog(argumentEntityCategory, saveEntryViewModel::saveBook)
+                BOOK -> AddBookDialogFragment
+                    .newInstance(argumentEntityCategory)
+                    .show(childFragmentManager, null)
+
                 GAME -> showAddGameDialog(argumentEntityCategory, saveEntryViewModel::saveGame)
+
                 MOVIE -> AddMovieDialogFragment
                     .newInstance(argumentEntityCategory)
                     .show(childFragmentManager, null) //todo check if dialog showing
