@@ -22,5 +22,4 @@ class GameRepoImpl @Inject constructor(
                     .map { remoteGame.copy(description = it.description ?: it.descriptionRaw) }
             }
             .toList()
-
 }
