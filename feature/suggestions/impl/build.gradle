@@ -13,6 +13,7 @@ android {
     namespace 'dev.liinahamari.suggestions.impl'
     defaultConfig {
         buildConfigField("String", "TMDB_API_KEY", apikeyProperties['TMDB_API_KEY'])
+        buildConfigField("String", "RAWG_IO_API_KEY", apikeyProperties['RAWG_IO_API_KEY'])
     }
 }
 

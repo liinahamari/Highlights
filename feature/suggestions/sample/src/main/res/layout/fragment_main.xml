@@ -30,4 +30,11 @@
         android:completionThreshold="1"
         android:hint="documentary"
         tools:ignore="HardcodedText" />
+
+    <dev.liinahamari.suggestions_ui.game.SearchGameAutoCompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:completionThreshold="1"
+        android:hint="game"
+        tools:ignore="HardcodedText" />
 </LinearLayout>

@@ -12,12 +12,11 @@ data class Book(
     val description: String
 ) {
     companion object {
-        fun default(category: Category=Category.GOOD) = Book(
+        fun default(category: Category = Category.GOOD) = Book(
             0L, category, 0, "", listOf(), "", listOf(), "", ""
         )
     }
 }
-
 
 enum class BookGenre {
     FICTION,
@@ -39,4 +38,3 @@ enum class BookGenre {
     DYSTOPIAN_FICTION,
     PHILOSOPHY
 }
-

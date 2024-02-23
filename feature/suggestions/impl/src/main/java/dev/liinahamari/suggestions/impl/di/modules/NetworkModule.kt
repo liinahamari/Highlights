@@ -19,10 +19,10 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 private const val BASE_URL_TMDB = "https://api.themoviedb.org/3/"
-private const val BASE_URL_IGDB = "https://api.themoviedb.org/3/"
+private const val BASE_URL_GAMES_DB = "https://api.rawg.io/api/"
 private const val BASE_URL_BDB = "https://openlibrary.org/"
 private const val DEFAULT_TIMEOUT_AMOUNT_IN_SEC = 20L
-private const val CONNECTION_TIMEOUT = "connection_timeout"
+private const val CONNECTION_TIMEOUT_QUALIFIER = "connection_timeout"
 
 @Module
 class NetworkModule {
@@ -32,7 +32,7 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    @Named(CONNECTION_TIMEOUT)
+    @Named(CONNECTION_TIMEOUT_QUALIFIER)
     fun provideConnectionTimeout(): Long = if (BuildConfig.DEBUG) 10L else DEFAULT_TIMEOUT_AMOUNT_IN_SEC
 
     @Singleton
@@ -47,7 +47,7 @@ class NetworkModule {
     @Provides
     fun providesOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        @Named(CONNECTION_TIMEOUT) timeout: Long
+        @Named(CONNECTION_TIMEOUT_QUALIFIER) timeout: Long
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(httpLoggingInterceptor)
         .callTimeout(timeout, TimeUnit.SECONDS)
@@ -94,7 +94,7 @@ class NetworkModule {
         callAdapterFactory: CallAdapter.Factory
     ): SearchGameApi =
         Retrofit.Builder()
-            .baseUrl(BASE_URL_IGDB)
+            .baseUrl(BASE_URL_GAMES_DB)
             .addConverterFactory(converterFactory)
             .addCallAdapterFactory(callAdapterFactory)
             .client(okHttpClient)

@@ -28,6 +28,7 @@ import dev.liinahamari.list_ui.single_entity.EntityType.GAME
 import dev.liinahamari.list_ui.single_entity.EntityType.MOVIE
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddBookDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddDocumentaryDialogFragment
+import dev.liinahamari.list_ui.single_entity.add_dialogs.AddGameDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.DeleteEvent
@@ -93,11 +94,9 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
                         .newInstance(argumentEntityCategory)
                         .show(childFragmentManager, null)
 
-                    GAME -> showAddGameDialog(
-                        argumentEntityCategory,
-                        saveEntryViewModel::saveGame,
-                        game = it.entry as Game
-                    )
+                    GAME -> AddGameDialogFragment
+                        .newInstance(argumentEntityCategory)
+                        .show(childFragmentManager, null)
 
                     MOVIE -> AddMovieDialogFragment
                         .newInstance(argumentEntityCategory)
@@ -118,7 +117,9 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
                     .newInstance(argumentEntityCategory)
                     .show(childFragmentManager, null)
 
-                GAME -> showAddGameDialog(argumentEntityCategory, saveEntryViewModel::saveGame)
+                GAME -> AddGameDialogFragment
+                    .newInstance(argumentEntityCategory)
+                    .show(childFragmentManager, null)
 
                 MOVIE -> AddMovieDialogFragment
                     .newInstance(argumentEntityCategory)
