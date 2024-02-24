@@ -1,6 +1,8 @@
 package dev.liinahamari.list_ui.single_entity
 
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.SubMenu
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -12,11 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.afollestad.materialdialogs.MaterialDialog
-import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Category
-import dev.liinahamari.api.domain.entities.Documentary
-import dev.liinahamari.api.domain.entities.Game
-import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.MainActivity
@@ -33,6 +31,7 @@ import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.DeleteEvent
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
+import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import me.saket.cascade.CascadePopupMenu
@@ -45,6 +44,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     private val fetchEntriesViewModel: FetchEntriesViewModel by viewModels { viewModelFactory }
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
     private val deleteEntryViewModel: DeleteEntryViewModel by viewModels { viewModelFactory }
+    private val moveToOtherCategoryViewModel: MoveToOtherCategoryViewModel by viewModels { viewModelFactory }
 
     private val argumentEntityType: EntityType by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
     private val argumentEntityCategory: Category by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
@@ -85,6 +85,12 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
         fetchEntriesViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
             if (it is FetchEntriesViewModel.FetchAllEvent.Success) {
                 entriesAdapter!!.replaceDataset(it.entries)
+            }
+        }
+        moveToOtherCategoryViewModel.saveEntityEvent.observe(viewLifecycleOwner) {
+            when (it) {
+                is MoveToOtherCategoryViewModel.SaveEntityEvent.Success -> entriesAdapter!!.removeItem(it.adapterPosition)
+                is MoveToOtherCategoryViewModel.SaveEntityEvent.Failure -> toast("Failed to move to other category")
             }
         }
         fetchEntriesViewModel.findEntityEvent.observe(viewLifecycleOwner) {
@@ -140,38 +146,54 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
             }
     }
 
-    override fun onLongClicked(id: Long, clazz: Class<*>, position: Int) {
+    override fun onLongClicked(id: Long, clazz: Class<*>, position: Int) =
         with(CascadePopupMenu(requireContext(), requireView())) {
             menu.apply {
                 MenuCompat.setGroupDividerEnabled(this, true)
 
-                add(getString(R.string.title_edit)).also {
-                    it.setOnMenuItemClickListener {
-                        fetchEntriesViewModel.findEntry(argumentEntityType, argumentEntityCategory, id)
-                        true
-                    }
-                    it.setIcon(R.drawable.baseline_edit_24)
-                }
-                add(getString(R.string.delete)).also {
-                    it.setOnMenuItemClickListener {
-                        MaterialDialog(requireContext())
-                            .message(R.string.sure_to_delete)
-                            .negativeButton(android.R.string.cancel)
-                            .positiveButton {
-                                when (clazz) {
-                                    Book::class.java -> deleteEntryViewModel.deleteBook(id, position)
-                                    Movie::class.java -> deleteEntryViewModel.deleteMovie(id, position)
-                                    Documentary::class.java -> deleteEntryViewModel.deleteDocumentary(id, position)
-                                    Game::class.java -> deleteEntryViewModel.deleteGame(id, position)
-                                    else -> throw IllegalStateException()
-                                }
-                            }.show()
-                        true
-                    }
-                    it.setIcon(R.drawable.baseline_delete_24)
-                }
+                addSubMenu(getString(R.string.move_to)).setupMoveToEntrySubMenu(id, position)
+                add(getString(R.string.title_edit)).setupEditEntry(id)
+                add(getString(R.string.delete)).setupDeleteEntry(id, position, clazz)
             }
             show()
         }
+
+    private fun SubMenu.setupMoveToEntrySubMenu(id: Long, adapterPosition: Int) {
+//        setIcon(R.drawable.move) //todo
+        Category.values() //todo to usecase
+            .toMutableList()
+            .apply { removeIf { it == argumentEntityCategory } }
+            .forEach { category ->
+                add(category.emoji).setOnMenuItemClickListener {
+                    moveToOtherCategoryViewModel.moveToOtherCategory(
+                        adapterPosition = adapterPosition,
+                        id = id,
+                        actualCategory = argumentEntityCategory,
+                        desirableCategory = category,
+                        entityType = argumentEntityType
+                    )
+                    true
+                }
+            }
+    }
+
+    private fun MenuItem.setupEditEntry(id: Long) {
+        setOnMenuItemClickListener {
+            fetchEntriesViewModel.findEntry(argumentEntityType, argumentEntityCategory, id)
+            true
+        }
+        setIcon(R.drawable.baseline_edit_24)
+    }
+
+    private fun MenuItem.setupDeleteEntry(id: Long, position: Int, clazz: Class<*>) {
+        setOnMenuItemClickListener {
+            MaterialDialog(requireContext())
+                .message(R.string.sure_to_delete)
+                .negativeButton(android.R.string.cancel)
+                .positiveButton { deleteEntryViewModel.deleteEntity(id, position, clazz) }
+                .show()
+            true
+        }
+        setIcon(R.drawable.baseline_delete_24)
     }
 }

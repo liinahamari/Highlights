@@ -9,6 +9,7 @@ import dagger.multibindings.IntoMap
 import dev.liinahamari.list_ui.entries_list.EntriesViewModel
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
+import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import javax.inject.Inject
 import javax.inject.Provider
@@ -36,6 +37,11 @@ abstract class ViewModelBuilderModule {
     @IntoMap
     @ViewModelKey(DeleteEntryViewModel::class)
     abstract fun deleteEntryViewModel(viewModel: DeleteEntryViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MoveToOtherCategoryViewModel::class)
+    abstract fun moveToOtherCategoryViewModelViewModel(viewModel: MoveToOtherCategoryViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

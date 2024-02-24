@@ -20,4 +20,5 @@
     <string name="internet_search">Internet Search</string>
     <string name="countries_placeholder">"Countries: %s"</string>
     <string name="years_placeholder">"Year: %d"</string>
+    <string name="move_to">Move to...</string>
 </resources>
