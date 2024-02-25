@@ -27,5 +27,7 @@ enum class GameGenre {
     RTS,
     TPS,
     STRATEGY,
-    SURVIVAL_HORROR
+    SURVIVAL_HORROR,
+    RACING,
+    ACTION
 }

@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Game
+import dev.liinahamari.api.domain.entities.GameGenre
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.MainActivity
@@ -85,12 +86,20 @@ class AddGameDialogFragment : DialogFragment(R.layout.fragment_add_game) {
 
     private fun setupUi() {
         var selectedCountries = listOf<String>()
+        var selectedGenres = listOf<GameGenre>()
 
         ui.countrySelectionBtn.setOnClickListener {
             showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
                 game = game.copy(countryCodes = it)
                 ui.countrySelectionBtn.text = it.toString()
+            }
+        }
+        ui.genreBtn.setOnClickListener {
+            showGameGenreSelectionDialog(selectedGenres) {
+                selectedGenres = it
+                game = game.copy(genres = it)
+                ui.genreBtn.text = it.toString()
             }
         }
 
@@ -112,6 +121,8 @@ class AddGameDialogFragment : DialogFragment(R.layout.fragment_add_game) {
                 )
                 selectedCountries = g.countryCodes
                 ui.countrySelectionBtn.text = g.countryCodes.toString()
+                selectedGenres = g.genres
+                ui.genreBtn.text = g.genres.toString()
             }
         })
     }

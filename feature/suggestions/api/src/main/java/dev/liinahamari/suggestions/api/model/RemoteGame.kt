@@ -122,8 +122,8 @@ fun RemoteGame.toDomain(category: Category, genres: List<GameGenre> = listOf()):
     countryCodes = emptyList(),
     genres = genres,
     name = this.name!!,
-    description = description?:"",
-    posterUrl = backgroundImageUri?:"",
+    description = description ?: "",
+    posterUrl = shortScreenshots?.firstOrNull { it.screenshotImage.isNullOrBlank().not() }?.screenshotImage ?: "",
     year = releasedDate?.substring(0, 4)?.toInt() ?: 0,
     id = 0L
 )

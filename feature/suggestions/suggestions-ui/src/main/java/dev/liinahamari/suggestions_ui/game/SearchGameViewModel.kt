@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import com.example.suggestions.MovieSuggestionsListFactory
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Game
+import dev.liinahamari.api.domain.entities.GameGenre
 import dev.liinahamari.core.SingleLiveEvent
 import dev.liinahamari.suggestions.api.MovieSuggestionsDependencies
 import dev.liinahamari.suggestions.api.model.toDomain
@@ -35,7 +36,15 @@ class SearchGameViewModel(application: Application) : AndroidViewModel(applicati
                         && it.releasedDate.isNullOrBlank().not()
                         && it.id != null
             }
-            .map { it.toDomain(category) }
+            .map {
+                GameGenre.values()
+                    .filter { localGenreName ->
+                        val remoteGenres = it.genres?.map { it.genreName }?.filter { it.isNullOrBlank().not() } ?: emptyList()
+                        remoteGenres.any { localGenreName.name.contains(it!!, true) }
+                    }
+                    .sorted() to it
+            }
+            .map { it.second.toDomain(category).copy(genres = it.first) }
             .toList()
             .map<GetRemoteGames>(GetRemoteGames::Success)
             .doOnError { it.printStackTrace() } //fixme reorder in other viewmodels
