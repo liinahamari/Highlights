@@ -11,9 +11,9 @@ android {
 }
 
 dependencies {
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
-    testImplementation "androidx.paging:paging-common-ktx:3.2.1"
-    implementation "androidx.paging:paging-rxjava3:3.2.1"
-    implementation "com.google.code.gson:gson:2.10"
+    implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
+    testImplementation "androidx.paging:paging-common-ktx:$pagingVersion"
+    implementation "androidx.paging:paging-rxjava3:$pagingVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
     api project(path: ':feature:entity-list:api')
 }

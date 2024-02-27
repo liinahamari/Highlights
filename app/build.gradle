@@ -15,15 +15,14 @@ android {
 setupDefaultModuleConfig(android)
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation "androidx.fragment:fragment-ktx:1.6.1"
+    implementation "androidx.core:core-ktx:$coreKtxVersion"
+    implementation "androidx.appcompat:appcompat:$appcompatKtxVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
 
-    implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
+    implementation "com.github.anrwatchdog:anrwatchdog:$anrWatchDogVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
 
     implementation project(":feature:entity-list:list-ui")
-    implementation project(":feature:db_backup")
 }
