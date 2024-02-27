@@ -11,16 +11,15 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation "androidx.activity:activity-ktx:1.8.0"
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation "androidx.core:core-ktx:$coreKtxVersion"
+    implementation "androidx.activity:activity-ktx:$activityKtxVersion"
+    implementation "com.google.android.material:material:$materialVersion"
     implementation project(":feature:db_backup")
 
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.6'
-    implementation "androidx.room:room-rxjava3:2.6.0"
+    implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
+    implementation "androidx.room:room-rxjava3:$roomVersion"
 
-    def room_version = "2.6.0"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
 }
