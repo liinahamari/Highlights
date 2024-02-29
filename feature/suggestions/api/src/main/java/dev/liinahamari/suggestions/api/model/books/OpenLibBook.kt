@@ -1,4 +1,4 @@
-package dev.liinahamari.suggestions.api.model
+package dev.liinahamari.suggestions.api.model.books
 
 import com.google.gson.annotations.SerializedName
 import dev.liinahamari.api.domain.entities.Book
@@ -14,7 +14,8 @@ const val AUTHOR_NAME = "author_name"
 const val AUTHOR_ALTERNATIVE_NAME = "author_alternative_name"
 const val COVER_EDITION_KEY = "cover_edition_key"
 const val SUBJECT = "subject"
-data class RemoteBook(
+
+data class RemoteOpenLibraryBook(
     @SerializedName(TITLE)
     val title: String,
     @SerializedName(ISBN)
@@ -35,7 +36,7 @@ data class RemoteBook(
     val subject: List<String>
 )
 
-fun RemoteBook.toDomain(category: Category, genres: List<BookGenre> = listOf()): Book =
+fun RemoteOpenLibraryBook.toDomain(category: Category, genres: List<BookGenre> = listOf()): Book =
     Book(
         category = category,
         countryCodes = emptyList(),

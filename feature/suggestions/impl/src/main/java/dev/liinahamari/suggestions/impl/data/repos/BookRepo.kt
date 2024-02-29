@@ -1,17 +1,26 @@
 package dev.liinahamari.suggestions.impl.data.repos
 
-import dev.liinahamari.suggestions.api.model.RemoteBook
-import dev.liinahamari.suggestions.impl.data.apis.SearchBookApi
+import dev.liinahamari.suggestions.api.model.books.RemoteGoogleBook
+import dev.liinahamari.suggestions.api.model.books.RemoteOpenLibraryBook
+import dev.liinahamari.suggestions.impl.data.apis.books.SearchGoogleBooksApi
+import dev.liinahamari.suggestions.impl.data.apis.books.SearchOpenLibraryApi
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 interface BookRepo {
-    fun search(searchParams: String): Single<List<RemoteBook>>
+    fun searchOpenLibrary(searchParams: String): Single<List<RemoteOpenLibraryBook>>
+    fun searchGoogleBooks(searchParams: String): Maybe<List<RemoteGoogleBook>>
 }
 
 class BookRepoImpl @Inject constructor(
-    private val api: SearchBookApi
+    private val gApi: SearchGoogleBooksApi,
+    private val olApi: SearchOpenLibraryApi
 ) : BookRepo {
-    override fun search(searchParams: String): Single<List<RemoteBook>> =
-        api.searchBookByTitle(searchParams).map { it.docs }
+    override fun searchOpenLibrary(searchParams: String): Single<List<RemoteOpenLibraryBook>> =
+        olApi.searchBookByTitle(searchParams).map { it.docs }
+
+    override fun searchGoogleBooks(searchParams: String): Maybe<List<RemoteGoogleBook>> = gApi.getAllBooks(searchParams)
+        .filter { it.remoteGoogleBooks.isNullOrEmpty().not() && it.remoteGoogleBooks!!.filterNotNull().isEmpty().not() }
+        .map { it.remoteGoogleBooks!!.filterNotNull() }
 }

@@ -2,9 +2,10 @@ package dev.liinahamari.suggestions.impl.di.modules
 
 import dagger.Module
 import dagger.Provides
-import dev.liinahamari.suggestions.impl.data.apis.SearchBookApi
+import dev.liinahamari.suggestions.impl.data.apis.books.SearchGoogleBooksApi
 import dev.liinahamari.suggestions.impl.data.apis.SearchGameApi
 import dev.liinahamari.suggestions.impl.data.apis.SearchMovieApi
+import dev.liinahamari.suggestions.impl.data.apis.books.SearchOpenLibraryApi
 import dev.liinahamari.suggestions.impl.data.db.MovieGenreDao
 import dev.liinahamari.suggestions.impl.data.repos.BookRepo
 import dev.liinahamari.suggestions.impl.data.repos.BookRepoImpl
@@ -22,7 +23,7 @@ class RepoModule {
 
     @Singleton
     @Provides
-    fun provideBookRepo(api: SearchBookApi): BookRepo = BookRepoImpl(api)
+    fun provideBookRepo(gApi: SearchGoogleBooksApi, olApi: SearchOpenLibraryApi): BookRepo = BookRepoImpl(gApi, olApi)
 
     @Singleton
     @Provides

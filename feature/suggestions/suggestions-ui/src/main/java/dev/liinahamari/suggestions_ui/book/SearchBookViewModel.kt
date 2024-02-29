@@ -8,7 +8,7 @@ import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.SingleLiveEvent
 import dev.liinahamari.suggestions.api.MovieSuggestionsDependencies
-import dev.liinahamari.suggestions.api.model.toDomain
+import dev.liinahamari.suggestions.api.model.books.toDomain
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -28,12 +28,14 @@ class SearchBookViewModel(application: Application) : AndroidViewModel(applicati
     private val searchBookUseCase by lazy { api.searchBookUseCase }
 
     fun searchBook(query: String, category: Category): Observable<GetRemoteBooks> =
-        searchBookUseCase.search(query)
+        searchBookUseCase.searchGoogleBooks(query)
             .flatMapObservable { Observable.fromIterable(it) }
+            .filter { it.volumeInfo != null }
             .filter {
-                (it.title.isBlank() || it.title == "null").not()
-                        && it.firstPublishYear != 0
-                        && it.authorName.isNullOrEmpty().not() && it.authorName!!.first().isNullOrBlank().not()
+                (it.volumeInfo!!.title.isNullOrBlank() || it.volumeInfo!!.title == "null").not()
+                        && it.volumeInfo!!.publishedDate.isNullOrBlank().not()
+                        && it.volumeInfo!!.authors.isNullOrEmpty().not() && it.volumeInfo!!.authors!!.first()
+                    .isNullOrBlank().not()
             }
             .map { it.toDomain(category) }
             .toList()

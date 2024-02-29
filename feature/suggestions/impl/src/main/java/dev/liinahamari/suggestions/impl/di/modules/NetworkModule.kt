@@ -3,9 +3,10 @@ package dev.liinahamari.suggestions.impl.di.modules
 import dagger.Module
 import dagger.Provides
 import dev.liinahamari.suggestions.impl.BuildConfig
-import dev.liinahamari.suggestions.impl.data.apis.SearchBookApi
+import dev.liinahamari.suggestions.impl.data.apis.books.SearchGoogleBooksApi
 import dev.liinahamari.suggestions.impl.data.apis.SearchGameApi
 import dev.liinahamari.suggestions.impl.data.apis.SearchMovieApi
+import dev.liinahamari.suggestions.impl.data.apis.books.SearchOpenLibraryApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
@@ -20,9 +21,10 @@ import javax.inject.Singleton
 
 private const val BASE_URL_TMDB = "https://api.themoviedb.org/3/"
 private const val BASE_URL_GAMES_DB = "https://api.rawg.io/api/"
-private const val BASE_URL_BDB = "https://openlibrary.org/"
+private const val BASE_URL_OPEN_LIBRARY = "https://openlibrary.org/"
 private const val DEFAULT_TIMEOUT_AMOUNT_IN_SEC = 20L
 private const val CONNECTION_TIMEOUT_QUALIFIER = "connection_timeout"
+private const val GOOGLE_BOOKS_BASE_URL = "https://www.googleapis.com/books/v1/"
 
 @Module
 class NetworkModule {
@@ -73,18 +75,33 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun providesBookApiService(
+    fun providesGoogleBookApiService(
         okHttpClient: OkHttpClient,
         converterFactory: Converter.Factory,
         callAdapterFactory: CallAdapter.Factory
-    ): SearchBookApi =
+    ): SearchGoogleBooksApi =
         Retrofit.Builder()
-            .baseUrl(BASE_URL_BDB)
+            .baseUrl(GOOGLE_BOOKS_BASE_URL)
             .addConverterFactory(converterFactory)
             .addCallAdapterFactory(callAdapterFactory)
             .client(okHttpClient)
             .build()
-            .create(SearchBookApi::class.java)
+            .create(SearchGoogleBooksApi::class.java)
+
+    @Singleton
+    @Provides
+    fun providesOpenLibraryBookApiService(
+        okHttpClient: OkHttpClient,
+        converterFactory: Converter.Factory,
+        callAdapterFactory: CallAdapter.Factory
+    ): SearchOpenLibraryApi =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL_OPEN_LIBRARY)
+            .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(callAdapterFactory)
+            .client(okHttpClient)
+            .build()
+            .create(SearchOpenLibraryApi::class.java)
 
     @Singleton
     @Provides

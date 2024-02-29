@@ -7,6 +7,10 @@ plugins {
 
 android {
     namespace 'dev.liinahamari.highlights'
+
+    defaultConfig {
+        applicationId = "dev.liinahamari.highlights"
+    }
     buildFeatures {
         viewBinding true
     }
