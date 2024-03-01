@@ -17,7 +17,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.list_ui.MainActivity
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentCategoryBinding
 import dev.liinahamari.list_ui.single_entity.EntityType.BOOK

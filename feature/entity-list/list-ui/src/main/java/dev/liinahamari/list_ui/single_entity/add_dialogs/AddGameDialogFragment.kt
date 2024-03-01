@@ -17,7 +17,7 @@ import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.GameGenre
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.list_ui.MainActivity
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentAddGameBinding
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel

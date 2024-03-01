@@ -1,26 +1,38 @@
-package dev.liinahamari.list_ui
+package dev.liinahamari.list_ui.activities
 
 import android.app.Application
 import android.content.Intent
-import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.seismic.ShakeDetector
 import dev.liinahamari.api.EntityListDependencies
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.getCurrentFragment
+import dev.liinahamari.core.ext.sensorManager
 import dev.liinahamari.entity_list.EntityListFactory.getApi
+import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.ActivityMainBinding
 import dev.liinahamari.list_ui.di.DaggerListUiComponent
 import dev.liinahamari.list_ui.di.ListUiComponent
 import dev.liinahamari.list_ui.tabs.SectionsPagerAdapter
+import dev.liinahamari.list_ui.viewmodels.MainActivityViewModel
+import javax.inject.Inject
+
+internal const val RETURN_CODE_SUCCESS = 100
 
 class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Listener {
     private val ui by viewBinding(ActivityMainBinding::bind)
     private val adapter = SectionsPagerAdapter(this)
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: MainActivityViewModel by viewModels { viewModelFactory }
+
     internal lateinit var listUiComponent: ListUiComponent
 
     private var shakeDetector: ShakeDetector? = null
@@ -30,6 +42,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
             override val application: Application
                 get() = getApplication()
         }))
+        listUiComponent.inject(this)
         shakeDetector = ShakeDetector(this)
         super.onCreate(savedInstanceState)
 
@@ -62,14 +75,23 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
 
     override fun onResume() {
         super.onResume()
-        shakeDetector!!.start(getSystemService(SENSOR_SERVICE) as SensorManager)
+        shakeDetector!!.start(sensorManager)
     }
 
-    override fun hearShake() = startActivity(Intent(this, SummaryActivity::class.java))
-}
+    override fun hearShake() {
+        if (viewModel.getShaked().not()) {
+            viewModel.setShaked(true)
+            summaryActivityWithResult.launch(Intent(this, SummaryActivity::class.java))
+        }
+    }
 
-interface OnBackPressedListener {
-    fun onBackPressed()
-}
+    private val summaryActivityWithResult = registerForActivityResult(StartActivityForResult()) { res: ActivityResult ->
+        if (res.resultCode == RETURN_CODE_SUCCESS) {
+            viewModel.setShaked(false)
+        }
+    }
 
-class SummaryActivity : AppCompatActivity(R.layout.activity_summary)
+    interface OnBackPressedListener {
+        fun onBackPressed()
+    }
+}

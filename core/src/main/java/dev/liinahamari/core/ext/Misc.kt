@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -68,3 +69,5 @@ val Fragment.contentResolver: ContentResolver
 
 val Context.layoutInflater: LayoutInflater
     get() = getSystemService(Activity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+val Context.sensorManager: SensorManager
+    get() = getSystemService(AppCompatActivity.SENSOR_SERVICE) as SensorManager

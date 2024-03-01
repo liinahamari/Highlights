@@ -5,7 +5,7 @@ import dev.liinahamari.api.domain.entities.BookGenre
 import dev.liinahamari.api.domain.entities.Category
 
 data class BooksResource(
-    val remoteGoogleBooks: List<RemoteGoogleBook?>?,
+    val items: List<RemoteGoogleBook?>?,
     val kind: String?,
     val totalItems: Int?
 )
@@ -110,7 +110,7 @@ fun RemoteGoogleBook.toDomain(category: Category, genres: List<BookGenre> = list
         genres = genres,
         name = volumeInfo!!.title!!,
         description = volumeInfo.description?:"",
-        posterUrl = volumeInfo.imageLinks?.thumbnail ?: "",
+        posterUrl = volumeInfo.imageLinks?.thumbnail?.replaceFirst("http", "https") ?: "",
         year = volumeInfo.publishedDate?.substring(0, 4)?.toInt() ?: 0,
         author = volumeInfo.authors?.joinToString() ?: ""
     )

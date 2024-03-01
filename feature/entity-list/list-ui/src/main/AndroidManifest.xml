@@ -10,7 +10,7 @@
         android:theme="@style/Theme.Highlights"
         tools:targetApi="31">
 
-        <activity android:name=".SummaryActivity"
+        <activity android:name=".activities.SummaryActivity"
             android:theme="@style/Theme.Material3.Dark.NoActionBar"
             android:exported="false"/>
     </application>

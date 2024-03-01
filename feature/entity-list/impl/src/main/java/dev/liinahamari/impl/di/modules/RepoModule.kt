@@ -2,6 +2,7 @@ package dev.liinahamari.impl.di.modules
 
 import dagger.Binds
 import dagger.Module
+import dev.liinahamari.api.domain.ShakeCounterRepo
 import dev.liinahamari.impl.data.repos.BooksRepo
 import dev.liinahamari.impl.data.repos.BooksRepoImpl
 import dev.liinahamari.impl.data.repos.DocumentariesRepo
@@ -10,6 +11,7 @@ import dev.liinahamari.impl.data.repos.GamesRepo
 import dev.liinahamari.impl.data.repos.GamesRepoImpl
 import dev.liinahamari.impl.data.repos.MoviesRepo
 import dev.liinahamari.impl.data.repos.MoviesRepoImpl
+import dev.liinahamari.impl.data.repos.ShakeCounterRepoImpl
 import javax.inject.Singleton
 
 @Module
@@ -29,4 +31,7 @@ interface RepoModule {
     @Binds
     @Singleton
     fun booksRepo(impl: BooksRepoImpl): BooksRepo
+
+    @Binds
+    fun shakeCounterRepo(impl: ShakeCounterRepoImpl): ShakeCounterRepo
 }

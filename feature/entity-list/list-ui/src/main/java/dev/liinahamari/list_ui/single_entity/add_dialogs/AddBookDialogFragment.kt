@@ -17,7 +17,7 @@ import dev.liinahamari.api.domain.entities.BookGenre
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.list_ui.MainActivity
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentAddBookBinding
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel

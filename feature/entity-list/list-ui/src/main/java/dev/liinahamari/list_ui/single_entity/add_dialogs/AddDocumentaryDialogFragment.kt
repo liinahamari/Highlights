@@ -18,7 +18,7 @@ import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.list_ui.MainActivity
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentAddDocumentaryBinding
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel

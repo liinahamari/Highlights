@@ -5,12 +5,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.getParcelableOf
-import dev.liinahamari.list_ui.OnBackPressedListener
 import dev.liinahamari.list_ui.R
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.entries_list.EntriesFragment
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 
-class ViewPagerPlaceholderFragment : Fragment(R.layout.fragment_main), OnBackPressedListener {
+class ViewPagerPlaceholderFragment : Fragment(R.layout.fragment_main), MainActivity.OnBackPressedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         childFragmentManager.beginTransaction()

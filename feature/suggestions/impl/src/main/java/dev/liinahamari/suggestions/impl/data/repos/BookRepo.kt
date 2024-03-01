@@ -21,6 +21,6 @@ class BookRepoImpl @Inject constructor(
         olApi.searchBookByTitle(searchParams).map { it.docs }
 
     override fun searchGoogleBooks(searchParams: String): Maybe<List<RemoteGoogleBook>> = gApi.getAllBooks(searchParams)
-        .filter { it.remoteGoogleBooks.isNullOrEmpty().not() && it.remoteGoogleBooks!!.filterNotNull().isEmpty().not() }
-        .map { it.remoteGoogleBooks!!.filterNotNull() }
+        .filter { it.items.isNullOrEmpty().not() && it.items!!.filterNotNull().isEmpty().not() }
+        .map { it.items?.filterNotNull()?: emptyList() }
 }
