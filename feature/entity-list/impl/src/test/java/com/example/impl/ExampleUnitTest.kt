@@ -1,5 +1,6 @@
 package com.example.impl
 
+import dev.liinahamari.impl.domain.RestoreDatabaseUseCaseImpl
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -12,6 +13,7 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
+        RestoreDatabaseUseCaseImpl(mock(), mock())
         assertEquals(4, 2 + 2)
     }
 }
