@@ -2,17 +2,14 @@ package dev.liinahamari.list_ui.single_entity.add_dialogs
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.core.ext.getParcelableOf
-import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentAddMovieBinding
-import dev.liinahamari.list_ui.viewmodels.SaveEvent
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView
 
@@ -43,22 +40,9 @@ class AddMovieDialogFragment : GenericAddFragment(R.layout.fragment_add_movie) {
         _ui = null
     }
 
-    private fun setupViewModelSubscriptions() = saveEntryViewModel.saveEvent.observe(this) {
-        when (it) {
-            is SaveEvent.Failure -> toast("Failed to save movie")
-            is SaveEvent.Success -> requireActivity().supportFragmentManager.popBackStackImmediate()
-        }
-    }
+    override fun getDialogCustomView() = FragmentAddMovieBinding.inflate(layoutInflater).also { _ui = it }.root
 
-    override fun setupUi() {
-        setupSelectionDialogs()
-        setupTextChangedListeners()
-        setupTitleEditText()
-    }
-
-    override fun getDialogCustomView() = (FragmentAddMovieBinding.inflate(layoutInflater)).also { _ui = it }.root
-
-    private fun setupTitleEditText() {
+    override fun setupTitleEditText() {
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchMovieAutoCompleteTextView.MovieObserver {
             override fun onChosen(mov: Movie) {
@@ -74,7 +58,7 @@ class AddMovieDialogFragment : GenericAddFragment(R.layout.fragment_add_movie) {
         })
     }
 
-    private fun setupSelectionDialogs() {
+    override fun setupSelectionDialogs() {
         ui.countrySelectionBtn.setOnClickListener {
             showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
@@ -91,7 +75,7 @@ class AddMovieDialogFragment : GenericAddFragment(R.layout.fragment_add_movie) {
         }
     }
 
-    private fun setupTextChangedListeners() {
+    override fun setupTextChangedListeners() {
         ui.yearEt.addTextChangedListener { movie = movie.copy(year = it.toString().toInt()) }
         ui.posterUrlEt.addTextChangedListener { movie = movie.copy(posterUrl = it.toString()) }
         if (preferenceRepo.suggestionsEnabled.not()) {

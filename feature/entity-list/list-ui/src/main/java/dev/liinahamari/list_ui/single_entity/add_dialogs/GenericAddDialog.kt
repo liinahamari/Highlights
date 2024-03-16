@@ -40,6 +40,16 @@ abstract class GenericAddFragment(@LayoutRes val layout: Int) : DialogFragment(l
         setupViewModelSubscriptions()
     }
 
+    private fun setupUi() {
+        setupTextChangedListeners()
+        setupSelectionDialogs()
+        setupTitleEditText()
+    }
+
+    abstract fun setupTitleEditText()
+    abstract fun setupSelectionDialogs()
+    abstract fun setupTextChangedListeners()
+
     private fun setupViewModelSubscriptions() = saveEntryViewModel.saveEvent.observe(this) {
         when (it) {
             is SaveEvent.Failure -> toast("Failed to save book")
@@ -62,7 +72,6 @@ abstract class GenericAddFragment(@LayoutRes val layout: Int) : DialogFragment(l
             }
         }
 
-    abstract fun setupUi()
     abstract fun getDialogCustomView(): LinearLayout
     abstract fun onSaveButtonClicked(): OnClickListener
     abstract fun webSearchQuery(): String

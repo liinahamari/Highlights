@@ -27,7 +27,7 @@ class AddDocumentaryDialogFragment : GenericAddFragment(R.layout.fragment_add_do
         }
     }
 
-    override fun getDialogCustomView() = (FragmentAddDocumentaryBinding.inflate(layoutInflater)).also { _ui = it }.root
+    override fun getDialogCustomView() = FragmentAddDocumentaryBinding.inflate(layoutInflater).also { _ui = it }.root
     override fun onSaveButtonClicked() = OnClickListener { _, _ -> saveEntryViewModel.saveDocumentary(documentary) }
     override fun webSearchQuery(): String = ui.titleEt.text.toString() + " documentary (${ui.yearEt.text})"
 
@@ -36,13 +36,7 @@ class AddDocumentaryDialogFragment : GenericAddFragment(R.layout.fragment_add_do
         _ui = null
     }
 
-    override fun setupUi() {
-        setupTextChangedListeners()
-        setupCountriesSelectionDialog()
-        setupTitleEditText()
-    }
-
-    private fun setupTitleEditText() {
+    override fun setupTitleEditText() {
         ui.titleEt.isSuggestionsEnabled = preferenceRepo.suggestionsEnabled
 
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
@@ -65,7 +59,7 @@ class AddDocumentaryDialogFragment : GenericAddFragment(R.layout.fragment_add_do
         })
     }
 
-    private fun setupCountriesSelectionDialog() {
+    override fun setupSelectionDialogs() {
         ui.countrySelectionBtn.setOnClickListener {
             showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
@@ -75,7 +69,7 @@ class AddDocumentaryDialogFragment : GenericAddFragment(R.layout.fragment_add_do
         }
     }
 
-    private fun setupTextChangedListeners() {
+    override fun setupTextChangedListeners() {
         ui.yearEt.addTextChangedListener { documentary = documentary.copy(year = it.toString().toInt()) }
         ui.posterUrlEt.addTextChangedListener { documentary = documentary.copy(posterUrl = it.toString()) }
         if (preferenceRepo.suggestionsEnabled.not()) {

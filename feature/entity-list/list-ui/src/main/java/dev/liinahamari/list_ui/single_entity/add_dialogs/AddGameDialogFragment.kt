@@ -1,14 +1,13 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
-import android.content.Context
 import android.content.DialogInterface.OnClickListener
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.GameGenre
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.list_ui.R
-import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentAddGameBinding
 import dev.liinahamari.suggestions_ui.game.SearchGameAutoCompleteTextView
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
@@ -28,23 +27,12 @@ class AddGameDialogFragment : GenericAddFragment(R.layout.fragment_add_game) {
         }
     }
 
-    override fun onAttach(context: Context) {
-        (requireActivity() as MainActivity).listUiComponent.inject(this)
-        super.onAttach(context)
-    }
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         _ui = null
     }
 
-    override fun setupUi() {
-        setupSelectionDialogs()
-        setupTitleEditText()
-    }
-
-    private fun setupTitleEditText() {
+    override fun setupTitleEditText() {
         ui.titleEt.isSuggestionsEnabled = preferenceRepo.suggestionsEnabled
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchGameAutoCompleteTextView.GameObserver {
@@ -53,7 +41,6 @@ class AddGameDialogFragment : GenericAddFragment(R.layout.fragment_add_game) {
                 ui.posterUrlEt.setText(g.posterUrl)
 
                 game = Game(
-                    id = 0L,
                     category = g.category,
                     year = g.year,
                     posterUrl = g.posterUrl,
@@ -70,7 +57,7 @@ class AddGameDialogFragment : GenericAddFragment(R.layout.fragment_add_game) {
         })
     }
 
-    private fun setupSelectionDialogs() {
+    override fun setupSelectionDialogs() {
         ui.countrySelectionBtn.setOnClickListener {
             showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
@@ -87,7 +74,15 @@ class AddGameDialogFragment : GenericAddFragment(R.layout.fragment_add_game) {
         }
     }
 
-    override fun getDialogCustomView() = (FragmentAddGameBinding.inflate(layoutInflater)).also { _ui = it }.root
+    override fun setupTextChangedListeners() {
+        ui.yearEt.addTextChangedListener { game = game.copy(year = it.toString().toInt()) }
+        ui.posterUrlEt.addTextChangedListener { game = game.copy(posterUrl = it.toString()) }
+        if (preferenceRepo.suggestionsEnabled.not()) {
+            ui.titleEt.addTextChangedListener { game = game.copy(name = it.toString()) }
+        }
+    }
+
+    override fun getDialogCustomView() = FragmentAddGameBinding.inflate(layoutInflater).also { _ui = it }.root
     override fun onSaveButtonClicked(): OnClickListener = OnClickListener { _, _ -> saveEntryViewModel.saveGame(game) }
     override fun webSearchQuery(): String = ui.titleEt.text.toString() + " video game (${ui.yearEt.text})"
 }

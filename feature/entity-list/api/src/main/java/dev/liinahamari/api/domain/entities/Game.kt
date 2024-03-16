@@ -1,7 +1,7 @@
 package dev.liinahamari.api.domain.entities
 
 data class Game(
-    val id: Long,
+    val id: Long = 0L,
     val category: Category,
     val year: Int,
     val posterUrl: String,

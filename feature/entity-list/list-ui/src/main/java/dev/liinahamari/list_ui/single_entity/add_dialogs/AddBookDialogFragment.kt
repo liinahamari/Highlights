@@ -28,20 +28,14 @@ class AddBookDialogFragment : GenericAddFragment(R.layout.fragment_add_book) {
 
     override fun onSaveButtonClicked() = OnClickListener { _, _ -> saveEntryViewModel.saveBook(book) }
     override fun webSearchQuery(): String = ui.titleEt.text.toString() + " book (${ui.yearEt.text})"
-    override fun getDialogCustomView() = (FragmentAddBookBinding.inflate(layoutInflater)).also { _ui = it }.root
+    override fun getDialogCustomView() = FragmentAddBookBinding.inflate(layoutInflater).also { _ui = it }.root
 
     override fun onDestroyView() {
         super.onDestroyView()
         _ui = null
     }
 
-    override fun setupUi() {
-        setupTextChangedListeners()
-        setupChoiceDialogsListeners()
-        setupTitleEditText()
-    }
-
-    private fun setupTitleEditText() {
+    override fun setupTitleEditText() {
         ui.titleEt.isSuggestionsEnabled = preferenceRepo.suggestionsEnabled
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchBookAutoCompleteTextView.BookObserver {
@@ -65,7 +59,7 @@ class AddBookDialogFragment : GenericAddFragment(R.layout.fragment_add_book) {
         })
     }
 
-    private fun setupChoiceDialogsListeners() {
+    override fun setupSelectionDialogs() {
         ui.countrySelectionBtn.setOnClickListener {
             showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
@@ -82,7 +76,7 @@ class AddBookDialogFragment : GenericAddFragment(R.layout.fragment_add_book) {
         }
     }
 
-    private fun setupTextChangedListeners() {
+    override fun setupTextChangedListeners() {
         ui.authorEt.addTextChangedListener { book = book.copy(author = it.toString()) }
         ui.yearEt.addTextChangedListener { book = book.copy(year = it.toString().toInt()) }
         ui.posterUrlEt.addTextChangedListener { book = book.copy(posterUrl = it.toString()) }
