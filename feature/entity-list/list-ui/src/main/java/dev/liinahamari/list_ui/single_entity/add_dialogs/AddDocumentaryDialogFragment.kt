@@ -1,43 +1,25 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
-import android.app.Dialog
-import android.app.SearchManager.QUERY
-import android.content.Context
-import android.content.DialogInterface.BUTTON_NEUTRAL
-import android.content.Intent
-import android.content.Intent.ACTION_WEB_SEARCH
+import android.content.DialogInterface.OnClickListener
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.core.widget.addTextChangedListener
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.Movie
-import dev.liinahamari.api.domain.repo.PreferencesRepo
 import dev.liinahamari.core.ext.getParcelableOf
-import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.R
-import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentAddDocumentaryBinding
-import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
-import dev.liinahamari.list_ui.viewmodels.SaveEvent
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView
-import javax.inject.Inject
 
-//todo ancestor AddEntityFragment
-class AddDocumentaryDialogFragment : DialogFragment(R.layout.fragment_add_documentary) {
+class AddDocumentaryDialogFragment : GenericAddFragment(R.layout.fragment_add_documentary) {
     private var _ui: FragmentAddDocumentaryBinding? = null
     private val ui: FragmentAddDocumentaryBinding by lazy { _ui!! }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var preferenceRepo: PreferencesRepo
-    private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
-
     private var documentary = Documentary.default(Category.GOOD)
+    private var selectedCountries = listOf<String>()
 
     companion object {
         fun newInstance(category: Category): AddDocumentaryDialogFragment = AddDocumentaryDialogFragment().apply {
@@ -45,57 +27,23 @@ class AddDocumentaryDialogFragment : DialogFragment(R.layout.fragment_add_docume
         }
     }
 
-    override fun onAttach(context: Context) {
-        (requireActivity() as MainActivity).listUiComponent.inject(this)
-        super.onAttach(context)
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext())
-        .setView((FragmentAddDocumentaryBinding.inflate(layoutInflater)).also { _ui = it }.root)
-        .setNeutralButton(R.string.internet_search) { _, _ -> }
-        .setPositiveButton(R.string.save) { _, _ -> saveEntryViewModel.saveDocumentary(documentary) }
-        .create()
-        .apply {
-            setOnShowListener {
-                (dialog as AlertDialog).getButton(BUTTON_NEUTRAL)
-                    .setOnClickListener {
-                        startActivity(
-                            Intent(ACTION_WEB_SEARCH)
-                                .putExtra(QUERY, ui.titleEt.text.toString() + " documentary (${ui.yearEt.text})")
-                        )
-                    }
-            }
-        }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupUi()
-        setupViewModelSubscriptions()
-    }
+    override fun getDialogCustomView() = (FragmentAddDocumentaryBinding.inflate(layoutInflater)).also { _ui = it }.root
+    override fun onSaveButtonClicked() = OnClickListener { _, _ -> saveEntryViewModel.saveDocumentary(documentary) }
+    override fun webSearchQuery(): String = ui.titleEt.text.toString() + " documentary (${ui.yearEt.text})"
 
     override fun onDestroyView() {
         super.onDestroyView()
         _ui = null
     }
 
-    private fun setupViewModelSubscriptions() = saveEntryViewModel.saveEvent.observe(this) {
-        when (it) {
-            is SaveEvent.Failure -> toast("Failed to save documentary")
-            is SaveEvent.Success -> requireActivity().supportFragmentManager.popBackStackImmediate()
-        }
+    override fun setupUi() {
+        setupTextChangedListeners()
+        setupCountriesSelectionDialog()
+        setupTitleEditText()
     }
 
-    private fun setupUi() {
-        var selectedCountries = listOf<String>()
-
+    private fun setupTitleEditText() {
         ui.titleEt.isSuggestionsEnabled = preferenceRepo.suggestionsEnabled
-        ui.countrySelectionBtn.setOnClickListener {
-            showCountrySelectionDialog(selectedCountries) {
-                selectedCountries = it
-                documentary = documentary.copy(countryCodes = it)
-                ui.countrySelectionBtn.text = it.toString()
-            }
-        }
 
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchMovieAutoCompleteTextView.MovieObserver {
@@ -104,7 +52,6 @@ class AddDocumentaryDialogFragment : DialogFragment(R.layout.fragment_add_docume
                 ui.posterUrlEt.setText(mov.posterUrl)
 
                 documentary = Documentary(
-                    id = 0L,//todo check in DB viewer
                     category = mov.category,
                     year = mov.year,
                     posterUrl = mov.posterUrl,
@@ -116,6 +63,24 @@ class AddDocumentaryDialogFragment : DialogFragment(R.layout.fragment_add_docume
                 ui.countrySelectionBtn.text = mov.countryCodes.toString()
             }
         })
+    }
+
+    private fun setupCountriesSelectionDialog() {
+        ui.countrySelectionBtn.setOnClickListener {
+            showCountrySelectionDialog(selectedCountries) {
+                selectedCountries = it
+                documentary = documentary.copy(countryCodes = it)
+                ui.countrySelectionBtn.text = it.toString()
+            }
+        }
+    }
+
+    private fun setupTextChangedListeners() {
+        ui.yearEt.addTextChangedListener { documentary = documentary.copy(year = it.toString().toInt()) }
+        ui.posterUrlEt.addTextChangedListener { documentary = documentary.copy(posterUrl = it.toString()) }
+        if (preferenceRepo.suggestionsEnabled.not()) {
+            ui.titleEt.addTextChangedListener { documentary = documentary.copy(name = it.toString()) }
+        }
     }
 }
 

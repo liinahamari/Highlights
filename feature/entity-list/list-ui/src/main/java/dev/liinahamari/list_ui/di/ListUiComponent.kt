@@ -5,10 +5,7 @@ import dev.liinahamari.api.EntityListApi
 import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.entries_list.EntriesFragment
 import dev.liinahamari.list_ui.single_entity.EntryFragment
-import dev.liinahamari.list_ui.single_entity.add_dialogs.AddBookDialogFragment
-import dev.liinahamari.list_ui.single_entity.add_dialogs.AddDocumentaryDialogFragment
-import dev.liinahamari.list_ui.single_entity.add_dialogs.AddGameDialogFragment
-import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
+import dev.liinahamari.list_ui.single_entity.add_dialogs.GenericAddFragment
 import javax.inject.Singleton
 
 @Component(
@@ -22,11 +19,8 @@ internal interface ListUiComponent {
         fun create(dependencies: EntityListApi): ListUiComponent
     }
 
-    fun inject(fragment: AddDocumentaryDialogFragment)
     fun inject(fragment: EntriesFragment)
     fun inject(activity: MainActivity)
     fun inject(fragment: EntryFragment)
-    fun inject(fragment: AddBookDialogFragment)
-    fun inject(fragment: AddMovieDialogFragment)
-    fun inject(fragment: AddGameDialogFragment)
+    fun inject(fragment: GenericAddFragment)
 }
