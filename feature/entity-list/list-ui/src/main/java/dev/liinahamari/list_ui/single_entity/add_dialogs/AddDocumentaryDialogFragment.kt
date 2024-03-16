@@ -16,10 +16,11 @@ import androidx.lifecycle.ViewModelProvider
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.Movie
+import dev.liinahamari.api.domain.repo.PreferencesRepo
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.R
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentAddDocumentaryBinding
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEvent
@@ -33,6 +34,7 @@ class AddDocumentaryDialogFragment : DialogFragment(R.layout.fragment_add_docume
     private val ui: FragmentAddDocumentaryBinding by lazy { _ui!! }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var preferenceRepo: PreferencesRepo
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
 
     private var documentary = Documentary.default(Category.GOOD)
@@ -86,6 +88,7 @@ class AddDocumentaryDialogFragment : DialogFragment(R.layout.fragment_add_docume
     private fun setupUi() {
         var selectedCountries = listOf<String>()
 
+        ui.titleEt.isSuggestionsEnabled = preferenceRepo.suggestionsEnabled
         ui.countrySelectionBtn.setOnClickListener {
             showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it

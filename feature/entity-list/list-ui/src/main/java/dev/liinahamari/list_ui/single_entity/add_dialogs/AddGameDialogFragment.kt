@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.GameGenre
+import dev.liinahamari.api.domain.repo.PreferencesRepo
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.activities.MainActivity
@@ -31,6 +32,7 @@ class AddGameDialogFragment : DialogFragment(R.layout.fragment_add_game) {
     private val ui: FragmentAddGameBinding by lazy { _ui!! }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var preferenceRepo: PreferencesRepo
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
 
     private var game = Game.default()
@@ -103,6 +105,7 @@ class AddGameDialogFragment : DialogFragment(R.layout.fragment_add_game) {
             }
         }
 
+        ui.titleEt.isSuggestionsEnabled = preferenceRepo.suggestionsEnabled
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchGameAutoCompleteTextView.GameObserver {
             override fun onChosen(g: Game) {

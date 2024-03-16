@@ -49,4 +49,5 @@ dependencies {
     implementation project(":feature:summary:summary-ui")
 
     implementation "com.github.cachapa:ExpandableLayout:$expandableLayoutVersion"
+    implementation "androidx.preference:preference-ktx:$preferencesVersion"
 }

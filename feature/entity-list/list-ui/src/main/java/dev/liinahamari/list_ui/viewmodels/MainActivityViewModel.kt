@@ -1,7 +1,7 @@
 package dev.liinahamari.list_ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import dev.liinahamari.api.domain.ShakeCounterRepo
+import dev.liinahamari.api.domain.repo.ShakeCounterRepo
 import javax.inject.Inject
 
 class MainActivityViewModel @Inject constructor(

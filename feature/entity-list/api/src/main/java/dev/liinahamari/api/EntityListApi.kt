@@ -1,6 +1,7 @@
 package dev.liinahamari.api
 
-import dev.liinahamari.api.domain.ShakeCounterRepo
+import dev.liinahamari.api.domain.repo.PreferencesRepo
+import dev.liinahamari.api.domain.repo.ShakeCounterRepo
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
 import dev.liinahamari.api.domain.usecases.RestoreDatabaseUseCase
 import dev.liinahamari.api.domain.usecases.SaveDatabaseUseCase
@@ -38,6 +39,7 @@ interface EntityListApi {
 
     val databaseCountersUseCase: DatabaseCountersUseCase
     val shakeCounterRepo: ShakeCounterRepo
+    val prefRepo: PreferencesRepo
 
     companion object
 }

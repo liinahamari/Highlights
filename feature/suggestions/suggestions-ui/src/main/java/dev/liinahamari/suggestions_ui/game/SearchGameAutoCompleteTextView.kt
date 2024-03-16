@@ -11,6 +11,7 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Game
+import dev.liinahamari.api.domain.repo.PreferencesRepo
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.suggestions_ui.PicturedArrayAdapter
 import dev.liinahamari.suggestions_ui.SuggestionUi
@@ -26,6 +27,7 @@ class SearchGameAutoCompleteTextView @JvmOverloads constructor(
     private val viewModel by lazy { ViewModelProvider(findViewTreeViewModelStoreOwner()!!).get<SearchGameViewModel>() }
     private val suggestionsAdapter: PicturedArrayAdapter by lazy { PicturedArrayAdapter(context) }
     private val disposable = CompositeDisposable()
+    private var suggestionsEnabled = true
     var categoryArg: Category = Category.GOOD //fixme actual
 
     private lateinit var bookObserver: GameObserver
@@ -34,17 +36,25 @@ class SearchGameAutoCompleteTextView @JvmOverloads constructor(
         this.bookObserver = bo
     }
 
+    fun setSuggestionsEnabled(suggestionsEnabled: Boolean) {
+        this.suggestionsEnabled = suggestionsEnabled
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        setAdapter(suggestionsAdapter)
-        disposable.add(textChanges()
-            .filter { it.isBlank().not() }
-            .map { it.toString() }
-            .throttleLast(1300, TimeUnit.MILLISECONDS)
-            .switchMap(::searchGame)
-            .subscribe())
+        if (suggestionsEnabled) {
+            setAdapter(suggestionsAdapter)
+            disposable.add(textChanges()
+                .filter { it.isBlank().not() }
+                .map { it.toString() }
+                .throttleLast(1300, TimeUnit.MILLISECONDS)
+                .switchMap(::searchGame)
+                .subscribe())
 
-        setupViewModelSubscriptions()
+            setupViewModelSubscriptions()
+        } else {
+            setAdapter(null)
+        }
     }
 
     private fun searchGame(query: String): Observable<GetRemoteGames> = viewModel.searchGame(query, categoryArg)

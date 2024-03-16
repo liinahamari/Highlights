@@ -13,7 +13,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.seismic.ShakeDetector
 import dev.liinahamari.api.EntityListDependencies
-import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.getCurrentFragment
 import dev.liinahamari.core.ext.sensorManager
 import dev.liinahamari.entity_list.EntityListFactory.getApi
@@ -22,6 +21,7 @@ import dev.liinahamari.list_ui.databinding.ActivityMainBinding
 import dev.liinahamari.list_ui.di.DaggerListUiComponent
 import dev.liinahamari.list_ui.di.ListUiComponent
 import dev.liinahamari.list_ui.tabs.SectionsPagerAdapter
+import dev.liinahamari.list_ui.tabs.ViewPagerPlaceholderFragment
 import dev.liinahamari.list_ui.viewmodels.MainActivityViewModel
 import javax.inject.Inject
 
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
     private fun setupViewPager() {
         ui.pager.adapter = adapter
         TabLayoutMediator(ui.tabs, ui.pager, true, false) { tab, position ->
-            tab.text = Category.values()[position].emoji
+            tab.text = ViewPagerPlaceholderFragment.ViewPagerEntries.values()[position].emoji
         }.attach()
     }
 

@@ -26,6 +26,7 @@ class SearchBookAutoCompleteTextView @JvmOverloads constructor(
     private val viewModel by lazy { ViewModelProvider(findViewTreeViewModelStoreOwner()!!).get<SearchBookViewModel>() }
     private val suggestionsAdapter: PicturedArrayAdapter by lazy { PicturedArrayAdapter(context) }
     private val disposable = CompositeDisposable()
+    private var suggestionsEnabled = true
     var categoryArg: Category = Category.GOOD //fixme actual
 
     private lateinit var bookObserver: BookObserver
@@ -33,18 +34,25 @@ class SearchBookAutoCompleteTextView @JvmOverloads constructor(
     fun setOnItemChosenListener(bo: BookObserver) {
         this.bookObserver = bo
     }
+    fun setSuggestionsEnabled(suggestionsEnabled: Boolean) {
+        this.suggestionsEnabled = suggestionsEnabled
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        setAdapter(suggestionsAdapter)
-        disposable.add(textChanges()
-            .filter { it.isBlank().not() }
-            .map { it.toString() }
-            .throttleLast(1300, TimeUnit.MILLISECONDS)
-            .switchMap(::searchBook)
-            .subscribe())
+        if (suggestionsEnabled) {
+            setAdapter(suggestionsAdapter)
+            disposable.add(textChanges()
+                .filter { it.isBlank().not() }
+                .map { it.toString() }
+                .throttleLast(1300, TimeUnit.MILLISECONDS)
+                .switchMap(::searchBook)
+                .subscribe())
 
-        setupViewModelSubscriptions()
+            setupViewModelSubscriptions()
+        } else {
+            setAdapter(null)
+        }
     }
 
     private fun searchBook(query: String): Observable<GetRemoteBooks> = viewModel.searchBook(query, categoryArg)

@@ -15,10 +15,11 @@ import androidx.lifecycle.ViewModelProvider
 import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.BookGenre
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.repo.PreferencesRepo
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.R
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentAddBookBinding
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEvent
@@ -31,6 +32,7 @@ class AddBookDialogFragment : DialogFragment(R.layout.fragment_add_book) {
     private val ui: FragmentAddBookBinding by lazy { _ui!! }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var preferenceRepo: PreferencesRepo
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
 
     private var book = Book.default()
@@ -84,6 +86,8 @@ class AddBookDialogFragment : DialogFragment(R.layout.fragment_add_book) {
     private fun setupUi() {
         var selectedCountries = listOf<String>()
         var selectedGenres = listOf<BookGenre>()
+
+        ui.titleEt.isSuggestionsEnabled = preferenceRepo.suggestionsEnabled
 
         ui.countrySelectionBtn.setOnClickListener {
             showCountrySelectionDialog(selectedCountries) {

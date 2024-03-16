@@ -1,6 +1,5 @@
 package dev.liinahamari.impl.di.modules
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import dagger.Module
@@ -14,15 +13,8 @@ import dev.liinahamari.impl.data.db.daos.MovieDao
 import javax.inject.Named
 import javax.inject.Singleton
 
-internal const val APP_CONTEXT = "app_ctx"
-
 @Module
 class DatabaseModule {
-    @Provides
-    @Singleton
-    @Named(APP_CONTEXT)
-    fun bindContext(app: Application): Context = app.applicationContext
-
     @Provides
     @Singleton
     fun database(@Named(APP_CONTEXT) context: Context): EntriesDatabase = Room.databaseBuilder(
