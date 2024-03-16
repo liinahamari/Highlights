@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize //fixme domain model in suggestions-ui module
 data class Movie(
-    val id: Long,
+    val id: Long = 0L,
     val category: Category,
     val year: Int,
     val posterUrl: String?,

@@ -15,7 +15,7 @@ data class Game(
     override val category: Category,
     override val posterUrl: String,
     override val countryCodes: Array<String>,
-    @PrimaryKey(autoGenerate = true) var id: Long = 0L
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L
 ) : Entry {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
