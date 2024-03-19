@@ -1,18 +1,16 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
 import android.annotation.SuppressLint
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
-import dev.liinahamari.core.ext.inflate
 import dev.liinahamari.list_ui.R
+import dev.liinahamari.list_ui.databinding.CountriesRvItemBinding
 import java.util.Locale
 import java.util.Locale.getISOCountries
 
@@ -60,25 +58,27 @@ private class CountriesAdapter(
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(parent.inflate(R.layout.countries_rv_item))
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder(CountriesRvItemBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false))
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemView.setOnClickListener {
-            holder.checkBox.isChecked = holder.checkBox.isChecked.not()
-        }
-        holder.countryTitleTv.text = filteredLocales[position].displayCountry
-
-        holder.checkBox.isChecked = filteredLocales[position].country in preselectedLocales
-        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
-            onChecked(isChecked, filteredLocales[position].country)
-        }
-    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
+        holder.bind(filteredLocales[position], onChecked, preselectedLocales)
 
     override fun getItemCount(): Int = filteredLocales.size
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var countryTitleTv: TextView = itemView.findViewById(R.id.titleTv)
-        var checkBox: AppCompatCheckBox = itemView.findViewById(R.id.checkbox)
+    class ViewHolder(private val ui: CountriesRvItemBinding) : RecyclerView.ViewHolder(ui.root) {
+        fun bind(
+            locale: Locale,
+            onChecked: (isChecked: Boolean, countryCode: String) -> Unit,
+            preselectedLocales: List<String>
+        ) {
+            ui.root.setOnClickListener { ui.checkbox.isChecked = ui.checkbox.isChecked.not() }
+            ui.titleTv.text = locale.displayCountry
+
+            ui.checkbox.isChecked = locale.country in preselectedLocales
+            ui.checkbox.setOnCheckedChangeListener { _, isChecked ->
+                onChecked(isChecked, locale.country)
+            }
+        }
     }
 }
