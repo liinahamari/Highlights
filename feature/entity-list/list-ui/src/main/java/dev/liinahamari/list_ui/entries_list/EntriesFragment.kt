@@ -23,8 +23,8 @@ import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.providePermissionExplanationDialog
 import dev.liinahamari.core.ext.restartApp
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.list_ui.MainActivity
 import dev.liinahamari.list_ui.R
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentEntriesBinding
 import dev.liinahamari.list_ui.single_entity.EntityType
 import dev.liinahamari.list_ui.single_entity.EntryFragment

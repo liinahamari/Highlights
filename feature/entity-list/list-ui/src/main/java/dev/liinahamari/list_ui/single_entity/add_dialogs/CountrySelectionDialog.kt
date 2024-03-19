@@ -18,7 +18,7 @@ import java.util.Locale.getISOCountries
 
 //todo move to first launch and cache
 //todo loading state while searching
-fun Context.showCountrySelectionDialog(preselectedLocales: List<String>, onCountrySelected: (List<String>) -> Unit) {
+fun Fragment.showCountrySelectionDialog(preselectedLocales: List<String>, onCountrySelected: (List<String>) -> Unit) {
     val allLocales = getISOCountries().map { Locale("", it) }.sortedBy { it.displayCountry }
     val chosenLocales = preselectedLocales.toMutableList()
     val adapter = CountriesAdapter(allLocales, preselectedLocales) { isChecked: Boolean, countryCode: String ->
