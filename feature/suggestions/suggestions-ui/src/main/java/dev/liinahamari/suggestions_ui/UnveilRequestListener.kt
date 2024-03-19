@@ -12,7 +12,7 @@ class UnveilRequestListener(private val doOnResourceReady: () -> Unit) : Request
         model: Any?,
         target: Target<Drawable>,
         isFirstResource: Boolean
-    ): Boolean = false
+    ): Boolean = false.also { doOnResourceReady.invoke() }
 
     override fun onResourceReady(
         resource: Drawable,
