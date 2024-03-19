@@ -12,7 +12,7 @@ import com.skydoves.androidveil.VeilLayout
 import dev.liinahamari.core.ext.layoutInflater
 
 class PicturedArrayAdapter(private val context: Context) :
-    ArrayAdapter<SuggestionUi>(context, R.layout.suggestions_list_item, emptyArray()) {
+    ArrayAdapter<SuggestionUi>(context, R.layout.suggestions_list_item) {
     private inner class ViewHolder(view: View) {
         var veilLayout: VeilLayout = view.findViewById(R.id.veilLayout)
         var thumbIv: ImageView = view.findViewById(R.id.thumbnail)
