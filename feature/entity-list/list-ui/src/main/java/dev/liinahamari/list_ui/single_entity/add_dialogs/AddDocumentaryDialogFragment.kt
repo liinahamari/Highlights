@@ -1,8 +1,6 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
 import android.content.DialogInterface.OnClickListener
-import android.os.Bundle
-import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import dev.liinahamari.api.domain.entities.Category

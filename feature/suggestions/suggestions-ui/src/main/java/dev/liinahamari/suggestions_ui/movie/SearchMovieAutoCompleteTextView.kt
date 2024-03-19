@@ -2,18 +2,12 @@ package dev.liinahamari.suggestions_ui.movie
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.DisplayMetrics
-import android.view.MotionEvent.ACTION_DOWN
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.AutoCompleteTextView
 import androidx.appcompat.R
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.get
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
@@ -64,20 +58,6 @@ open class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
 
     fun setSuggestionsEnabled(suggestionsEnabled: Boolean) {
         this.suggestionsEnabled = suggestionsEnabled
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        setAdapter(suggestionsAdapter)
-        viewModel.fetchMovieGenres()
-        disposable.add(textChanges()
-            .filter { it.isBlank().not() }
-            .map { it.toString() }
-            .throttleLast(1300, TimeUnit.MILLISECONDS)
-            .switchMap(::searchMovie)
-            .subscribe())
-
-        setupViewModelSubscriptions()
     }
 
     open fun searchMovie(query: String): Observable<GetRemoteMovies> = viewModel.searchForMovie(query, categoryArg)
