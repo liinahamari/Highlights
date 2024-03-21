@@ -13,10 +13,12 @@ import android.view.LayoutInflater
 import android.view.LayoutInflater.from
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
@@ -71,3 +73,11 @@ val Context.layoutInflater: LayoutInflater
     get() = getSystemService(Activity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 val Context.sensorManager: SensorManager
     get() = getSystemService(AppCompatActivity.SENSOR_SERVICE) as SensorManager
+val Context.inputMethodManager: InputMethodManager
+    get() = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+val View.keyboardIsVisible: Boolean
+    get() = WindowInsetsCompat
+        .toWindowInsetsCompat(rootWindowInsets)
+        .isVisible(WindowInsetsCompat.Type.ime())
+
+fun View.hideKeyboard() = context.inputMethodManager.hideSoftInputFromWindow(windowToken, 0)

@@ -7,14 +7,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.get
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Game
-import dev.liinahamari.api.domain.repo.PreferencesRepo
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.suggestions_ui.PicturedArrayAdapter
 import dev.liinahamari.suggestions_ui.SuggestionUi
+import dev.liinahamari.suggestions_ui.movie.HideSuggestionListOnScrollMaterialAutoCompleteTextView
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -23,7 +22,7 @@ class SearchGameAutoCompleteTextView @JvmOverloads constructor(
     private val context: Context,
     attributeSet: AttributeSet? = null,
     defStyleAttr: Int = R.attr.autoCompleteTextViewStyle
-) : MaterialAutoCompleteTextView(context, attributeSet, defStyleAttr) {
+) : HideSuggestionListOnScrollMaterialAutoCompleteTextView(context, attributeSet, defStyleAttr) {
     private val viewModel by lazy { ViewModelProvider(findViewTreeViewModelStoreOwner()!!).get<SearchGameViewModel>() }
     private val suggestionsAdapter: PicturedArrayAdapter by lazy { PicturedArrayAdapter(context) }
     private val disposable = CompositeDisposable()

@@ -1,7 +1,6 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
 import android.content.DialogInterface
-import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import dev.liinahamari.api.domain.entities.Category
@@ -29,11 +28,6 @@ class AddMovieDialogFragment : GenericAddFragment(R.layout.fragment_add_movie) {
 
     override fun webSearchQuery(): String = ui.titleEt.text.toString() + " film (${ui.yearEt.text})"
     override fun onSaveButtonClicked() = DialogInterface.OnClickListener { _, _ -> saveEntryViewModel.saveMovie(movie) }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

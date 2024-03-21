@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.skydoves.androidveil.VeilLayout
+import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.layoutInflater
 
 class PicturedArrayAdapter(private val context: Context) :
@@ -35,20 +36,31 @@ class PicturedArrayAdapter(private val context: Context) :
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
         context.layoutInflater.inflate(R.layout.suggestions_list_item, null).apply {
             ViewHolder(this).apply {
-                titleTv.text = getItem(position)!!.title
-                yearTv.text = getItem(position)!!.year.toString()
-                genresTv.text = getItem(position)!!.genres.joinToString()
-                Glide.with(context)
-                    .load(getItem(position)?.posterUrl)
-//                    .load(/*"https://image.tmdb.org/t/p/w154${*/getItem(position)?.posterUrl/*}"*/)
-                    .fallback(android.R.drawable.gallery_thumb)
-                    .error(android.R.drawable.gallery_thumb)
-                    .timeout(10_000)
-                    .override(100, 100)
-                    .listener(UnveilRequestListener { veilLayout.unVeil() })
-                    .into(thumbIv)
+                with(getItem(position)!!) {
+                    titleTv.text = title
+                    yearTv.text = year.toString()
+                    genresTv.text = genres.joinToString()
+                    posterUrl?.let {
+                        Glide.with(context)
+                            .load(getItem(position)?.posterUrl)
+//                          .load(/*"https://image.tmdb.org/t/p/w154${*/getItem(position)?.posterUrl/*}"*/)
+                            .fallback(android.R.drawable.gallery_thumb)
+                            .error(android.R.drawable.gallery_thumb)
+                            .timeout(10_000)
+                            .override(100, 100)
+                            .listener(UnveilRequestListener { veilLayout.unVeil() })
+                            .into(thumbIv)
+                    }
+                }
             }
         }
 }
 
-data class SuggestionUi(val title: String, val year: Int, val posterUrl: String, val genres: List<String>)
+data class SuggestionUi(val title: String, val year: Int, val posterUrl: String?, val genres: List<String>)
+
+fun Movie.toUi() = SuggestionUi(
+    title = name,
+    year = year,
+    genres = genres.map { it.name.replace("_", " ").lowercase() },
+    posterUrl = posterUrl
+)
