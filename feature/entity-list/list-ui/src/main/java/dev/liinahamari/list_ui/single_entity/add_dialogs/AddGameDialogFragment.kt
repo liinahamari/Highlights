@@ -23,6 +23,7 @@ class AddGameDialogFragment : GenericAddFragment(R.layout.fragment_add_game) {
 
     companion object {
         fun newInstance(category: Category): AddGameDialogFragment = AddGameDialogFragment().apply {
+            game = game.copy(category = category)
             arguments = bundleOf(ARG_CATEGORY to category)
         }
     }
@@ -77,9 +78,7 @@ class AddGameDialogFragment : GenericAddFragment(R.layout.fragment_add_game) {
     override fun setupTextChangedListeners() {
         ui.yearEt.addTextChangedListener { game = game.copy(year = it.toString().toInt()) }
         ui.posterUrlEt.addTextChangedListener { game = game.copy(posterUrl = it.toString()) }
-        if (preferenceRepo.suggestionsEnabled.not()) {
-            ui.titleEt.addTextChangedListener { game = game.copy(name = it.toString()) }
-        }
+        ui.titleEt.addTextChangedListener { game = game.copy(name = it.toString()) }
     }
 
     override fun getDialogCustomView() = FragmentAddGameBinding.inflate(layoutInflater).also { _ui = it }.root

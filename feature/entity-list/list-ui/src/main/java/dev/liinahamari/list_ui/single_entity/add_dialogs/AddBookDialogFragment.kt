@@ -22,6 +22,7 @@ class AddBookDialogFragment : GenericAddFragment(R.layout.fragment_add_book) {
 
     companion object {
         fun newInstance(category: Category): AddBookDialogFragment = AddBookDialogFragment().apply {
+            book = book.copy(category = category)
             arguments = bundleOf(ARG_CATEGORY to category)
         }
     }
@@ -80,8 +81,6 @@ class AddBookDialogFragment : GenericAddFragment(R.layout.fragment_add_book) {
         ui.authorEt.addTextChangedListener { book = book.copy(author = it.toString()) }
         ui.yearEt.addTextChangedListener { book = book.copy(year = it.toString().toInt()) }
         ui.posterUrlEt.addTextChangedListener { book = book.copy(posterUrl = it.toString()) }
-        if (preferenceRepo.suggestionsEnabled.not()) {
-            ui.titleEt.addTextChangedListener { book = book.copy(name = it.toString()) }
-        }
+        ui.titleEt.addTextChangedListener { book = book.copy(name = it.toString()) }
     }
 }

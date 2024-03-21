@@ -22,6 +22,7 @@ class AddMovieDialogFragment : GenericAddFragment(R.layout.fragment_add_movie) {
 
     companion object {
         fun newInstance(category: Category): AddMovieDialogFragment = AddMovieDialogFragment().apply {
+            movie = movie.copy(category = category)
             arguments = bundleOf(ARG_CATEGORY to category)
         }
     }
@@ -72,8 +73,6 @@ class AddMovieDialogFragment : GenericAddFragment(R.layout.fragment_add_movie) {
     override fun setupTextChangedListeners() {
         ui.yearEt.addTextChangedListener { movie = movie.copy(year = it.toString().toInt()) }
         ui.posterUrlEt.addTextChangedListener { movie = movie.copy(posterUrl = it.toString()) }
-        if (preferenceRepo.suggestionsEnabled.not()) {
-            ui.titleEt.addTextChangedListener { movie = movie.copy(name = it.toString()) }
-        }
+        ui.titleEt.addTextChangedListener { movie = movie.copy(name = it.toString()) }
     }
 }
