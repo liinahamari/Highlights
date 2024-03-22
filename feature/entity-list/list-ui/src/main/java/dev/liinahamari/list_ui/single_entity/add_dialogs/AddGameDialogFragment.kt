@@ -12,7 +12,7 @@ import dev.liinahamari.list_ui.databinding.FragmentAddGameBinding
 import dev.liinahamari.suggestions_ui.game.SearchGameAutoCompleteTextView
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 
-class AddGameDialogFragment : GenericAddFragment(R.layout.fragment_add_game) {
+class AddGameDialogFragment : AddFragment(R.layout.fragment_add_game) {
     private var _ui: FragmentAddGameBinding? = null
     private val ui: FragmentAddGameBinding by lazy { _ui!! }
 

@@ -12,7 +12,7 @@ import dev.liinahamari.list_ui.databinding.FragmentAddMovieBinding
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView
 
-class AddMovieDialogFragment : GenericAddFragment(R.layout.fragment_add_movie) {
+class AddMovieDialogFragment : AddFragment(R.layout.fragment_add_movie) {
     private var _ui: FragmentAddMovieBinding? = null
     private val ui: FragmentAddMovieBinding by lazy { _ui!! }
 

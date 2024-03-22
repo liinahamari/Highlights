@@ -12,7 +12,7 @@ import dev.liinahamari.list_ui.databinding.FragmentAddBookBinding
 import dev.liinahamari.suggestions_ui.book.SearchBookAutoCompleteTextView
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 
-class AddBookDialogFragment : GenericAddFragment(R.layout.fragment_add_book) {
+class AddBookDialogFragment : AddFragment(R.layout.fragment_add_book) {
     private var _ui: FragmentAddBookBinding? = null
     private val ui: FragmentAddBookBinding by lazy { _ui!! }
 

@@ -23,7 +23,7 @@ import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEvent
 import javax.inject.Inject
 
-abstract class GenericAddFragment(@LayoutRes val layout: Int) : DialogFragment(layout) {
+abstract class AddFragment(@LayoutRes val layout: Int) : DialogFragment(layout) {
     @Inject lateinit var preferenceRepo: PreferencesRepo
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     protected val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
