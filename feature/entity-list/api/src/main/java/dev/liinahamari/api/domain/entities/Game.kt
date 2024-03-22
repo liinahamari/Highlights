@@ -17,7 +17,6 @@ data class Game(
     }
 }
 
-
 enum class GameGenre {
     ADVENTURE,
     FIGHTING,

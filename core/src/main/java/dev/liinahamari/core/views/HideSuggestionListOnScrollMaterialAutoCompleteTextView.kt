@@ -1,4 +1,4 @@
-package dev.liinahamari.suggestions_ui.movie
+package dev.liinahamari.core.views
 
 import android.annotation.SuppressLint
 import android.content.Context

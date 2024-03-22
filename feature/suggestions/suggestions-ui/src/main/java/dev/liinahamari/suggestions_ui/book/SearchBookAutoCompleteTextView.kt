@@ -11,9 +11,10 @@ import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.toast
+import dev.liinahamari.core.views.HideSuggestionListOnScrollMaterialAutoCompleteTextView
 import dev.liinahamari.suggestions_ui.PicturedArrayAdapter
 import dev.liinahamari.suggestions_ui.SuggestionUi
-import dev.liinahamari.suggestions_ui.movie.HideSuggestionListOnScrollMaterialAutoCompleteTextView
+import dev.liinahamari.suggestions_ui.toUi
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -65,15 +66,7 @@ class SearchBookAutoCompleteTextView @JvmOverloads constructor(
                 is GetRemoteBooks.Error.NoInternetError -> context.toast("Check the Internet connection")
 
                 is GetRemoteBooks.Success -> {
-                    suggestionsAdapter.replaceAll(it.books.map {
-                        SuggestionUi(
-                            title = it.name,
-                            year = it.year,
-                            posterUrl = it.posterUrl,
-                            genres = it.genres.map { it.name.replace("_", " ").lowercase() }
-                        )
-                    }
-                    )
+                    suggestionsAdapter.replaceAll(it.books.map {it.toUi()})
                     setOnItemClickListener { _, _, position, _ -> bookObserver.onChosen(it.books[position]) }
                 }
             }

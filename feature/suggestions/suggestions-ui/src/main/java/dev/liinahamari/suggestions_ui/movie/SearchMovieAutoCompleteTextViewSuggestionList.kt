@@ -11,6 +11,7 @@ import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.toast
+import dev.liinahamari.core.views.HideSuggestionListOnScrollMaterialAutoCompleteTextView
 import dev.liinahamari.suggestions_ui.PicturedArrayAdapter
 import dev.liinahamari.suggestions_ui.SuggestionUi
 import dev.liinahamari.suggestions_ui.movie.SearchMoviesViewModel.GetRemoteMovies

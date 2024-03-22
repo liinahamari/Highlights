@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.skydoves.androidveil.VeilLayout
+import dev.liinahamari.api.domain.entities.Book
+import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.layoutInflater
 
@@ -63,4 +65,18 @@ fun Movie.toUi() = SuggestionUi(
     year = year,
     genres = genres.map { it.name.replace("_", " ").lowercase() },
     posterUrl = posterUrl
+)
+
+fun Book.toUi() = SuggestionUi(
+    title = name,
+    year = year,
+    posterUrl = posterUrl,
+    genres = genres.map { it.name.replace("_", " ").lowercase() }
+)
+
+fun Game.toSuggestion() = SuggestionUi(
+    title = name,
+    year = year,
+    posterUrl = posterUrl,
+    genres = genres.map { it.name.replace("_", " ").lowercase() }
 )
