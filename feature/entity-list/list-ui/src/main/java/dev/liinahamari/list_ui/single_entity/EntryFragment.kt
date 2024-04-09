@@ -113,6 +113,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             when (it) {
                 is BunchDeleteEvent.Failure -> toast("Failed to delete")
                 is BunchDeleteEvent.Success -> {
+                    (requireActivity() as AppCompatActivity).supportActionBar?.hide()
                     tracker.clearSelection()
                     toast("Successfully deleted")
                     fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
