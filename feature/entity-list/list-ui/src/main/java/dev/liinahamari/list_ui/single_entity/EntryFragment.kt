@@ -21,6 +21,7 @@ import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.core.ext.createSelectionTracker
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
+import dev.liinahamari.core.views.VerticalSpaceItemDecoration
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentCategoryBinding
@@ -90,13 +91,18 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
     })
 
     private fun setupViews() {
-        entriesAdapter = EntryAdapter(childFragmentManager, ui.entriesRv)
-        ui.entriesRv.adapter = entriesAdapter
+        setupRecyclerView()
         setupFab()
         ui.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean = false
             override fun onQueryTextChange(newText: String) = false.also { entriesAdapter!!.filter(newText) }
         })
+    }
+
+    private fun setupRecyclerView() {
+        ui.entriesRv.addItemDecoration(VerticalSpaceItemDecoration(10))
+        entriesAdapter = EntryAdapter(childFragmentManager, ui.entriesRv)
+        ui.entriesRv.adapter = entriesAdapter
     }
 
     private fun onSelectionChanged(selection: Selection<Long>) {
