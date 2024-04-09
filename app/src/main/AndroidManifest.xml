@@ -25,7 +25,7 @@
         <activity
             android:name="dev.liinahamari.list_ui.activities.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Material3.Dark.NoActionBar">
+            android:theme="@style/Theme.Material3.Dark">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

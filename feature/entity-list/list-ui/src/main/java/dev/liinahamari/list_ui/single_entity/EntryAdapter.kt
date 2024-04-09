@@ -2,9 +2,12 @@ package dev.liinahamari.list_ui.single_entity
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.selection.ItemDetailsLookup
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import dev.liinahamari.list_ui.R
@@ -25,12 +28,7 @@ data class Entry(
 
 private const val TIMEOUT_20_SEC = 20_000
 
-interface LongClickListener {
-    fun onLongClicked(id: Long, clazz: Class<*>, position: Int)
-}
-
 class EntryAdapter(
-    private val longClickListener: LongClickListener,
     private val fragmentManager: FragmentManager,
     private val recyclerView: RecyclerView
 ) :
@@ -39,8 +37,16 @@ class EntryAdapter(
     private var filteredEntries: MutableList<Entry> = entries
 
     private val UNSELECTED = -1
-    private var selectedItems = mutableListOf<Int>()
+    private var expandedItems = mutableListOf<Int>()
     private var selectedItem = UNSELECTED //fixme filtered
+
+    var tracker: SelectionTracker<Long>? = null
+
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long = filteredEntries[position].id
 
     @SuppressLint("NotifyDataSetChanged") fun replaceDataset(dataSet: List<Entry>) {
         this.entries = dataSet.toMutableList()
@@ -56,30 +62,32 @@ class EntryAdapter(
     inner class ViewHolder(private val ui: EntryRowItemBinding) : RecyclerView.ViewHolder(ui.root),
         OnExpansionUpdateListener {
 
-        fun bind(entry: Entry) {
+        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> = object : ItemDetailsLookup.ItemDetails<Long>() {
+            override fun getPosition(): Int = bindingAdapterPosition
+            override fun getSelectionKey(): Long = itemId
+        }
+
+        fun bind(entry: Entry, isActivated: Boolean = false) {
             ui.expandableLayout.apply {
                 setInterpolator(OvershootInterpolator())
                 setOnExpansionUpdateListener(this@ViewHolder)
-                isExpanded = adapterPosition in selectedItems
+                isExpanded = bindingAdapterPosition in expandedItems
             }
 
-            ui.root.apply {
+            itemView.apply {
+                this.isActivated = isActivated
                 setOnClickListener {
-                    if (recyclerView.findViewHolderForAdapterPosition(selectedItems.firstOrNull { it == adapterPosition } ?: UNSELECTED) as ViewHolder? != null) {
+                    if (recyclerView.findViewHolderForAdapterPosition(expandedItems.firstOrNull { it == bindingAdapterPosition }
+                            ?: UNSELECTED) as ViewHolder? != null) {
                         ui.expandableLayout.collapse(false)
                     }
 
-                    if (adapterPosition in selectedItems) {
-                        selectedItems.remove(adapterPosition)
+                    if (bindingAdapterPosition in expandedItems) {
+                        expandedItems.remove(bindingAdapterPosition)
                     } else {
                         ui.expandableLayout.expand()
-                        selectedItems.add(adapterPosition)
+                        expandedItems.add(bindingAdapterPosition)
                     }
-                }
-
-                setOnLongClickListener {
-                    longClickListener.onLongClicked(entry.id, entry.clazz, bindingAdapterPosition)
-                    true
                 }
             }
 
@@ -98,21 +106,28 @@ class EntryAdapter(
             }
         }
 
-        override fun onExpansionUpdate(expansionFraction: Float, state: Int) {/*
-            if (state == EXPANDING) {
-                recyclerView.smoothScrollToPosition(adapterPosition)
-            }
-        */}
+        override fun onExpansionUpdate(expansionFraction: Float, state: Int) = Unit
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(EntryRowItemBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false))
 
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) = viewHolder.bind(filteredEntries[position])
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        viewHolder.bind(filteredEntries[position], tracker!!.isSelected(filteredEntries[position].id))
+    }
+
     override fun getItemCount() = filteredEntries.size
 
     @SuppressLint("NotifyDataSetChanged") fun filter(text: String) {
         filteredEntries = entries.filter { it.title.contains(text, true) }.toMutableList()
         notifyDataSetChanged()
+    }
+
+    class EntryDetailsLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Long>() {
+        override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? =
+            recyclerView.findChildViewUnder(event.x, event.y)?.let {
+                (recyclerView.getChildViewHolder(it) as EntryAdapter.ViewHolder)
+                    .getItemDetails()
+            }
     }
 }

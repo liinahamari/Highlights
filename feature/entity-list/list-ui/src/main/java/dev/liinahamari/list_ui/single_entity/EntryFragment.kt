@@ -1,24 +1,28 @@
 package dev.liinahamari.list_ui.single_entity
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.SubMenu
 import android.view.View
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
-import androidx.core.view.MenuCompat
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.selection.Selection
+import androidx.recyclerview.selection.SelectionTracker
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.afollestad.materialdialogs.MaterialDialog
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.core.ext.createSelectionTracker
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
-import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.R
+import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentCategoryBinding
 import dev.liinahamari.list_ui.single_entity.EntityType.BOOK
 import dev.liinahamari.list_ui.single_entity.EntityType.DOCUMENTARY
@@ -28,17 +32,17 @@ import dev.liinahamari.list_ui.single_entity.add_dialogs.AddBookDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddDocumentaryDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddGameDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
+import dev.liinahamari.list_ui.viewmodels.BunchDeleteEvent
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
-import dev.liinahamari.list_ui.viewmodels.DeleteEvent
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
 import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
-import me.saket.cascade.CascadePopupMenu
 import javax.inject.Inject
 
-class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
+class EntryFragment : Fragment(R.layout.fragment_category) {
     private val ui by viewBinding(FragmentCategoryBinding::bind)
+    private lateinit var menu: Menu
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val fetchEntriesViewModel: FetchEntriesViewModel by viewModels { viewModelFactory }
@@ -50,17 +54,43 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
     private val argumentEntityCategory: Category by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
 
     private var entriesAdapter: EntryAdapter? = null
+    private val tracker: SelectionTracker<Long> by lazy {
+        ui.entriesRv.createSelectionTracker(
+            ::onSelectionChanged,
+            ::javaClass.name,
+            EntryAdapter.EntryDetailsLookup(ui.entriesRv)
+        )
+    }
+
+    val entitiesIdToDelete = mutableSetOf<Long>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as MainActivity).listUiComponent.inject(this)
         setupViewModelSubscriptions()
         setupViews()
-
         fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+        setupMenu()
     }
 
+    private fun setupMenu() = requireActivity().addMenuProvider(object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.bunch_entities_actions, menu)
+            this@EntryFragment.menu = menu
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem) = true.also {
+            if (menuItem.itemId == R.id.delete) {
+                MaterialDialog(requireContext())
+                    .message(R.string.sure_to_delete)
+                    .negativeButton(android.R.string.cancel)
+                    .positiveButton { deleteEntryViewModel.delete(entitiesIdToDelete, argumentEntityType) }
+                    .show()
+            }
+        }
+    })
+
     private fun setupViews() {
-        entriesAdapter = EntryAdapter(this, childFragmentManager, ui.entriesRv)
+        entriesAdapter = EntryAdapter(childFragmentManager, ui.entriesRv)
         ui.entriesRv.adapter = entriesAdapter
         setupFab()
         ui.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -69,13 +99,23 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
         })
     }
 
+    private fun onSelectionChanged(selection: Selection<Long>) {
+        if (selection.isEmpty.not()) {
+            (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        }
+        menu.findItem(R.id.delete)!!.setVisible(selection.isEmpty.not())
+        entitiesIdToDelete.clear()
+        entitiesIdToDelete.addAll(selection)
+    }
+
     private fun setupViewModelSubscriptions() {
-        deleteEntryViewModel.deleteEvent.observe(viewLifecycleOwner) {
+        deleteEntryViewModel.bunchDeleteEvent.observe(viewLifecycleOwner) {
             when (it) {
-                is DeleteEvent.Failure -> Toast.makeText(context, "Failed to delete", Toast.LENGTH_SHORT).show()
-                is DeleteEvent.Success -> {
+                is BunchDeleteEvent.Failure -> toast("Failed to delete")
+                is BunchDeleteEvent.Success -> {
+                    tracker.clearSelection()
                     toast("Successfully deleted")
-                    entriesAdapter!!.removeItem(it.position)
+                    fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
                 }
             }
         }
@@ -85,6 +125,7 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
         fetchEntriesViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
             if (it is FetchEntriesViewModel.FetchAllEvent.Success) {
                 entriesAdapter!!.replaceDataset(it.entries)
+                entriesAdapter!!.tracker = tracker
             }
         }
         moveToOtherCategoryViewModel.saveEntityEvent.observe(viewLifecycleOwner) {
@@ -144,56 +185,5 @@ class EntryFragment : Fragment(R.layout.fragment_category), LongClickListener {
             EntryFragment().apply {
                 arguments = bundleOf(ARG_CATEGORY to entityCategory, ARG_TYPE to entityType)
             }
-    }
-
-    override fun onLongClicked(id: Long, clazz: Class<*>, position: Int) =
-        with(CascadePopupMenu(requireContext(), requireView())) {
-            menu.apply {
-                MenuCompat.setGroupDividerEnabled(this, true)
-
-                addSubMenu(getString(R.string.move_to)).setupMoveToEntrySubMenu(id, position)
-                add(getString(R.string.title_edit)).setupEditEntry(id)
-                add(getString(R.string.delete)).setupDeleteEntry(id, position, clazz)
-            }
-            show()
-        }
-
-    private fun SubMenu.setupMoveToEntrySubMenu(id: Long, adapterPosition: Int) {
-//        setIcon(R.drawable.move) //todo
-        Category.values() //todo to usecase
-            .toMutableList()
-            .apply { removeIf { it == argumentEntityCategory } }
-            .forEach { category ->
-                add(category.emoji).setOnMenuItemClickListener {
-                    moveToOtherCategoryViewModel.moveToOtherCategory(
-                        adapterPosition = adapterPosition,
-                        id = id,
-                        actualCategory = argumentEntityCategory,
-                        desirableCategory = category,
-                        entityType = argumentEntityType
-                    )
-                    true
-                }
-            }
-    }
-
-    private fun MenuItem.setupEditEntry(id: Long) {
-        setOnMenuItemClickListener {
-            fetchEntriesViewModel.findEntry(argumentEntityType, argumentEntityCategory, id)
-            true
-        }
-        setIcon(R.drawable.baseline_edit_24)
-    }
-
-    private fun MenuItem.setupDeleteEntry(id: Long, position: Int, clazz: Class<*>) {
-        setOnMenuItemClickListener {
-            MaterialDialog(requireContext())
-                .message(R.string.sure_to_delete)
-                .negativeButton(android.R.string.cancel)
-                .positiveButton { deleteEntryViewModel.deleteEntity(id, position, clazz) }
-                .show()
-            true
-        }
-        setIcon(R.drawable.baseline_delete_24)
     }
 }

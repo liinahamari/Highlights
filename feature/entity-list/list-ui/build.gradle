@@ -50,4 +50,6 @@ dependencies {
 
     implementation "com.github.cachapa:ExpandableLayout:$expandableLayoutVersion"
     implementation "androidx.preference:preference-ktx:$preferencesVersion"
+
+    implementation "androidx.recyclerview:recyclerview-selection:$recyclerviewSelectionVersion"
 }

@@ -43,6 +43,7 @@ ext {
     glideVersion = '4.16.0'
     keyboardVisibilityVersion = '2.3.0'//todo
     preferencesVersion = '1.2.1'
+    recyclerviewSelectionVersion = '1.1.0'
 
     junitVersion = '4.13.2'
 }

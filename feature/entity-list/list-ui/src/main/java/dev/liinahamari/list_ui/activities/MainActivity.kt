@@ -3,13 +3,18 @@ package dev.liinahamari.list_ui.activities
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.seismic.ShakeDetector
 import dev.liinahamari.api.EntityListDependencies
@@ -20,6 +25,7 @@ import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.ActivityMainBinding
 import dev.liinahamari.list_ui.di.DaggerListUiComponent
 import dev.liinahamari.list_ui.di.ListUiComponent
+import dev.liinahamari.list_ui.single_entity.EntryFragment
 import dev.liinahamari.list_ui.tabs.SectionsPagerAdapter
 import dev.liinahamari.list_ui.tabs.ViewPagerPlaceholderFragment
 import dev.liinahamari.list_ui.viewmodels.MainActivityViewModel
@@ -48,6 +54,20 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
 
         setupViewPager()
         setupOnBackPressed()
+        setupActionBar()
+    }
+
+    private fun setupActionBar() {
+        supportActionBar?.apply {
+            title = ""
+            setDisplayUseLogoEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }?.hide()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?) = true.also {
+        menuInflater.inflate(R.menu.bunch_entities_actions, menu)
+        menu?.findItem(R.id.delete)?.setVisible(false)
     }
 
     private fun setupViewPager() {
@@ -55,7 +75,23 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
         TabLayoutMediator(ui.tabs, ui.pager, true, false) { tab, position ->
             tab.text = ViewPagerPlaceholderFragment.ViewPagerEntries.values()[position].emoji
         }.attach()
+        ui.tabs.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(p0: TabLayout.Tab?) {
+                if (selectedEntriesInTabNotEmpty()) {
+                    supportActionBar?.show()
+                } else {
+                    supportActionBar?.hide()
+                }
+            }
+
+            override fun onTabUnselected(p0: TabLayout.Tab?) {}
+            override fun onTabReselected(p0: TabLayout.Tab?) {}
+        })
     }
+
+    private fun selectedEntriesInTabNotEmpty(): Boolean =
+        (ui.pager.getCurrentFragment(supportFragmentManager).view?.findViewById<FragmentContainerView>(R.id.pagerContainer)
+            ?.getFragment<Fragment>() as? EntryFragment?)?.entitiesIdToDelete?.isNotEmpty() == true
 
     private fun setupOnBackPressed() {
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
