@@ -13,7 +13,6 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        RestoreDatabaseUseCaseImpl(mock(), mock())
         assertEquals(4, 2 + 2)
     }
 }
