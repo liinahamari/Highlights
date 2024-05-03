@@ -4,5 +4,5 @@ import dev.liinahamari.api.domain.entities.Documentary
 import io.reactivex.rxjava3.core.Completable
 
 interface SaveDocumentaryUseCase {
-    fun saveDocumentary(documentary: Documentary): Completable
+    fun saveDocumentaries(vararg documentaries: Documentary): Completable
 }

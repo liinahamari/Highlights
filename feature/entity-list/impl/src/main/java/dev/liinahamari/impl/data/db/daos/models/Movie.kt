@@ -53,7 +53,7 @@ fun Movie.toDomain(): dev.liinahamari.api.domain.entities.Movie = dev.liinahamar
     description = this.description
 )
 
-fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
+private fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
     id = this.id,
     category = this.category,
     countryCodes = this.countryCodes.toTypedArray(),
@@ -63,3 +63,5 @@ fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
     year = this.year,
     description = this.description
 )
+
+fun Array<out dev.liinahamari.api.domain.entities.Movie>.toData(): List<Movie> = map { it.toData() }

@@ -21,13 +21,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 get() = this@MainActivity.application
         })
             .apply {
-                saveMovieUseCase.saveMovie(Movie.default()).subscribeOn(Schedulers.io())
+                saveMovieUseCase.saveMovies(Movie.default()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe()
-                saveBookUseCase.saveBook(Book.default()).subscribeOn(Schedulers.io())
+                saveBookUseCase.saveBooks(Book.default()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe()
-                saveDocumentaryUseCase.saveDocumentary(Documentary.default()).subscribeOn(Schedulers.io())
+                saveDocumentaryUseCase.saveDocumentaries(Documentary.default()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe()
-                saveGameUseCase.saveGame(Game.default()).subscribeOn(Schedulers.io())
+                saveGameUseCase.saveGames(Game.default()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe()
             }
         Thread.sleep(1000)

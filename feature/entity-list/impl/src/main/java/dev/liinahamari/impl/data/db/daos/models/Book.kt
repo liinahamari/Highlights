@@ -57,7 +57,7 @@ fun Book.toDomain(): dev.liinahamari.api.domain.entities.Book = dev.liinahamari.
     description = this.description
 )
 
-fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
+private fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
     id = this.id,
     category = this.category,
     countryCodes = this.countryCodes.toTypedArray(),
@@ -68,3 +68,4 @@ fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
     author = this.author,
     description = this.description
 )
+fun Array<out dev.liinahamari.api.domain.entities.Book>.toData(): List<Book> = map { it.toData() }

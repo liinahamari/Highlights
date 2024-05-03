@@ -17,14 +17,18 @@ class MoviesRepoImpl @Inject constructor(private val moviesDao: MovieDao) : Movi
 
     override fun delete(id: Long): Completable = moviesDao.delete(id)
 
-    override fun save(movie: Movie): Completable = moviesDao.insert(movie.toData())
+    override fun save(vararg movies: Movie): Completable = moviesDao.insert(movies.toData())
     override fun findById(category: Category, id: Long): Single<Movie> = moviesDao.findById(category, id)
         .map { it.toDomain() }
+
+    override fun findByIds(category: Category, ids: Set<Long>): Single<List<Movie>> = moviesDao.findByIds(category, ids)
+        .map { it.map { it.toDomain() } }
 }
 
 interface MoviesRepo {
     fun getAllMoviesByCategory(category: Category): Single<List<Movie>>
-    fun save(movie: Movie): Completable
+    fun save(vararg movies: Movie): Completable
     fun delete(id: Long): Completable
     fun findById(category: Category, id: Long): Single<Movie>
+    fun findByIds(category: Category, ids: Set<Long>): Single<List<Movie>>
 }

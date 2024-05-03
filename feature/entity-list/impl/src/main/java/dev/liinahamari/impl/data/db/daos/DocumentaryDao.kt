@@ -1,7 +1,9 @@
 package dev.liinahamari.impl.data.db.daos
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
+import androidx.room.Query
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.impl.data.db.daos.models.Documentary
 import io.reactivex.rxjava3.core.Completable
@@ -15,8 +17,11 @@ interface DocumentaryDao {
     @Query("SELECT * FROM documentary WHERE category = :category and id LIKE :id LIMIT 1")
     fun findById(category: Category, id: Long): Single<Documentary>
 
+    @Query("SELECT * FROM documentary WHERE category = :category and id IN (:ids)")
+    fun findByIds(category: Category, ids: Set<Long>): Single<List<Documentary>>
+
     @Insert(onConflict = REPLACE)
-    fun insert(documentary: Documentary): Completable
+    fun insert(documentaries: List<Documentary>): Completable
 
     @Query("DELETE FROM documentary WHERE id = :id")
     fun delete(id: Long): Completable

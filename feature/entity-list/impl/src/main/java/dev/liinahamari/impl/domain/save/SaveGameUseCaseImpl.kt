@@ -7,5 +7,5 @@ import io.reactivex.rxjava3.core.Completable
 import javax.inject.Inject
 
 class SaveGameUseCaseImpl @Inject constructor(private val gamesRepo: GamesRepo) : SaveGameUseCase {
-    override fun saveGame(game: Game): Completable = gamesRepo.save(game)
+    override fun saveGames(vararg games: Game): Completable = gamesRepo.save(*games)
 }

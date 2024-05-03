@@ -34,38 +34,37 @@ class MoveToOtherCategoryViewModel @Inject constructor(
         actualCategory: Category,
         desirableCategory: Category,
         entityType: EntityType,
-        id: Long,
-        adapterPosition: Int
+        selection: Set<Long>
     ) {
         when (entityType) {
-            EntityType.DOCUMENTARY -> getDocumentariesUseCase.findById(actualCategory, id)
-                .map { it.copy(category = desirableCategory) }
-                .flatMapCompletable(saveDocumentaryUseCase::saveDocumentary)
+            EntityType.DOCUMENTARY -> getDocumentariesUseCase.findByIds(actualCategory, selection)
+                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+                .flatMapCompletable(saveDocumentaryUseCase::saveDocumentaries)
                 .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success(adapterPosition) }
+                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
 
-            EntityType.BOOK -> getBooksUseCase.findById(actualCategory, id)
-                .map { it.copy(category = desirableCategory) }
-                .flatMapCompletable(saveBookUseCase::saveBook)
+            EntityType.BOOK -> getBooksUseCase.findByIds(actualCategory, selection)
+                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+                .flatMapCompletable(saveBookUseCase::saveBooks)
                 .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success(adapterPosition) }
+                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
 
-            EntityType.MOVIE -> getMoviesUseCase.findById(actualCategory, id)
-                .map { it.copy(category = desirableCategory) }
-                .flatMapCompletable(saveMovieUseCase::saveMovie)
+            EntityType.MOVIE -> getMoviesUseCase.findByIds(actualCategory, selection)
+                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+                .flatMapCompletable(saveMovieUseCase::saveMovies)
                 .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success(adapterPosition) }
+                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
 
-            EntityType.GAME -> getGamesUseCase.findById(actualCategory, id)
-                .map { it.copy(category = desirableCategory) }
-                .flatMapCompletable(saveGameUseCase::saveGame)
+            EntityType.GAME -> getGamesUseCase.findByIds(actualCategory, selection)
+                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+                .flatMapCompletable(saveGameUseCase::saveGames)
                 .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success(adapterPosition) }
+                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
         }
     }
 
     sealed class SaveEntityEvent {
-        data class Success(val adapterPosition: Int) : SaveEntityEvent()
+        object Success : SaveEntityEvent()
         object Failure : SaveEntityEvent()
     }
 }

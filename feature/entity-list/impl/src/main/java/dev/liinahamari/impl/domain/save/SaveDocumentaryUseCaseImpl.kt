@@ -8,5 +8,5 @@ import javax.inject.Inject
 
 internal class SaveDocumentaryUseCaseImpl @Inject constructor(private val documentariesRepo: DocumentariesRepo) :
     SaveDocumentaryUseCase {
-    override fun saveDocumentary(documentary: Documentary): Completable = documentariesRepo.save(documentary)
+    override fun saveDocumentaries(vararg documentaries: Documentary): Completable = documentariesRepo.save(*documentaries)
 }

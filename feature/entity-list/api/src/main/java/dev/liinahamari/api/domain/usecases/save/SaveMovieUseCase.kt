@@ -4,5 +4,5 @@ import dev.liinahamari.api.domain.entities.Movie
 import io.reactivex.rxjava3.core.Completable
 
 interface SaveMovieUseCase {
-    fun saveMovie(movie: Movie): Completable
+    fun saveMovies(vararg movies: Movie): Completable
 }

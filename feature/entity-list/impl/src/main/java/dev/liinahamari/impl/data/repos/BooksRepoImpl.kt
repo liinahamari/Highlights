@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class BooksRepoImpl @Inject constructor(private val bookDao: BookDao) : BooksRepo {
-    override fun save(book: Book): Completable = bookDao.insert(book.toData())
+    override fun save(vararg books: Book): Completable = bookDao.insert(books.toData())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
@@ -28,6 +28,11 @@ class BooksRepoImpl @Inject constructor(private val bookDao: BookDao) : BooksRep
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
+    override fun findByIds(category: Category, ids: Set<Long>): Single<List<Book>> = bookDao.findByIds(category, ids)
+        .map { it.map { it.toDomain() } }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+
     override fun findById(category: Category, id: Long): Single<Book> = bookDao.findById(category, id)
         .map { it.toDomain() }
         .subscribeOn(Schedulers.io())
@@ -36,7 +41,8 @@ class BooksRepoImpl @Inject constructor(private val bookDao: BookDao) : BooksRep
 
 interface BooksRepo {
     fun getAllBooksByCategory(category: Category): Single<List<Book>>
-    fun save(book: Book): Completable
+    fun save(vararg books: Book): Completable
     fun delete(id: Long): Completable
+    fun findByIds(category: Category, ids: Set<Long>): Single<List<Book>>
     fun findById(category: Category, id: Long): Single<Book>
 }

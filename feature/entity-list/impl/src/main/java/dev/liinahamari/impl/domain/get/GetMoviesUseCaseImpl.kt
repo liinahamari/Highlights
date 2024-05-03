@@ -10,4 +10,6 @@ import javax.inject.Inject
 class GetMoviesUseCaseImpl @Inject constructor(private val moviesRepo: MoviesRepo) : GetMoviesUseCase {
     override fun getAllMovies(category: Category): Single<List<Movie>> = moviesRepo.getAllMoviesByCategory(category)
     override fun findById(category: Category, id: Long): Single<Movie> = moviesRepo.findById(category, id)
+    override fun findByIds(category: Category, ids: Set<Long>): Single<List<Movie>> =
+        moviesRepo.findByIds(category, ids)
 }

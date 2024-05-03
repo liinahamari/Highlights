@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
 
     private fun selectedEntriesInTabNotEmpty(): Boolean =
         (ui.pager.getCurrentFragment(supportFragmentManager).view?.findViewById<FragmentContainerView>(R.id.pagerContainer)
-            ?.getFragment<Fragment>() as? EntryFragment?)?.entitiesIdToDelete?.isNotEmpty() == true
+            ?.getFragment<Fragment>() as? EntryFragment?)?.selectedEntitiesIds?.isNotEmpty() == true
 
     private fun setupOnBackPressed() {
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {

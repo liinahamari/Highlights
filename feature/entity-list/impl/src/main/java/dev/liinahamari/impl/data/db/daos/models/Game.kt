@@ -53,7 +53,7 @@ fun Game.toDomain(): dev.liinahamari.api.domain.entities.Game = dev.liinahamari.
     description = this.description
 )
 
-fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
+private fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
     id = this.id,
     category = this.category,
     countryCodes = this.countryCodes.toTypedArray(),
@@ -63,3 +63,4 @@ fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
     year = this.year,
     description = this.description
 )
+fun Array<out dev.liinahamari.api.domain.entities.Game>.toData(): List<Game> = map { it.toData() }

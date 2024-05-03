@@ -49,7 +49,7 @@ fun Documentary.toDomain(): dev.liinahamari.api.domain.entities.Documentary =
         description = this.description
     )
 
-fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentary = Documentary(
+private fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentary = Documentary(
     id = this.id,
     category = this.category,
     countryCodes = this.countryCodes.toTypedArray(),
@@ -58,3 +58,4 @@ fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentary = Docu
     year = this.year,
     description = this.description
 )
+fun Array<out dev.liinahamari.api.domain.entities.Documentary>.toData(): List<Documentary> = map { it.toData() }

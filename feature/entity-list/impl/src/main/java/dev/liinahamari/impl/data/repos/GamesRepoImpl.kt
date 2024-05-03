@@ -24,7 +24,7 @@ class GamesRepoImpl @Inject constructor(private val gamesDao: GameDao) : GamesRe
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
-    override fun save(game: Game): Completable = gamesDao.insert(game.toData())
+    override fun save(vararg games: Game): Completable = gamesDao.insert(games.toData())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
@@ -32,11 +32,17 @@ class GamesRepoImpl @Inject constructor(private val gamesDao: GameDao) : GamesRe
         .map { it.toDomain() }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+
+    override fun findByIds(category: Category, ids: Set<Long>): Single<List<Game>> = gamesDao.findByIds(category, ids)
+        .map { it.map { it.toDomain() } }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 }
 
 interface GamesRepo {
     fun getAllGamesByCategory(category: Category): Single<List<Game>>
-    fun save(game: Game): Completable
+    fun save(vararg games: Game): Completable
     fun delete(id: Long): Completable
     fun findById(category: Category, id: Long): Single<Game>
+    fun findByIds(category: Category, ids: Set<Long>): Single<List<Game>>
 }

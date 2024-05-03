@@ -7,5 +7,5 @@ import io.reactivex.rxjava3.core.Completable
 import javax.inject.Inject
 
 class SaveMovieUseCaseImpl @Inject constructor(private val moviesRepo: MoviesRepo) : SaveMovieUseCase {
-    override fun saveMovie(movie: Movie): Completable = moviesRepo.save(movie)
+    override fun saveMovies(vararg movies: Movie): Completable = moviesRepo.save(*movies)
 }

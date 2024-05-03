@@ -7,5 +7,5 @@ import io.reactivex.rxjava3.core.Completable
 import javax.inject.Inject
 
 class SaveBookUseCaseImpl @Inject constructor(private val booksRepo: BooksRepo) : SaveBookUseCase {
-    override fun saveBook(book: Book): Completable = booksRepo.save(book)
+    override fun saveBooks(vararg books: Book): Completable = booksRepo.save(*books)
 }

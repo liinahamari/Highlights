@@ -17,8 +17,11 @@ interface MovieDao {
     @Query("SELECT * FROM movie WHERE id LIKE :id and category = :category LIMIT 1")
     fun findById(category: Category, id: Long): Single<Movie>
 
+    @Query("SELECT * FROM movie WHERE category = :category and id IN (:ids)")
+    fun findByIds(category: Category, ids: Set<Long>): Single<List<Movie>>
+
     @Insert(onConflict = REPLACE)
-    fun insert(movie: Movie): Completable
+    fun insert(movies: List<Movie>): Completable
 
     @Query("DELETE FROM movie WHERE id = :id")
     fun delete(id: Long): Completable

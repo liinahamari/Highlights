@@ -25,25 +25,25 @@ class SaveEntryViewModel @Inject constructor(
     val saveEvent: LiveData<SaveEvent> get() = _saveEvent
 
     fun saveMovie(movie: Movie) {
-        saveMovieUseCase.saveMovie(movie)
+        saveMovieUseCase.saveMovies(movie)
             .doOnError { _saveEvent.value = SaveEvent.Failure }
             .subscribeUi { _saveEvent.value = SaveEvent.Success }
     }
 
     fun saveBook(book: Book) {
-        saveBookUseCase.saveBook(book)
+        saveBookUseCase.saveBooks(book)
             .doOnError { _saveEvent.value = SaveEvent.Failure }
             .subscribeUi { _saveEvent.value = SaveEvent.Success }
     }
 
     fun saveDocumentary(documentary: Documentary) {
-        saveDocumentaryUseCase.saveDocumentary(documentary)
+        saveDocumentaryUseCase.saveDocumentaries(documentary)
             .doOnError { _saveEvent.value = SaveEvent.Failure }
             .subscribeUi { _saveEvent.value = SaveEvent.Success }
     }
 
     fun saveGame(game: Game) {
-        saveGameUseCase.saveGame(game)
+        saveGameUseCase.saveGames(game)
             .doOnError { _saveEvent.value = SaveEvent.Failure }
             .subscribeUi { _saveEvent.value = SaveEvent.Success }
     }

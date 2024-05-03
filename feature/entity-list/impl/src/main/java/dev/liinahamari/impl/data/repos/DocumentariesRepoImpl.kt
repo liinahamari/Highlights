@@ -12,9 +12,10 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class DocumentariesRepoImpl @Inject constructor(private val documentaryDao: DocumentaryDao) : DocumentariesRepo {
-    override fun save(documentary: Documentary): Completable = documentaryDao.insert(documentary.toData())
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+    override fun save(vararg documentaries: Documentary): Completable =
+        documentaryDao.insert(documentaries.toData())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
     override fun delete(id: Long): Completable = documentaryDao.delete(id)
         .subscribeOn(Schedulers.io())
@@ -32,11 +33,18 @@ class DocumentariesRepoImpl @Inject constructor(private val documentaryDao: Docu
         .map { it.toDomain() }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+
+    override fun findByIds(category: Category, ids: Set<Long>): Single<List<Documentary>> =
+        documentaryDao.findByIds(category, ids)
+            .map { it.map { it.toDomain() } }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 }
 
 interface DocumentariesRepo {
+    fun findByIds(category: Category, ids: Set<Long>): Single<List<Documentary>>
     fun findById(category: Category, id: Long): Single<Documentary>
     fun getAllDocumentariesByCategory(category: Category): Single<List<Documentary>>
-    fun save(documentary: Documentary): Completable
+    fun save(vararg documentaries: Documentary): Completable
     fun delete(id: Long): Completable
 }

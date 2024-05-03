@@ -17,8 +17,11 @@ interface GameDao {
     @Query("SELECT * FROM game WHERE id LIKE :id and category = :category LIMIT 1")
     fun findById(category: Category, id: Long): Single<Game>
 
+    @Query("SELECT * FROM game WHERE id IN (:ids) and category = :category")
+    fun findByIds(category: Category, ids: Set<Long>): Single<List<Game>>
+
     @Insert(onConflict = REPLACE)
-    fun insert(game: Game): Completable
+    fun insert(games: List<Game>): Completable
 
     @Query("DELETE FROM game WHERE id = :id")
     fun delete(id: Long): Completable

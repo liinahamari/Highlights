@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
+import androidx.core.view.MenuCompat
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -39,6 +41,7 @@ import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
 import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
+import me.saket.cascade.CascadePopupMenu
 import javax.inject.Inject
 
 class EntryFragment : Fragment(R.layout.fragment_category) {
@@ -63,7 +66,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
         )
     }
 
-    val entitiesIdToDelete = mutableSetOf<Long>()
+    val selectedEntitiesIds = mutableSetOf<Long>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as MainActivity).listUiComponent.inject(this)
@@ -75,20 +78,47 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
 
     private fun setupMenu() = requireActivity().addMenuProvider(object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menu.clear()
             menuInflater.inflate(R.menu.bunch_entities_actions, menu)
             this@EntryFragment.menu = menu
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem) = true.also {
-            if (menuItem.itemId == R.id.delete) {
-                MaterialDialog(requireContext())
+            when (menuItem.itemId) {
+                R.id.delete -> MaterialDialog(requireContext())
                     .message(R.string.sure_to_delete)
                     .negativeButton(android.R.string.cancel)
-                    .positiveButton { deleteEntryViewModel.delete(entitiesIdToDelete, argumentEntityType) }
+                    .positiveButton { deleteEntryViewModel.delete(selectedEntitiesIds, argumentEntityType) }
                     .show()
+
+                R.id.moveTo -> with(CascadePopupMenu(requireContext(), requireView())) {
+                    menu.apply {
+                        MenuCompat.setGroupDividerEnabled(this, true)
+                        addSubMenu(getString(R.string.move_to)).setupMoveToEntrySubMenu()
+                    }
+                    show()
+                }
             }
         }
     })
+
+    private fun SubMenu.setupMoveToEntrySubMenu() {
+//        setIcon(R.drawable.move) //todo
+        Category.values() //todo to usecase
+            .toMutableList()
+            .apply { removeIf { it == argumentEntityCategory } }
+            .forEach { category ->
+                add(category.emoji).setOnMenuItemClickListener {
+                    moveToOtherCategoryViewModel.moveToOtherCategory(
+                        selection = selectedEntitiesIds,
+                        actualCategory = argumentEntityCategory,
+                        desirableCategory = category,
+                        entityType = argumentEntityType
+                    )
+                    true
+                }
+            }
+    }
 
     private fun setupViews() {
         setupRecyclerView()
@@ -108,10 +138,11 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
     private fun onSelectionChanged(selection: Selection<Long>) {
         if (selection.isEmpty.not()) {
             (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        } else {
+            (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         }
-        menu.findItem(R.id.delete)!!.setVisible(selection.isEmpty.not())
-        entitiesIdToDelete.clear()
-        entitiesIdToDelete.addAll(selection)
+        selectedEntitiesIds.clear()
+        selectedEntitiesIds.addAll(selection)
     }
 
     private fun setupViewModelSubscriptions() {
@@ -137,7 +168,12 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
         }
         moveToOtherCategoryViewModel.saveEntityEvent.observe(viewLifecycleOwner) {
             when (it) {
-                is MoveToOtherCategoryViewModel.SaveEntityEvent.Success -> entriesAdapter!!.removeItem(it.adapterPosition)
+                is MoveToOtherCategoryViewModel.SaveEntityEvent.Success -> {
+                    (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+                    tracker.clearSelection()
+                    toast("Successfully changed category")
+                    fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+                }
                 is MoveToOtherCategoryViewModel.SaveEntityEvent.Failure -> toast("Failed to move to other category")
             }
         }
