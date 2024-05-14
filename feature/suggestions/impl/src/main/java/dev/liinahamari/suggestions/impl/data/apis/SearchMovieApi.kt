@@ -13,7 +13,8 @@ interface SearchMovieApi {
         @Query("query") query: String,
         @Query("page") page: Int = 1,
         @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY,
-        @Query("language") language: String = "en"
+        @Query("language") language: String = "en",
+        @Query("include_adult") includeAdult: Boolean = false
     ): Single<MoviesSearchResponse>
 
     @GET("genre/movie/list")
