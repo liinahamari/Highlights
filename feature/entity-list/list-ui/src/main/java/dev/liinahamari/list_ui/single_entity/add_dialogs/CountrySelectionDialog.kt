@@ -1,45 +1,42 @@
 package dev.liinahamari.list_ui.single_entity.add_dialogs
 
 import android.annotation.SuppressLint
-import android.view.LayoutInflater
+import android.view.LayoutInflater.from
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.CountriesRvItemBinding
+import dev.liinahamari.list_ui.databinding.CountriesRvItemBinding.inflate
 import java.util.Locale
 import java.util.Locale.getISOCountries
 
 //todo move to first launch and cache
 //todo loading state while searching
 fun Fragment.showCountrySelectionDialog(preselectedLocales: List<String>, onCountrySelected: (List<String>) -> Unit) {
-    val allLocales = getISOCountries().map { Locale("", it) }.sortedBy { it.displayCountry }
-    val chosenLocales = preselectedLocales.toMutableList()
-    val adapter = CountriesAdapter(allLocales, preselectedLocales) { isChecked: Boolean, countryCode: String ->
-        if (isChecked) {
-            if (chosenLocales.contains(countryCode).not()) chosenLocales.add(countryCode)
-        } else chosenLocales.remove(countryCode)
-    }
-
+    val countriesListAdapter = CountriesAdapter(
+        allLocales = getISOCountries().map { Locale("", it) }.sortedBy { it.displayCountry },
+        preselectedLocales = preselectedLocales
+    )
     MaterialDialog(requireContext())
-        .positiveButton(res = android.R.string.ok) {
-            onCountrySelected(chosenLocales)
-        }
+        .positiveButton(res = android.R.string.ok) { onCountrySelected(countriesListAdapter.checkedLocales.map { it.country } + preselectedLocales) }
         .customView(R.layout.countries_selection)
         .apply {
             getCustomView().also {
                 it.findViewById<RecyclerView>(R.id.countriesRv).apply {
-                    setHasFixedSize(true)
-                    this.adapter = adapter
+                    this.adapter = countriesListAdapter
                 }
                 findViewById<SearchView>(R.id.searchView).setOnQueryTextListener(object :
                     SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String): Boolean = false
-                    override fun onQueryTextChange(newText: String) = false.also { adapter.filter(newText) }
+                    override fun onQueryTextChange(newText: String) =
+                        false.also { countriesListAdapter.filter(newText) }
                 })
             }
         }
@@ -48,36 +45,57 @@ fun Fragment.showCountrySelectionDialog(preselectedLocales: List<String>, onCoun
 
 private class CountriesAdapter(
     private val allLocales: List<Locale>,
-    private val preselectedLocales: List<String>,
-    private val onChecked: (isChecked: Boolean, countryCode: String) -> Unit
+    private val preselectedLocales: List<String>
 ) : RecyclerView.Adapter<CountriesAdapter.ViewHolder>() {
-    private var filteredLocales: List<Locale> = allLocales
+    class ViewHolder(val ui: CountriesRvItemBinding) : RecyclerView.ViewHolder(ui.root)
 
-    @SuppressLint("NotifyDataSetChanged") fun filter(text: String) {
-        filteredLocales = allLocales.filter { it.displayCountry.contains(text, true) }
-        notifyDataSetChanged()
+    private val asyncListDiffer = AsyncListDiffer(this, object : DiffUtil.ItemCallback<Locale>() {
+        override fun areItemsTheSame(oldItem: Locale, newItem: Locale): Boolean = oldItem.country == newItem.country
+        override fun areContentsTheSame(oldItem: Locale, newItem: Locale): Boolean = oldItem == newItem
+    })
+
+    private var filteredLocales: List<Locale> = allLocales
+    val checkedLocales = mutableListOf<Locale>()
+
+    init {
+        filteredLocales = allLocales
+        asyncListDiffer.submitList(filteredLocales)
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder(CountriesRvItemBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false))
+    @SuppressLint("NotifyDataSetChanged") fun filter(text: String) {
+        filteredLocales = if (text.isBlank()) {
+            allLocales
+        } else {
+            allLocales.filter { it.displayCountry.contains(text, true) }
+        }
+        asyncListDiffer.submitList(filteredLocales)
+    }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        holder.bind(filteredLocales[position], onChecked, preselectedLocales)
+    override fun getItemCount(): Int = asyncListDiffer.currentList.size
 
-    override fun getItemCount(): Int = filteredLocales.size
+    @SuppressLint("NotifyDataSetChanged") fun clearSelectedItems() {
+        if (checkedLocales.isNotEmpty()) {
+            checkedLocales.clear()
+            notifyDataSetChanged()
+        }
+    }
 
-    class ViewHolder(private val ui: CountriesRvItemBinding) : RecyclerView.ViewHolder(ui.root) {
-        fun bind(
-            locale: Locale,
-            onChecked: (isChecked: Boolean, countryCode: String) -> Unit,
-            preselectedLocales: List<String>
-        ) {
-            ui.root.setOnClickListener { ui.checkbox.isChecked = ui.checkbox.isChecked.not() }
-            ui.titleTv.text = locale.displayCountry
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder(inflate(from(parent.context), parent, false))
 
-            ui.checkbox.isChecked = locale.country in preselectedLocales
-            ui.checkbox.setOnCheckedChangeListener { _, isChecked ->
-                onChecked(isChecked, locale.country)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.ui.checkbox.setOnCheckedChangeListener(null)
+        with(asyncListDiffer.currentList[position]) {
+            holder.ui.titleTv.text = displayCountry
+            holder.ui.checkbox.isChecked = checkedLocales.contains(this) || country in preselectedLocales
+            holder.ui.checkbox.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    if (checkedLocales.contains(this).not()) {
+                        checkedLocales.add(this)
+                    }
+                } else {
+                    checkedLocales.remove(this)
+                }
             }
         }
     }
