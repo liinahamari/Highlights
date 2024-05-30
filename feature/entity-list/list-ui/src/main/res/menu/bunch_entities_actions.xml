@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/moveTo"
-        android:icon="@drawable/cascade_ic_round_arrow_right_24"
+        android:icon="@drawable/move_to_other_category"
         android:title="@string/move_to"
         android:visible="true"
         app:showAsAction="ifRoom" />
