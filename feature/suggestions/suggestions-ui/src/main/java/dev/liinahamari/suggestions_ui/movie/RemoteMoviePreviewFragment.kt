@@ -26,7 +26,7 @@ class RemoteMoviePreviewFragment : DialogFragment(R.layout.fragment_movie_previe
             RemoteMoviePreviewFragment().apply { arguments = bundleOf(ARG_MOVIE to movie, ARG_CATEGORY to category) }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(ui) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         renderMovieInformation()
         setupOnClickListeners()
     }
