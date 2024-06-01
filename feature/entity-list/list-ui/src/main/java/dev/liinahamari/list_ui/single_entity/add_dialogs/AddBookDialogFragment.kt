@@ -41,19 +41,9 @@ class AddBookDialogFragment : AddFragment(R.layout.fragment_add_book) {
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchBookAutoCompleteTextView.BookObserver {
             override fun onChosen(b: Book) {
+                book = b
                 ui.yearEt.setText(b.year.toString())
                 ui.posterUrlEt.setText(b.posterUrl)
-
-                book = Book(
-                    category = b.category,
-                    year = b.year,
-                    posterUrl = b.posterUrl,
-                    countryCodes = b.countryCodes,
-                    name = b.name,
-                    author = b.author,
-                    genres = b.genres,
-                    description = b.description
-                )
                 selectedCountries = b.countryCodes
                 ui.countrySelectionBtn.text = b.countryCodes.toString()
             }

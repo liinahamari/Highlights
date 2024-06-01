@@ -38,18 +38,9 @@ class AddGameDialogFragment : AddFragment(R.layout.fragment_add_game) {
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchGameAutoCompleteTextView.GameObserver {
             override fun onChosen(g: Game) {
+                game = g
                 ui.yearEt.setText(g.year.toString())
                 ui.posterUrlEt.setText(g.posterUrl)
-
-                game = Game(
-                    category = g.category,
-                    year = g.year,
-                    posterUrl = g.posterUrl,
-                    countryCodes = g.countryCodes,
-                    name = g.name,
-                    description = g.description,
-                    genres = g.genres
-                )
                 selectedCountries = g.countryCodes
                 ui.countrySelectionBtn.text = g.countryCodes.toString()
                 selectedGenres = g.genres
