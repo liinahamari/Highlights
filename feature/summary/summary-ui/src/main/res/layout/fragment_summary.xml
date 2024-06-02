@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.github.mikephil.charting.charts.PieChart
+    <com.anychart.AnyChartView
         android:id="@+id/entityRatioChart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent"
+        />
     <TextView
         android:id="@+id/noDataTv"
         android:layout_width="wrap_content"

@@ -13,15 +13,15 @@ sealed interface DatabaseCounters {
 }
 
 sealed interface Entity {
-    val counter: Float
+    val counter: Int
     val label: String
 
-    data class Games(override val counter: Float, override val label: String = Games::class.java.simpleName) : Entity
+    data class Games(override val counter: Int, override val label: String = Games::class.java.simpleName) : Entity
     data class Documentaries(
-        override val counter: Float,
+        override val counter: Int,
         override val label: String = Documentaries::class.java.simpleName
     ) : Entity
 
-    data class Movies(override val counter: Float, override val label: String = Movies::class.java.simpleName) : Entity
-    data class Books(override val counter: Float, override val label: String = Books::class.java.simpleName) : Entity
+    data class Movies(override val counter: Int, override val label: String = Movies::class.java.simpleName) : Entity
+    data class Books(override val counter: Int, override val label: String = Books::class.java.simpleName) : Entity
 }

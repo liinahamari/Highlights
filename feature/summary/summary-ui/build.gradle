@@ -33,5 +33,5 @@ dependencies {
     implementation project(':core')
     implementation project(':feature:entity-list')
 
-    implementation "com.github.PhilJay:MPAndroidChart:$chartVersion"
+    implementation "com.github.AnyChart:AnyChart-Android:$chartVersion"
 }

@@ -29,7 +29,7 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
             if (counters.isEmpty()) {
                 DatabaseCounters.Empty
             } else {
-                val sum = counters.map { it.counter }.sum()
+                val sum = counters.sumOf { it.counter }
                 DatabaseCounters.Success(
                     entities = counters,
                     totalCounter = sum.toString(),
@@ -40,25 +40,25 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
 
     private fun getMoviesAmount(): Maybe<Entity> = movieDao.getRowCount()
         .filter { it > 0 }
-        .map<Entity> { Entity.Movies(it.toFloat()) }
+        .map<Entity>(Entity::Movies)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
     private fun getDocumentariesAmount(): Maybe<Entity> = documentariesDao.getRowCount()
         .filter { it > 0 }
-        .map<Entity> { Entity.Documentaries(it.toFloat()) }
+        .map<Entity>(Entity::Documentaries)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
     private fun getBooksAmount(): Maybe<Entity> = bookDao.getRowCount()
         .filter { it > 0 }
-        .map<Entity> { Entity.Books(it.toFloat()) }
+        .map<Entity>(Entity::Books)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
     private fun getGamesAmount(): Maybe<Entity> = gameDao.getRowCount()
         .filter { it > 0 }
-        .map<Entity> { Entity.Games(it.toFloat()) }
+        .map<Entity>(Entity::Games)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 }
