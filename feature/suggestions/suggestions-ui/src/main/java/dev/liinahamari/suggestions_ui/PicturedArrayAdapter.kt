@@ -5,25 +5,15 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.skydoves.androidveil.VeilLayout
 import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.layoutInflater
+import dev.liinahamari.suggestions_ui.databinding.SuggestionsListItemBinding
 
 class PicturedArrayAdapter(private val context: Context) :
     ArrayAdapter<SuggestionUi>(context, R.layout.suggestions_list_item) {
-    private inner class ViewHolder(view: View) {
-        var veilLayout: VeilLayout = view.findViewById(R.id.veilLayout)
-        var thumbIv: ImageView = view.findViewById(R.id.thumbnail)
-        var titleTv: TextView = view.findViewById(R.id.titleTv)
-        var yearTv: TextView = view.findViewById(R.id.yearTv)
-        var genresTv: TextView = view.findViewById(R.id.genresTv)
-    }
-
     init {
         setNotifyOnChange(true)
     }
@@ -35,27 +25,32 @@ class PicturedArrayAdapter(private val context: Context) :
     }
 
     @SuppressLint("ViewHolder", "InflateParams")
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
-        context.layoutInflater.inflate(R.layout.suggestions_list_item, null).apply {
-            ViewHolder(this).apply {
-                with(getItem(position)!!) {
-                    titleTv.text = title
-                    yearTv.text = year.toString()
-                    genresTv.text = genres.joinToString()
-                    posterUrl?.let {
-                        Glide.with(context)
-                            .load(getItem(position)?.posterUrl)
-//                          .load(/*"https://image.tmdb.org/t/p/w154${*/getItem(position)?.posterUrl/*}"*/)
-                            .fallback(R.drawable.broken_image_24)
-                            .error(R.drawable.broken_image_24)
-                            .timeout(10_000)
-                            .override(100, 100)
-                            .listener(UnveilRequestListener { veilLayout.unVeil() })
-                            .into(thumbIv)
-                    }
-                }
-            }
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View = convertView.getBinding(parent)
+        .apply { getItem(position)!!.render(this) }
+        .root
+
+    private fun SuggestionUi.render(ui: SuggestionsListItemBinding) {
+        ui.titleTv.text = title
+        ui.yearTv.text = year.toString()
+        ui.genresTv.text = genres.joinToString()
+        posterUrl?.let {
+            Glide.with(context)
+                .load(posterUrl)
+//              .load(/*"https://image.tmdb.org/t/p/w154${*/getItem(position)?.posterUrl/*}"*/)
+                .fallback(R.drawable.broken_image_24)
+                .error(R.drawable.broken_image_24)
+                .timeout(10_000)
+                .override(100, 100)
+                .listener(UnveilRequestListener { ui.veilLayout.unVeil() })
+                .into(ui.thumbnail)
         }
+    }
+
+    private fun View?.getBinding(parent: ViewGroup): SuggestionsListItemBinding = if (this == null) {
+        SuggestionsListItemBinding.inflate(context.layoutInflater, parent, false)
+    } else {
+        SuggestionsListItemBinding.bind(this)
+    }
 }
 
 data class SuggestionUi(val title: String, val year: Int, val posterUrl: String?, val genres: List<String>)
