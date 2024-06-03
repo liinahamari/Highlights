@@ -28,6 +28,9 @@ class FetchEntriesViewModel @Inject constructor(
     private val _fetchAllEvent = SingleLiveEvent<FetchAllEvent>()
     val fetchAllEvent: LiveData<FetchAllEvent> get() = _fetchAllEvent
 
+    private val _filterEvent = SingleLiveEvent<FilterEvent>()
+    val filterEvent: LiveData<FilterEvent> get() = _filterEvent
+
     private val _findEntityEvent = SingleLiveEvent<FindEntityEvent>()
     val findEntityEvent: LiveData<FindEntityEvent> get() = _findEntityEvent
 
@@ -126,12 +129,91 @@ class FetchEntriesViewModel @Inject constructor(
                 .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
         }
     }
+    fun filter(entityType: EntityType, entityCategory: Category, countryCode: String) {
+        when (entityType) {
+            EntityType.DOCUMENTARY -> getDocumentariesUseCase.filter(entityCategory, countryCode)
+                .map {
+                    it.map {
+                        Entry(
+                            it.id,
+                            title = it.name,
+                            description = it.description,
+                            genres = "",
+                            countries = it.countryCodes.map { Locale("", it).displayCountry },
+                            url = it.posterUrl,
+                            year = it.year,
+                            clazz = Documentary::class.java
+                        )
+                    }
+                }
+                .doOnError { _filterEvent.value = FilterEvent.Failure }
+                .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
+
+            EntityType.BOOK -> getBooksUseCase.filter(entityCategory, countryCode)
+                .map {
+                    it.map {
+                        Entry(
+                            it.id,
+                            title = it.name,
+                            genres = it.genres.toString(),
+                            description = it.description,
+                            countries = it.countryCodes.map { Locale("", it).displayCountry },
+                            url = it.posterUrl,
+                            year = it.year,
+                            clazz = Book::class.java
+                        )
+                    }
+                }
+                .doOnError { _filterEvent.value = FilterEvent.Failure }
+                .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
+
+            EntityType.MOVIE -> getMoviesUseCase.filter(entityCategory, countryCode)
+                .map {
+                    it.map {
+                        Entry(
+                            it.id,
+                            title = it.name,
+                            genres = it.genres.toString(),
+                            description = it.description,
+                            countries = it.countryCodes.map { Locale("", it).displayCountry },
+                            url = it.posterUrl,
+                            year = it.year,
+                            clazz = Movie::class.java
+                        )
+                    }
+                }
+                .doOnError { _filterEvent.value = FilterEvent.Failure }
+                .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
+
+            EntityType.GAME -> getGamesUseCase.filter(entityCategory, countryCode)
+                .map {
+                    it.map {
+                        Entry(
+                            it.id,
+                            title = it.name,
+                            genres = it.genres.toString(),
+                            description = it.description,
+                            countries = it.countryCodes.map { Locale("", it).displayCountry },
+                            url = it.posterUrl,
+                            year = it.year,
+                            clazz = Game::class.java
+                        )
+                    }
+                }
+                .doOnError { _filterEvent.value = FilterEvent.Failure }
+                .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
+        }
+    }
 
     override fun onCleared() = disposeSubscriptions()
 
     sealed class FetchAllEvent {
         data class Success(val entries: List<Entry>) : FetchAllEvent()
         object Failure : FetchAllEvent()
+    }
+    sealed class FilterEvent {
+        data class Success(val entries: List<Entry>) : FilterEvent()
+        object Failure : FilterEvent()
     }
 
     sealed class FindEntityEvent {

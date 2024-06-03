@@ -56,6 +56,7 @@ fun Book.toDomain(): dev.liinahamari.api.domain.entities.Book = dev.liinahamari.
     author = this.author,
     description = this.description
 )
+fun Iterable<Book>.toDomain(): List<dev.liinahamari.api.domain.entities.Book> = this.map { it.toDomain() }
 
 private fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
     id = this.id,

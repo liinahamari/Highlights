@@ -6,6 +6,7 @@ import io.reactivex.rxjava3.core.Single
 
 interface GetMoviesUseCase {
     fun getAllMovies(category: Category): Single<List<Movie>>
+    fun filter(category: Category, countryCode: String): Single<List<Movie>>
     fun findById(category: Category, id: Long): Single<Movie>
     fun findByIds(category: Category, ids: Set<Long>): Single<List<Movie>>
 }

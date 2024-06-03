@@ -53,6 +53,8 @@ fun Game.toDomain(): dev.liinahamari.api.domain.entities.Game = dev.liinahamari.
     description = this.description
 )
 
+fun Iterable<Game>.toDomain(): List<dev.liinahamari.api.domain.entities.Game> = map { it.toDomain() }
+
 private fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
     id = this.id,
     category = this.category,
@@ -63,4 +65,5 @@ private fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
     year = this.year,
     description = this.description
 )
+
 fun Array<out dev.liinahamari.api.domain.entities.Game>.toData(): List<Game> = map { it.toData() }

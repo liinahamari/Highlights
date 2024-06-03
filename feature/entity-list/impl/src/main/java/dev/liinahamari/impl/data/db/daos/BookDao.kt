@@ -14,6 +14,9 @@ interface BookDao {
     @Query("SELECT * FROM book WHERE category = :ctg")
     fun getAll(ctg: Category): Single<List<Book>>
 
+    @Query("SELECT * FROM book WHERE category = :category and countryCodes LIKE '%' || :countryCode || '%'")
+    fun filterByCountry(category: Category, countryCode: String): Single<List<Book>>
+
     @Query("SELECT * FROM book WHERE id LIKE :id and category = :ctg LIMIT 1")
     fun findById(ctg: Category, id: Long): Single<Book>
 

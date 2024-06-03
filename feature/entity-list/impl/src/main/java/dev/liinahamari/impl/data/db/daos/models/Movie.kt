@@ -53,6 +53,8 @@ fun Movie.toDomain(): dev.liinahamari.api.domain.entities.Movie = dev.liinahamar
     description = this.description
 )
 
+fun Iterable<Movie>.toDomain(): List<dev.liinahamari.api.domain.entities.Movie> = map { it.toDomain() }
+
 private fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
     id = this.id,
     category = this.category,

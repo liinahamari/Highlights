@@ -14,6 +14,9 @@ interface DocumentaryDao {
     @Query("SELECT * FROM documentary WHERE category = :category")
     fun getAll(category: Category): Single<List<Documentary>>
 
+    @Query("SELECT * FROM documentary WHERE category = :category and countryCodes LIKE '%' || :countryCode || '%'")
+    fun filterByCountry(category: Category, countryCode: String): Single<List<Documentary>>
+
     @Query("SELECT * FROM documentary WHERE category = :category and id LIKE :id LIMIT 1")
     fun findById(category: Category, id: Long): Single<Documentary>
 

@@ -14,6 +14,9 @@ interface MovieDao {
     @Query("SELECT * FROM movie WHERE category = :category")
     fun getAll(category: Category): Single<List<Movie>>
 
+    @Query("SELECT * FROM movie WHERE category = :category and countryCodes LIKE '%' || :countryCode || '%'")
+    fun filterByCountry(category: Category, countryCode: String): Single<List<Movie>>
+
     @Query("SELECT * FROM movie WHERE id LIKE :id and category = :category LIMIT 1")
     fun findById(category: Category, id: Long): Single<Movie>
 

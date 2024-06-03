@@ -24,7 +24,15 @@ class DocumentariesRepoImpl @Inject constructor(private val documentaryDao: Docu
     override fun getAllDocumentariesByCategory(category: Category): Single<List<Documentary>> =
         documentaryDao.getAll(category)
             .toObservable()
-            .map { it.map { it.toDomain() } }
+            .map { it.toDomain() }
+            .firstOrError()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+
+    override fun filterByCountry(category: Category, countryCode: String): Single<List<Documentary>> =
+        documentaryDao.filterByCountry(category, countryCode)
+            .toObservable()
+            .map { it.toDomain() }
             .firstOrError()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -36,7 +44,7 @@ class DocumentariesRepoImpl @Inject constructor(private val documentaryDao: Docu
 
     override fun findByIds(category: Category, ids: Set<Long>): Single<List<Documentary>> =
         documentaryDao.findByIds(category, ids)
-            .map { it.map { it.toDomain() } }
+            .map { it.toDomain() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 }
@@ -47,4 +55,5 @@ interface DocumentariesRepo {
     fun getAllDocumentariesByCategory(category: Category): Single<List<Documentary>>
     fun save(vararg documentaries: Documentary): Completable
     fun delete(id: Long): Completable
+    fun filterByCountry(category: Category, countryCode: String): Single<List<Documentary>>
 }

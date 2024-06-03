@@ -19,7 +19,7 @@ import java.util.Locale.getISOCountries
 
 //todo move to first launch and cache
 //todo loading state while searching
-fun Fragment.showCountrySelectionDialog(preselectedLocales: List<String>, onCountrySelected: (List<String>) -> Unit) {
+fun Fragment.showCountrySelectionDialog(preselectedLocales: List<String> = emptyList(), onCountrySelected: (List<String>) -> Unit) {
     val countriesListAdapter = CountriesAdapter(
         allLocales = getISOCountries().map { Locale("", it) }.sortedBy { it.displayCountry },
         preselectedLocales = preselectedLocales

@@ -15,7 +15,15 @@ class GamesRepoImpl @Inject constructor(private val gamesDao: GameDao) : GamesRe
     override fun getAllGamesByCategory(category: Category): Single<List<Game>> =
         gamesDao.getAll(category)
             .toObservable()
-            .map { it.map { it.toDomain() } }
+            .map { it.toDomain() }
+            .firstOrError()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+
+    override fun filterByCountry(category: Category, countryCode: String): Single<List<Game>> =
+        gamesDao.filterByCountry(category, countryCode)
+            .toObservable()
+            .map { it.toDomain() }
             .firstOrError()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -34,13 +42,14 @@ class GamesRepoImpl @Inject constructor(private val gamesDao: GameDao) : GamesRe
         .observeOn(AndroidSchedulers.mainThread())
 
     override fun findByIds(category: Category, ids: Set<Long>): Single<List<Game>> = gamesDao.findByIds(category, ids)
-        .map { it.map { it.toDomain() } }
+        .map { it.toDomain() }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 }
 
 interface GamesRepo {
     fun getAllGamesByCategory(category: Category): Single<List<Game>>
+    fun filterByCountry(category: Category, countryCode: String): Single<List<Game>>
     fun save(vararg games: Game): Completable
     fun delete(id: Long): Completable
     fun findById(category: Category, id: Long): Single<Game>

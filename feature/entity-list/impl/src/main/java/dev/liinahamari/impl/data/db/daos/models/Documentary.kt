@@ -48,6 +48,7 @@ fun Documentary.toDomain(): dev.liinahamari.api.domain.entities.Documentary =
         year = this.year,
         description = this.description
     )
+fun Iterable<Documentary>.toDomain(): List<dev.liinahamari.api.domain.entities.Documentary> = map { it.toDomain() }
 
 private fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentary = Documentary(
     id = this.id,

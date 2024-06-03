@@ -8,6 +8,9 @@ import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class GetMoviesUseCaseImpl @Inject constructor(private val moviesRepo: MoviesRepo) : GetMoviesUseCase {
+    override fun filter(category: Category, countryCode: String): Single<List<Movie>> =
+        moviesRepo.filterByCountry(category, countryCode)
+
     override fun getAllMovies(category: Category): Single<List<Movie>> = moviesRepo.getAllMoviesByCategory(category)
     override fun findById(category: Category, id: Long): Single<Movie> = moviesRepo.findById(category, id)
     override fun findByIds(category: Category, ids: Set<Long>): Single<List<Movie>> =

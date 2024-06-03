@@ -13,4 +13,10 @@
         android:title="@string/move_to"
         android:visible="true"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/filter"
+        android:title="@string/move_to"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
 </menu>

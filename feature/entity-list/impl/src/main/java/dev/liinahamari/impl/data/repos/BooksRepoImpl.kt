@@ -19,7 +19,15 @@ class BooksRepoImpl @Inject constructor(private val bookDao: BookDao) : BooksRep
     override fun getAllBooksByCategory(category: Category): Single<List<Book>> =
         bookDao.getAll(category)
             .toObservable()
-            .map { it.map { it.toDomain() } }
+            .map { it.toDomain() }
+            .firstOrError()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+
+    override fun filterByCountry(category: Category, countryCode: String): Single<List<Book>> =
+        bookDao.filterByCountry(category, countryCode)
+            .toObservable()
+            .map { it.toDomain() }
             .firstOrError()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -29,7 +37,7 @@ class BooksRepoImpl @Inject constructor(private val bookDao: BookDao) : BooksRep
         .observeOn(AndroidSchedulers.mainThread())
 
     override fun findByIds(category: Category, ids: Set<Long>): Single<List<Book>> = bookDao.findByIds(category, ids)
-        .map { it.map { it.toDomain() } }
+        .map { it.toDomain() }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
@@ -45,4 +53,5 @@ interface BooksRepo {
     fun delete(id: Long): Completable
     fun findByIds(category: Category, ids: Set<Long>): Single<List<Book>>
     fun findById(category: Category, id: Long): Single<Book>
+    fun filterByCountry(category: Category, countryCode: String): Single<List<Book>>
 }

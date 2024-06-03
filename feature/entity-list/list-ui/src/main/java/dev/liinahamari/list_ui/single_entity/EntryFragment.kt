@@ -35,6 +35,7 @@ import dev.liinahamari.list_ui.single_entity.add_dialogs.AddBookDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddDocumentaryDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddGameDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
+import dev.liinahamari.list_ui.single_entity.add_dialogs.showCountrySelectionDialog
 import dev.liinahamari.list_ui.viewmodels.BunchDeleteEvent
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
@@ -67,6 +68,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
     }
 
     val selectedEntitiesIds = mutableSetOf<Long>()
+    private var filterEnabled = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as MainActivity).listUiComponent.inject(this)
@@ -74,17 +76,32 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
         setupViews()
         fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
         setupMenu()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
     private fun setupMenu() = requireActivity().addMenuProvider(object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menu.clear()
             menuInflater.inflate(R.menu.bunch_entities_actions, menu)
+            if (filterEnabled) menu.findItem(R.id.filter)
+                .setIcon(R.drawable.clear_filter) else menu.findItem(R.id.filter).setIcon(R.drawable.filter)
             this@EntryFragment.menu = menu
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem) = true.also {
             when (menuItem.itemId) {
+                R.id.filter -> if (filterEnabled) {
+                    filterEnabled = false
+                    fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+                    menuItem.setIcon(R.drawable.filter)
+                } else {
+                    showCountrySelectionDialog {
+                        fetchEntriesViewModel.filter(argumentEntityType, argumentEntityCategory, it.first())
+                        filterEnabled = true
+                        menuItem.setIcon(R.drawable.clear_filter)
+                    }
+                }
+
                 R.id.delete -> MaterialDialog(requireContext())
                     .message(R.string.sure_to_delete)
                     .negativeButton(android.R.string.cancel)
@@ -136,10 +153,9 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
     }
 
     private fun onSelectionChanged(selection: Selection<Long>) {
-        if (selection.isEmpty.not()) {
-            (requireActivity() as AppCompatActivity).supportActionBar?.show()
-        } else {
-            (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        with(selection.isEmpty.not()) {
+            menu.findItem(R.id.delete).isVisible = this
+            menu.findItem(R.id.moveTo).isVisible = this
         }
         selectedEntitiesIds.clear()
         selectedEntitiesIds.addAll(selection)
@@ -150,7 +166,6 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             when (it) {
                 is BunchDeleteEvent.Failure -> toast("Failed to delete")
                 is BunchDeleteEvent.Success -> {
-                    (requireActivity() as AppCompatActivity).supportActionBar?.hide()
                     tracker.clearSelection()
                     toast("Successfully deleted")
                     fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
@@ -166,14 +181,20 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                 entriesAdapter!!.tracker = tracker
             }
         }
+        fetchEntriesViewModel.filterEvent.observe(viewLifecycleOwner) {
+            if (it is FetchEntriesViewModel.FilterEvent.Success) {
+                entriesAdapter!!.replaceDataset(it.entries)
+                entriesAdapter!!.tracker = tracker
+            }
+        }
         moveToOtherCategoryViewModel.saveEntityEvent.observe(viewLifecycleOwner) {
             when (it) {
                 is MoveToOtherCategoryViewModel.SaveEntityEvent.Success -> {
-                    (requireActivity() as AppCompatActivity).supportActionBar?.hide()
                     tracker.clearSelection()
                     toast("Successfully changed category")
                     fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
                 }
+
                 is MoveToOtherCategoryViewModel.SaveEntityEvent.Failure -> toast("Failed to move to other category")
             }
         }
@@ -213,7 +234,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
 
                 MOVIE -> AddMovieDialogFragment
                     .newInstance(argumentEntityCategory)
-                    .show(childFragmentManager, null) //todo check if dialog showing
+                    .show(childFragmentManager, null)
 
                 DOCUMENTARY -> AddDocumentaryDialogFragment
                     .newInstance(argumentEntityCategory)
