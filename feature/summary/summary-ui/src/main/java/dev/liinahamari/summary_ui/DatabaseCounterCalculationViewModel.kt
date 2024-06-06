@@ -22,12 +22,9 @@ class DatabaseCounterCalculationViewModel @Inject constructor(private val databa
     val errorEvent: LiveData<String> get() = _errorEvent
 
     fun getDatabaseCounters() {
-        println("dsadadadas 0 ${Thread.currentThread().name}")
         viewModelScope.launch(IO) {
-            println("dsadadadas 1 ${Thread.currentThread().name}")
             val databaseCounters = databaseCountersUseCase.getAllDatabaseCounters()
             withContext(Main) {
-                println("dsadadadas 2 ${Thread.currentThread().name}")
                 when (databaseCounters) {
                     is DatabaseCounters.Empty -> _emptyViewEvent.call()
                     is DatabaseCounters.DatabaseCorruptionError -> _errorEvent.value = "Something wrong with database!"
