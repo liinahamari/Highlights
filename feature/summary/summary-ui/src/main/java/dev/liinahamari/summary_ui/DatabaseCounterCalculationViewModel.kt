@@ -2,10 +2,14 @@ package dev.liinahamari.summary_ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dev.liinahamari.api.domain.entities.DatabaseCounters
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
 import dev.liinahamari.core.SingleLiveEvent
-import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class DatabaseCounterCalculationViewModel @Inject constructor(private val databaseCountersUseCase: DatabaseCountersUseCase) :
@@ -17,16 +21,19 @@ class DatabaseCounterCalculationViewModel @Inject constructor(private val databa
     private val _errorEvent = SingleLiveEvent<String>()
     val errorEvent: LiveData<String> get() = _errorEvent
 
-
-    private val disposable = CompositeDisposable()
-    override fun onCleared() = disposable.dispose()
-
-    fun getDatabaseCounters() =
-        disposable.add(databaseCountersUseCase.getAllDatabaseCounters().subscribe { counters ->
-            when (counters) {
-                is DatabaseCounters.Empty -> _emptyViewEvent.call()
-                is DatabaseCounters.DatabaseCorruptionError -> _errorEvent.value = "Something wrong with database!"
-                is DatabaseCounters.Success -> _chartDataEvent.value = counters
+    fun getDatabaseCounters() {
+        println("dsadadadas 0 ${Thread.currentThread().name}")
+        viewModelScope.launch(IO) {
+            println("dsadadadas 1 ${Thread.currentThread().name}")
+            val databaseCounters = databaseCountersUseCase.getAllDatabaseCounters()
+            withContext(Main) {
+                println("dsadadadas 2 ${Thread.currentThread().name}")
+                when (databaseCounters) {
+                    is DatabaseCounters.Empty -> _emptyViewEvent.call()
+                    is DatabaseCounters.DatabaseCorruptionError -> _errorEvent.value = "Something wrong with database!"
+                    is DatabaseCounters.Success -> _chartDataEvent.value = databaseCounters
+                }
             }
-        })
+        }
+    }
 }

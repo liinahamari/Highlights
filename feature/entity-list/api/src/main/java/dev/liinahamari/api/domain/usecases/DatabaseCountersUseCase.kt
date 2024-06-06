@@ -4,5 +4,5 @@ import dev.liinahamari.api.domain.entities.DatabaseCounters
 import io.reactivex.rxjava3.core.Single
 
 interface DatabaseCountersUseCase {
-    fun getAllDatabaseCounters(): Single<DatabaseCounters>
+    suspend fun getAllDatabaseCounters(): DatabaseCounters
 }

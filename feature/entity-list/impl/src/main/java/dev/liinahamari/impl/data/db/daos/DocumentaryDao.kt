@@ -30,5 +30,5 @@ interface DocumentaryDao {
     fun delete(id: Long): Completable
 
     @Query("SELECT COUNT(id) FROM documentary")
-    fun getRowCount(): Single<Int>
+    suspend fun getRowCount(): Int
 }

@@ -30,5 +30,5 @@ interface GameDao {
     fun delete(id: Long): Completable
 
     @Query("SELECT COUNT(id) FROM game")
-    fun getRowCount(): Single<Int>
+    suspend fun getRowCount(): Int
 }

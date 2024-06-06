@@ -7,10 +7,6 @@ import dev.liinahamari.impl.data.db.daos.BookDao
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
 import dev.liinahamari.impl.data.db.daos.GameDao
 import dev.liinahamari.impl.data.db.daos.MovieDao
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class DatabaseCountersUseCaseImpl @Inject constructor(
@@ -19,46 +15,28 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
     private val gameDao: GameDao,
     private val documentariesDao: DocumentaryDao
 ) : DatabaseCountersUseCase {
-    override fun getAllDatabaseCounters(): Single<DatabaseCounters> = Maybe.concat(
+    override suspend fun getAllDatabaseCounters(): DatabaseCounters = listOf(
         getGamesAmount(),
         getMoviesAmount(),
         getBooksAmount(),
         getDocumentariesAmount()
-    ).toList()
-        .map { counters ->
-            if (counters.isEmpty()) {
-                DatabaseCounters.Empty
-            } else {
-                val sum = counters.sumOf { it.counter }
-                DatabaseCounters.Success(
-                    entities = counters,
-                    totalCounter = sum.toString(),
-                    titleInCenterOfChart = "Total ($sum)"
+    )
+        .let { entities ->
+            val allEntitiesCounter = entities.sumOf { it.counter }
+            when (allEntitiesCounter) {
+                0 -> DatabaseCounters.Empty
+                in 0..Int.MAX_VALUE -> DatabaseCounters.Success(
+                    entities = entities,
+                    totalCounter = allEntitiesCounter.toString(),
+                    titleInCenterOfChart = "Total ($allEntitiesCounter)"
                 )
+
+                else -> DatabaseCounters.DatabaseCorruptionError
             }
         }
 
-    private fun getMoviesAmount(): Maybe<Entity> = movieDao.getRowCount()
-        .filter { it > 0 }
-        .map<Entity>(Entity::Movies)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-
-    private fun getDocumentariesAmount(): Maybe<Entity> = documentariesDao.getRowCount()
-        .filter { it > 0 }
-        .map<Entity>(Entity::Documentaries)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-
-    private fun getBooksAmount(): Maybe<Entity> = bookDao.getRowCount()
-        .filter { it > 0 }
-        .map<Entity>(Entity::Books)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-
-    private fun getGamesAmount(): Maybe<Entity> = gameDao.getRowCount()
-        .filter { it > 0 }
-        .map<Entity>(Entity::Games)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+    private suspend fun getMoviesAmount(): Entity = movieDao.getRowCount().let(Entity::Movies)
+    private suspend fun getDocumentariesAmount(): Entity = documentariesDao.getRowCount().let(Entity::Documentaries)
+    private suspend fun getBooksAmount(): Entity = bookDao.getRowCount().let(Entity::Books)
+    private suspend fun getGamesAmount(): Entity = gameDao.getRowCount().let(Entity::Games)
 }

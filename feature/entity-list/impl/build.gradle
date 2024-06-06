@@ -22,6 +22,7 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxkotlin:$rxKotlinVersion"
 
     implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomKtxVersion"
     annotationProcessor "androidx.room:room-compiler:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-rxjava3:$roomVersion"

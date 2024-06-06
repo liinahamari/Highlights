@@ -30,5 +30,5 @@ interface MovieDao {
     fun delete(id: Long): Completable
 
     @Query("SELECT COUNT(id) FROM movie")
-    fun getRowCount(): Single<Int>
+    suspend fun getRowCount(): Int
 }

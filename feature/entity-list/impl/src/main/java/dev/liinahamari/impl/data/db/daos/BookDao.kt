@@ -30,5 +30,5 @@ interface BookDao {
     fun delete(id: Long): Completable
 
     @Query("SELECT COUNT(id) FROM book")
-    fun getRowCount(): Single<Int>
+    suspend fun getRowCount(): Int
 }
