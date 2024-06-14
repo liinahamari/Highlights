@@ -10,21 +10,11 @@ import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.custom_views.PopupImageDialog
 import dev.liinahamari.list_ui.databinding.EntryRowItemBinding
 import net.cachapa.expandablelayout.ExpandableLayout.OnExpansionUpdateListener
-
-data class Entry(
-    val id: Long,
-    val title: String,
-    val countries: List<String>,
-    val genres: String,
-    val year: Int,
-    val description: String,
-    val url: String?,
-    val clazz: Class<*>
-)
 
 private const val TIMEOUT_20_SEC = 20_000
 
@@ -33,8 +23,8 @@ class EntryAdapter(
     private val recyclerView: RecyclerView
 ) :
     RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
-    private var entries: MutableList<Entry> = mutableListOf()
-    private var filteredEntries: MutableList<Entry> = entries
+    private var entries: MutableList<EntryUi> = mutableListOf()
+    private var filteredEntries: MutableList<EntryUi> = entries
 
     private val UNSELECTED = -1
     private var expandedItems = mutableListOf<Int>()
@@ -48,7 +38,7 @@ class EntryAdapter(
 
     override fun getItemId(position: Int): Long = filteredEntries[position].id
 
-    @SuppressLint("NotifyDataSetChanged") fun replaceDataset(dataSet: List<Entry>) {
+    @SuppressLint("NotifyDataSetChanged") fun replaceDataset(dataSet: List<EntryUi>) {
         this.entries = dataSet.toMutableList()
         this.filteredEntries = dataSet.toMutableList()
         notifyDataSetChanged()
@@ -67,7 +57,7 @@ class EntryAdapter(
             override fun getSelectionKey(): Long = itemId
         }
 
-        fun bind(entry: Entry, isActivated: Boolean = false) {
+        fun bind(entry: EntryUi, isActivated: Boolean = false) {
             ui.expandableLayout.apply {
                 setInterpolator(OvershootInterpolator())
                 setOnExpansionUpdateListener(this@ViewHolder)

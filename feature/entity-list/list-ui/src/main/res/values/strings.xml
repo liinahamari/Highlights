@@ -21,4 +21,6 @@
     <string name="countries_placeholder">"Countries: %s"</string>
     <string name="years_placeholder">"Year: %d"</string>
     <string name="move_to">Move to…</string>
+    <string name="error_fetching_local_data">Error fetching local data</string>
+    <string name="empty_list_message">You don\'t have any %s added</string>
 </resources>

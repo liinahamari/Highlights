@@ -17,8 +17,6 @@ class GamesRepoImpl @Inject constructor(private val gamesDao: GameDao) : GamesRe
             .toObservable()
             .map { it.toDomain() }
             .firstOrError()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 
     override fun filterByCountry(category: Category, countryCode: String): Single<List<Game>> =
         gamesDao.filterByCountry(category, countryCode)

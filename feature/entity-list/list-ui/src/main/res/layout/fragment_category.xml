@@ -7,26 +7,46 @@
     android:background="@color/black"
     tools:context="dev.liinahamari.list_ui.activities.MainActivity">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"
-        android:orientation="vertical"
-        tools:context="dev.liinahamari.list_ui.activities.MainActivity">
-
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:closeIcon="@android:drawable/ic_menu_close_clear_cancel" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/entriesRv"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/search_and_list_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/black"
             android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-    </LinearLayout>
+            tools:context="dev.liinahamari.list_ui.activities.MainActivity">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:closeIcon="@android:drawable/ic_menu_close_clear_cancel" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/entriesRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/errorView"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text="@string/error_fetching_local_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/emptyMessageView"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text="@string/empty_list_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

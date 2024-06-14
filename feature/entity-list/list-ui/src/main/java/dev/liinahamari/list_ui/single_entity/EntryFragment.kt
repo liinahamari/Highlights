@@ -11,6 +11,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.core.view.MenuCompat
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -43,6 +44,7 @@ import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import me.saket.cascade.CascadePopupMenu
+import java.util.Locale
 import javax.inject.Inject
 
 class EntryFragment : Fragment(R.layout.fragment_category) {
@@ -176,9 +178,31 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
         }
         fetchEntriesViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
-            if (it is FetchEntriesViewModel.FetchAllEvent.Success) {
-                entriesAdapter!!.replaceDataset(it.entries)
-                entriesAdapter!!.tracker = tracker
+            when (it) {
+                is FetchEntriesViewModel.FetchAllEvent.Empty -> {
+                    ui.searchAndListLayout.isVisible = false
+                    ui.errorView.isVisible = false
+                    ui.emptyMessageView.isVisible = true
+                    ui.emptyMessageView.text = String.format(
+                        Locale.getDefault(),
+                        getString(R.string.empty_list_message),
+                        argumentEntityType.toString().lowercase().capitalize()//todo mapper
+                    )
+                }
+
+                is FetchEntriesViewModel.FetchAllEvent.Success -> {
+                    ui.searchAndListLayout.isVisible = true
+                    ui.emptyMessageView.isVisible = false
+                    ui.errorView.isVisible = false
+                    entriesAdapter!!.replaceDataset(it.entries)
+                    entriesAdapter!!.tracker = tracker
+                }
+
+                is FetchEntriesViewModel.FetchAllEvent.Failure -> {
+                    ui.searchAndListLayout.isVisible = false
+                    ui.errorView.isVisible = true
+                    ui.emptyMessageView.isVisible = false
+                }
             }
         }
         fetchEntriesViewModel.filterEvent.observe(viewLifecycleOwner) {

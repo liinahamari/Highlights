@@ -22,8 +22,7 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
         getDocumentariesAmount()
     )
         .let { entities ->
-            val allEntitiesCounter = entities.sumOf { it.counter }
-            when (allEntitiesCounter) {
+            when (val allEntitiesCounter = entities.sumOf { it.counter }) {
                 0 -> DatabaseCounters.Empty
                 in 0..Int.MAX_VALUE -> DatabaseCounters.Success(
                     entities = entities,

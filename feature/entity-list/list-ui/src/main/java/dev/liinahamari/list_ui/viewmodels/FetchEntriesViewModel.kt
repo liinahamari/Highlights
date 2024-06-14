@@ -5,8 +5,13 @@ import androidx.lifecycle.ViewModel
 import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
+import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.Movie
+import dev.liinahamari.api.domain.usecases.get.GetAllBooksResult
+import dev.liinahamari.api.domain.usecases.get.GetAllDocumentariesResult
+import dev.liinahamari.api.domain.usecases.get.GetAllGamesResult
+import dev.liinahamari.api.domain.usecases.get.GetAllMoviesResult
 import dev.liinahamari.api.domain.usecases.get.GetBooksUseCase
 import dev.liinahamari.api.domain.usecases.get.GetDocumentariesUseCase
 import dev.liinahamari.api.domain.usecases.get.GetGamesUseCase
@@ -15,7 +20,6 @@ import dev.liinahamari.core.RxSubscriptionDelegateImpl
 import dev.liinahamari.core.RxSubscriptionsDelegate
 import dev.liinahamari.core.SingleLiveEvent
 import dev.liinahamari.list_ui.single_entity.EntityType
-import dev.liinahamari.list_ui.single_entity.Entry
 import java.util.Locale
 import javax.inject.Inject
 
@@ -57,84 +61,48 @@ class FetchEntriesViewModel @Inject constructor(
     fun fetchEntries(entityType: EntityType, entityCategory: Category) {
         when (entityType) {
             EntityType.DOCUMENTARY -> getDocumentariesUseCase.getAllDocumentaries(entityCategory)
-                .map {
-                    it.map {
-                        Entry(
-                            it.id,
-                            title = it.name,
-                            description = it.description,
-                            genres = "",
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Documentary::class.java
-                        )
+                .subscribeUi { result ->
+                    when (result) {
+                        is GetAllDocumentariesResult.Success -> _fetchAllEvent.value = FetchAllEvent.Success(result.data)
+                        is GetAllDocumentariesResult.EmptyList -> _fetchAllEvent.value = FetchAllEvent.Empty
+                        is GetAllDocumentariesResult.Error -> _fetchAllEvent.value = FetchAllEvent.Failure
                     }
                 }
-                .doOnError { _fetchAllEvent.value = FetchAllEvent.Failure }
-                .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
 
             EntityType.BOOK -> getBooksUseCase.getAllBooks(entityCategory)
-                .map {
-                    it.map {
-                        Entry(
-                            it.id,
-                            title = it.name,
-                            genres = it.genres.toString(),
-                            description = it.description,
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Book::class.java
-                        )
+                .subscribeUi { result ->
+                    when (result) {
+                        is GetAllBooksResult.Success -> _fetchAllEvent.value = FetchAllEvent.Success(result.data)
+                        is GetAllBooksResult.EmptyList -> _fetchAllEvent.value = FetchAllEvent.Empty
+                        is GetAllBooksResult.Error -> _fetchAllEvent.value = FetchAllEvent.Failure
                     }
                 }
-                .doOnError { _fetchAllEvent.value = FetchAllEvent.Failure }
-                .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
 
             EntityType.MOVIE -> getMoviesUseCase.getAllMovies(entityCategory)
-                .map {
-                    it.map {
-                        Entry(
-                            it.id,
-                            title = it.name,
-                            genres = it.genres.toString(),
-                            description = it.description,
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Movie::class.java
-                        )
+                .subscribeUi { result ->
+                    when (result) {
+                        is GetAllMoviesResult.Success -> _fetchAllEvent.value = FetchAllEvent.Success(result.data)
+                        is GetAllMoviesResult.EmptyList -> _fetchAllEvent.value = FetchAllEvent.Empty
+                        is GetAllMoviesResult.Error -> _fetchAllEvent.value = FetchAllEvent.Failure
                     }
                 }
-                .doOnError { _fetchAllEvent.value = FetchAllEvent.Failure }
-                .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
-
             EntityType.GAME -> getGamesUseCase.getAllGames(entityCategory)
-                .map {
-                    it.map {
-                        Entry(
-                            it.id,
-                            title = it.name,
-                            genres = it.genres.toString(),
-                            description = it.description,
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Game::class.java
-                        )
+                .subscribeUi { result ->
+                    when (result) {
+                        is GetAllGamesResult.Success -> _fetchAllEvent.value = FetchAllEvent.Success(result.data)
+                        is GetAllGamesResult.EmptyList -> _fetchAllEvent.value = FetchAllEvent.Empty
+                        is GetAllGamesResult.Error -> _fetchAllEvent.value = FetchAllEvent.Failure
                     }
                 }
-                .doOnError { _fetchAllEvent.value = FetchAllEvent.Failure }
-                .subscribeUi { entries -> _fetchAllEvent.value = FetchAllEvent.Success(entries) }
         }
     }
+
     fun filter(entityType: EntityType, entityCategory: Category, countryCode: String) {
         when (entityType) {
             EntityType.DOCUMENTARY -> getDocumentariesUseCase.filter(entityCategory, countryCode)
                 .map {
                     it.map {
-                        Entry(
+                        EntryUi(
                             it.id,
                             title = it.name,
                             description = it.description,
@@ -152,7 +120,7 @@ class FetchEntriesViewModel @Inject constructor(
             EntityType.BOOK -> getBooksUseCase.filter(entityCategory, countryCode)
                 .map {
                     it.map {
-                        Entry(
+                        EntryUi(
                             it.id,
                             title = it.name,
                             genres = it.genres.toString(),
@@ -170,7 +138,7 @@ class FetchEntriesViewModel @Inject constructor(
             EntityType.MOVIE -> getMoviesUseCase.filter(entityCategory, countryCode)
                 .map {
                     it.map {
-                        Entry(
+                        EntryUi(
                             it.id,
                             title = it.name,
                             genres = it.genres.toString(),
@@ -188,7 +156,7 @@ class FetchEntriesViewModel @Inject constructor(
             EntityType.GAME -> getGamesUseCase.filter(entityCategory, countryCode)
                 .map {
                     it.map {
-                        Entry(
+                        EntryUi(
                             it.id,
                             title = it.name,
                             genres = it.genres.toString(),
@@ -208,11 +176,13 @@ class FetchEntriesViewModel @Inject constructor(
     override fun onCleared() = disposeSubscriptions()
 
     sealed class FetchAllEvent {
-        data class Success(val entries: List<Entry>) : FetchAllEvent()
+        data class Success(val entries: List<EntryUi>) : FetchAllEvent()
         object Failure : FetchAllEvent()
+        object Empty : FetchAllEvent()
     }
+
     sealed class FilterEvent {
-        data class Success(val entries: List<Entry>) : FilterEvent()
+        data class Success(val entries: List<EntryUi>) : FilterEvent()
         object Failure : FilterEvent()
     }
 

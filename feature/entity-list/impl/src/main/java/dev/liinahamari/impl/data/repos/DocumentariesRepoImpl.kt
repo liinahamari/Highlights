@@ -26,8 +26,6 @@ class DocumentariesRepoImpl @Inject constructor(private val documentaryDao: Docu
             .toObservable()
             .map { it.toDomain() }
             .firstOrError()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 
     override fun filterByCountry(category: Category, countryCode: String): Single<List<Documentary>> =
         documentaryDao.filterByCountry(category, countryCode)
