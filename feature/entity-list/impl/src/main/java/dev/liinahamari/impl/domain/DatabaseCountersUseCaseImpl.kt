@@ -7,6 +7,8 @@ import dev.liinahamari.impl.data.db.daos.BookDao
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
 import dev.liinahamari.impl.data.db.daos.GameDao
 import dev.liinahamari.impl.data.db.daos.MovieDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class DatabaseCountersUseCaseImpl @Inject constructor(
@@ -15,24 +17,26 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
     private val gameDao: GameDao,
     private val documentariesDao: DocumentaryDao
 ) : DatabaseCountersUseCase {
-    override suspend fun getAllDatabaseCounters(): DatabaseCounters = listOf(
-        getGamesAmount(),
-        getMoviesAmount(),
-        getBooksAmount(),
-        getDocumentariesAmount()
-    )
-        .let { entities ->
-            when (val allEntitiesCounter = entities.sumOf { it.counter }) {
-                0 -> DatabaseCounters.Empty
-                in 0..Int.MAX_VALUE -> DatabaseCounters.Success(
-                    entities = entities,
-                    totalCounter = allEntitiesCounter.toString(),
-                    titleInCenterOfChart = "Total ($allEntitiesCounter)"
-                )
+    override suspend fun getAllDatabaseCounters(): DatabaseCounters = withContext(Dispatchers.IO) {
+        listOf(
+            getGamesAmount(),
+            getMoviesAmount(),
+            getBooksAmount(),
+            getDocumentariesAmount()
+        )
+            .let { entities ->
+                when (val allEntitiesCounter = entities.sumOf { it.counter }) {
+                    0 -> DatabaseCounters.Empty
+                    in 0..Int.MAX_VALUE -> DatabaseCounters.Success(
+                        entities = entities,
+                        totalCounter = allEntitiesCounter.toString(),
+                        titleInCenterOfChart = "Total ($allEntitiesCounter)"
+                    )
 
-                else -> DatabaseCounters.DatabaseCorruptionError
+                    else -> throw IllegalStateException("Sum of entities in database equal to $allEntitiesCounter")
+                }
             }
-        }
+    }
 
     private suspend fun getMoviesAmount(): Entity = movieDao.getRowCount().let(Entity::Movies)
     private suspend fun getDocumentariesAmount(): Entity = documentariesDao.getRowCount().let(Entity::Documentaries)

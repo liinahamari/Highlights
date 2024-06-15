@@ -6,10 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dev.liinahamari.api.domain.entities.DatabaseCounters
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
 import dev.liinahamari.core.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class DatabaseCounterCalculationViewModel @Inject constructor(private val databaseCountersUseCase: DatabaseCountersUseCase) :
@@ -22,14 +19,11 @@ class DatabaseCounterCalculationViewModel @Inject constructor(private val databa
     val errorEvent: LiveData<String> get() = _errorEvent
 
     fun getDatabaseCounters() {
-        viewModelScope.launch(IO) {
-            val databaseCounters = databaseCountersUseCase.getAllDatabaseCounters()
-            withContext(Main) {
-                when (databaseCounters) {
-                    is DatabaseCounters.Empty -> _emptyViewEvent.call()
-                    is DatabaseCounters.DatabaseCorruptionError -> _errorEvent.value = "Something wrong with database!"
-                    is DatabaseCounters.Success -> _chartDataEvent.value = databaseCounters
-                }
+        viewModelScope.launch {
+            when (val databaseCounters = databaseCountersUseCase.getAllDatabaseCounters()) {
+                is DatabaseCounters.Empty -> _emptyViewEvent.call()
+                is DatabaseCounters.DatabaseCorruptionError -> _errorEvent.value = "Something wrong with database!"
+                is DatabaseCounters.Success -> _chartDataEvent.value = databaseCounters
             }
         }
     }
