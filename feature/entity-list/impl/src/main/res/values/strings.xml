@@ -1,4 +1,0 @@
-<resources>
-    <string name="pref_enable_suggestions" translatable="false">pref_enable_suggestions</string>
-    <string name="title_enable_suggestions">Enable suggestions</string>
-</resources>

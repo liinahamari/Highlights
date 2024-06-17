@@ -5,6 +5,7 @@ import dev.liinahamari.api.EntityListApi
 import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.entries_list.EntriesFragment
 import dev.liinahamari.list_ui.single_entity.EntryFragment
+import dev.liinahamari.list_ui.single_entity.SettingsFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddFragment
 import javax.inject.Singleton
 
@@ -22,5 +23,6 @@ internal interface ListUiComponent {
     fun inject(fragment: EntriesFragment)
     fun inject(activity: MainActivity)
     fun inject(fragment: EntryFragment)
+    fun inject(fragment: SettingsFragment)
     fun inject(fragment: AddFragment)
 }
