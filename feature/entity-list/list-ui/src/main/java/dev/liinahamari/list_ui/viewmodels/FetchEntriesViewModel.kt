@@ -2,12 +2,13 @@ package dev.liinahamari.list_ui.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Category
-import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.EntryUi
-import dev.liinahamari.api.domain.entities.Game
-import dev.liinahamari.api.domain.entities.Movie
+import dev.liinahamari.api.domain.entities.toBookUi
+import dev.liinahamari.api.domain.entities.toDocumentaryUi
+import dev.liinahamari.api.domain.entities.toGameUi
+import dev.liinahamari.api.domain.entities.toMovieUi
+import dev.liinahamari.api.domain.entities.toUi
 import dev.liinahamari.api.domain.usecases.get.GetAllBooksResult
 import dev.liinahamari.api.domain.usecases.get.GetAllDocumentariesResult
 import dev.liinahamari.api.domain.usecases.get.GetAllGamesResult
@@ -20,7 +21,6 @@ import dev.liinahamari.core.RxSubscriptionDelegateImpl
 import dev.liinahamari.core.RxSubscriptionsDelegate
 import dev.liinahamari.core.SingleLiveEvent
 import dev.liinahamari.list_ui.single_entity.EntityType
-import java.util.Locale
 import javax.inject.Inject
 
 class FetchEntriesViewModel @Inject constructor(
@@ -37,26 +37,6 @@ class FetchEntriesViewModel @Inject constructor(
 
     private val _findEntityEvent = SingleLiveEvent<FindEntityEvent>()
     val findEntityEvent: LiveData<FindEntityEvent> get() = _findEntityEvent
-
-    fun findEntry(entityType: EntityType, entityCategory: Category, id: Long) {
-        when (entityType) {
-            EntityType.DOCUMENTARY -> getDocumentariesUseCase.findById(entityCategory, id)
-                .doOnError { _findEntityEvent.value = FindEntityEvent.Failure }
-                .subscribeUi { entry -> _findEntityEvent.value = FindEntityEvent.Success(entry) }
-
-            EntityType.BOOK -> getBooksUseCase.findById(entityCategory, id)
-                .doOnError { _findEntityEvent.value = FindEntityEvent.Failure }
-                .subscribeUi { entry -> _findEntityEvent.value = FindEntityEvent.Success(entry) }
-
-            EntityType.MOVIE -> getMoviesUseCase.findById(entityCategory, id)
-                .doOnError { _findEntityEvent.value = FindEntityEvent.Failure }
-                .subscribeUi { entry -> _findEntityEvent.value = FindEntityEvent.Success(entry) }
-
-            EntityType.GAME -> getGamesUseCase.findById(entityCategory, id)
-                .doOnError { _findEntityEvent.value = FindEntityEvent.Failure }
-                .subscribeUi { entry -> _findEntityEvent.value = FindEntityEvent.Success(entry) }
-        }
-    }
 
     fun fetchEntries(entityType: EntityType, entityCategory: Category) {
         when (entityType) {
@@ -86,6 +66,7 @@ class FetchEntriesViewModel @Inject constructor(
                         is GetAllMoviesResult.Error -> _fetchAllEvent.value = FetchAllEvent.Failure
                     }
                 }
+
             EntityType.GAME -> getGamesUseCase.getAllGames(entityCategory)
                 .subscribeUi { result ->
                     when (result) {
@@ -100,74 +81,22 @@ class FetchEntriesViewModel @Inject constructor(
     fun filter(entityType: EntityType, entityCategory: Category, countryCode: String) {
         when (entityType) {
             EntityType.DOCUMENTARY -> getDocumentariesUseCase.filter(entityCategory, countryCode)
-                .map {
-                    it.map {
-                        EntryUi(
-                            it.id,
-                            title = it.name,
-                            description = it.description,
-                            genres = "",
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Documentary::class.java
-                        )
-                    }
-                }
+                .map { it.toDocumentaryUi() }
                 .doOnError { _filterEvent.value = FilterEvent.Failure }
                 .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
 
             EntityType.BOOK -> getBooksUseCase.filter(entityCategory, countryCode)
-                .map {
-                    it.map {
-                        EntryUi(
-                            it.id,
-                            title = it.name,
-                            genres = it.genres.toString(),
-                            description = it.description,
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Book::class.java
-                        )
-                    }
-                }
+                .map { it.toBookUi() }
                 .doOnError { _filterEvent.value = FilterEvent.Failure }
                 .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
 
             EntityType.MOVIE -> getMoviesUseCase.filter(entityCategory, countryCode)
-                .map {
-                    it.map {
-                        EntryUi(
-                            it.id,
-                            title = it.name,
-                            genres = it.genres.toString(),
-                            description = it.description,
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Movie::class.java
-                        )
-                    }
-                }
+                .map { it.toMovieUi() }
                 .doOnError { _filterEvent.value = FilterEvent.Failure }
                 .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
 
             EntityType.GAME -> getGamesUseCase.filter(entityCategory, countryCode)
-                .map {
-                    it.map {
-                        EntryUi(
-                            it.id,
-                            title = it.name,
-                            genres = it.genres.toString(),
-                            description = it.description,
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Game::class.java
-                        )
-                    }
-                }
+                .map { it.toGameUi() }
                 .doOnError { _filterEvent.value = FilterEvent.Failure }
                 .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
         }

@@ -13,6 +13,7 @@ import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
 import dev.liinahamari.list_ui.viewmodels.MainActivityViewModel
 import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
+import dev.liinahamari.list_ui.viewmodels.ShareEntryViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -24,6 +25,11 @@ abstract class ViewModelBuilderModule {
     @IntoMap
     @ViewModelKey(FetchEntriesViewModel::class)
     abstract fun fetchEntriesViewModel(viewModel: FetchEntriesViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ShareEntryViewModel::class)
+    abstract fun shareEntryViewModel(viewModel: ShareEntryViewModel): ViewModel
 
     @Binds
     @IntoMap

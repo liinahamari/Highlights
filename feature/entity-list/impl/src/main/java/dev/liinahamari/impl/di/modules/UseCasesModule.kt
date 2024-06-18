@@ -3,6 +3,7 @@ package dev.liinahamari.impl.di.modules
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import dev.liinahamari.api.domain.usecases.ComposeShareMessageUseCase
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
 import dev.liinahamari.api.domain.usecases.RestoreDatabaseUseCase
 import dev.liinahamari.api.domain.usecases.SaveDatabaseUseCase
@@ -27,6 +28,7 @@ import dev.liinahamari.impl.data.repos.BooksRepo
 import dev.liinahamari.impl.data.repos.DocumentariesRepo
 import dev.liinahamari.impl.data.repos.GamesRepo
 import dev.liinahamari.impl.data.repos.MoviesRepo
+import dev.liinahamari.impl.domain.ComposeShareMessageUseCaseImpl
 import dev.liinahamari.impl.domain.DatabaseCountersUseCaseImpl
 import dev.liinahamari.impl.domain.RestoreDatabaseUseCaseImpl
 import dev.liinahamari.impl.domain.SaveDatabaseUseCaseImpl
@@ -107,6 +109,9 @@ interface UseCasesModule {
         @JvmStatic
         fun restoreDbUseCase(@Named(APP_CONTEXT) context: Context, db: EntriesDatabase): RestoreDatabaseUseCase =
             RestoreDatabaseUseCaseImpl(context, db)
+        @Provides
+        @JvmStatic
+        fun composeShareMessageUseCase(): ComposeShareMessageUseCase = ComposeShareMessageUseCaseImpl()
 
         @Provides
         @JvmStatic

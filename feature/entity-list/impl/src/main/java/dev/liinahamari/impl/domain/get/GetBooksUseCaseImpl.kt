@@ -4,6 +4,8 @@ import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.EntryUi
+import dev.liinahamari.api.domain.entities.toBookUi
+import dev.liinahamari.api.domain.entities.toUi
 import dev.liinahamari.api.domain.usecases.get.GetAllBooksResult
 import dev.liinahamari.api.domain.usecases.get.GetBooksUseCase
 import dev.liinahamari.impl.data.repos.BooksRepo
@@ -18,18 +20,7 @@ class GetBooksUseCaseImpl @Inject constructor(private val booksRepo: BooksRepo) 
     override fun getAllBooks(category: Category): Single<GetAllBooksResult> = booksRepo.getAllBooksByCategory(category)
         .map {
             if (it.isEmpty().not()) {
-                GetAllBooksResult.Success(it.map {
-                    EntryUi(
-                        it.id,
-                        title = it.name,
-                        description = it.description,
-                        genres = "",
-                        countries = it.countryCodes.map { Locale("", it).displayCountry },
-                        url = it.posterUrl,
-                        year = it.year,
-                        clazz = Documentary::class.java
-                    )
-                })
+                GetAllBooksResult.Success(it.toBookUi())
             } else {
                 GetAllBooksResult.EmptyList
             }

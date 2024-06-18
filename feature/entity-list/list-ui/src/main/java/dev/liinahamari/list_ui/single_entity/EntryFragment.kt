@@ -1,5 +1,6 @@
 package dev.liinahamari.list_ui.single_entity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -21,6 +22,7 @@ import androidx.recyclerview.selection.SelectionTracker
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.afollestad.materialdialogs.MaterialDialog
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.ShareMessage
 import dev.liinahamari.core.ext.createSelectionTracker
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
@@ -42,6 +44,7 @@ import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
 import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
+import dev.liinahamari.list_ui.viewmodels.ShareEntryViewModel
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import me.saket.cascade.CascadePopupMenu
 import java.util.Locale
@@ -53,6 +56,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val fetchEntriesViewModel: FetchEntriesViewModel by viewModels { viewModelFactory }
+    private val shareEntryViewModel: ShareEntryViewModel by viewModels { viewModelFactory }
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
     private val deleteEntryViewModel: DeleteEntryViewModel by viewModels { viewModelFactory }
     private val moveToOtherCategoryViewModel: MoveToOtherCategoryViewModel by viewModels { viewModelFactory }
@@ -67,6 +71,16 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             ::javaClass.name,
             EntryAdapter.EntryDetailsLookup(ui.entriesRv)
         )
+    }
+
+    private fun shareEntity(shareMessage: ShareMessage) {
+        val shareIntent = Intent().apply {
+            setAction(Intent.ACTION_SEND)
+            setType("text/plain")
+            putExtra(Intent.EXTRA_SUBJECT, shareMessage.title)
+            putExtra(Intent.EXTRA_TEXT, shareMessage.content)
+        }
+        startActivity(Intent.createChooser(shareIntent, resources.getString(R.string.share_with)))
     }
 
     val selectedEntitiesIds = mutableSetOf<Long>()
@@ -109,6 +123,12 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                     .negativeButton(android.R.string.cancel)
                     .positiveButton { deleteEntryViewModel.delete(selectedEntitiesIds, argumentEntityType) }
                     .show()
+
+                R.id.share -> shareEntryViewModel.getEntitiesById(
+                    argumentEntityCategory,
+                    argumentEntityType,
+                    selectedEntitiesIds
+                )
 
                 R.id.moveTo -> with(CascadePopupMenu(requireContext(), requireView())) {
                     menu.apply {
@@ -209,6 +229,12 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             if (it is FetchEntriesViewModel.FilterEvent.Success) {
                 entriesAdapter!!.replaceDataset(it.entries)
                 entriesAdapter!!.tracker = tracker
+            }
+        }
+        shareEntryViewModel.shareEntryEvent.observe(viewLifecycleOwner) {
+            when (it) {
+                is ShareEntryViewModel.ShareEntry.Success -> shareEntity(it.data)
+                is ShareEntryViewModel.ShareEntry.Failure -> toast("Failed to get info about entities to share")
             }
         }
         moveToOtherCategoryViewModel.saveEntityEvent.observe(viewLifecycleOwner) {

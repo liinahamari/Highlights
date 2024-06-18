@@ -2,12 +2,12 @@ package dev.liinahamari.impl.domain.get
 
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
-import dev.liinahamari.api.domain.entities.EntryUi
+import dev.liinahamari.api.domain.entities.toDocumentaryUi
+import dev.liinahamari.api.domain.entities.toUi
 import dev.liinahamari.api.domain.usecases.get.GetAllDocumentariesResult
 import dev.liinahamari.api.domain.usecases.get.GetDocumentariesUseCase
 import dev.liinahamari.impl.data.repos.DocumentariesRepo
 import io.reactivex.rxjava3.core.Single
-import java.util.Locale
 import javax.inject.Inject
 
 internal class GetDocumentariesUseCaseImpl @Inject constructor(private val documentariesRepo: DocumentariesRepo) :
@@ -19,18 +19,7 @@ internal class GetDocumentariesUseCaseImpl @Inject constructor(private val docum
         documentariesRepo.getAllDocumentariesByCategory(category)
             .map {
                 if (it.isEmpty().not()) {
-                    GetAllDocumentariesResult.Success(it.map {
-                        EntryUi(
-                            it.id,
-                            title = it.name,
-                            description = it.description,
-                            genres = "",
-                            countries = it.countryCodes.map { Locale("", it).displayCountry },
-                            url = it.posterUrl,
-                            year = it.year,
-                            clazz = Documentary::class.java
-                        )
-                    })
+                    GetAllDocumentariesResult.Success(it.toDocumentaryUi())
                 } else {
                     GetAllDocumentariesResult.EmptyList
                 }

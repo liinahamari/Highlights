@@ -24,7 +24,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as MainActivity).listUiComponent.inject(this)
         super.onViewCreated(view, savedInstanceState)
-        //todo ext
         findPreference<Preference>(getString(dev.liinahamari.core.R.string.pref_clear_image_cache))?.setOnPreferenceClickListener {
             cacheClearingViewModel.clearImageCache()
             true
