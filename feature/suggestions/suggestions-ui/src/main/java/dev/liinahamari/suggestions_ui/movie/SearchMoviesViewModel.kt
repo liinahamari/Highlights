@@ -79,9 +79,10 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
     }
 }
 
-fun RemoteMovie.toDomain(category: Category, genres: List<dev.liinahamari.api.domain.entities.MovieGenre>): Movie =
+fun TmdbRemoteMovie.toDomain(category: Category, genres: List<dev.liinahamari.api.domain.entities.MovieGenre>): Movie =
     Movie(
         id = 0, // fixme
+        tmdbUrl = remoteId?.let { "https://www.themoviedb.org/movie/$it" },
         category = category,
         countryCodes = originCountry.orEmpty(),
         genres = genres,

@@ -50,7 +50,8 @@ class AddDocumentaryDialogFragment : AddFragment(R.layout.fragment_add_documenta
                     posterUrl = mov.posterUrl,
                     countryCodes = mov.countryCodes,
                     name = mov.name,
-                    description = mov.description
+                    description = mov.description,
+                    tmdbUrl = mov.tmdbUrl
                 )
                 selectedCountries = mov.countryCodes
                 ui.countrySelectionBtn.text = mov.countryCodes.toString()

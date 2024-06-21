@@ -2,6 +2,8 @@ package dev.liinahamari.impl.di.modules
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import dev.liinahamari.api.DATABASE_NAME
@@ -21,6 +23,13 @@ class DatabaseModule {
         context,
         EntriesDatabase::class.java, DATABASE_NAME,
     )
+        .addMigrations(object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE movie ADD COLUMN tmdbUrl TEXT")
+                db.execSQL("ALTER TABLE documentary ADD COLUMN tmdbUrl TEXT")
+            }
+        }
+        )
         .fallbackToDestructiveMigration()
         .build()
 

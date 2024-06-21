@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Movie(
     val id: Long = 0L,
     val category: Category,
+    val tmdbUrl: String?,
     val year: Int,
     val posterUrl: String?,
     val countryCodes: List<String>,
@@ -16,7 +17,7 @@ data class Movie(
 ) : Parcelable {
     companion object {
         fun default(category: Category = Category.GOOD) = Movie(
-            0L, category, 0, "", listOf(), "", listOf(), ""
+            0L, category, "", 0, "", listOf(), "", listOf(), ""
         )
     }
 }

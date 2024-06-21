@@ -7,6 +7,7 @@ data class EntryUi(
     val genres: String,
     val year: Int,
     val description: String,
-    val url: String?,
-    val clazz: Class<*>
+    val posterUrl: String?,
+    val clazz: Class<*>,
+    val tmdbUrl: String?
 )

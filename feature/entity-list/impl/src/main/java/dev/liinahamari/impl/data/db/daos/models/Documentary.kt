@@ -8,6 +8,7 @@ import dev.liinahamari.impl.data.db.daos.Entry
 @Entity
 data class Documentary(
     val name: String,
+    val tmdbUrl: String?,
     override val description: String,
     override val year: Int,
     override val category: Category,
@@ -46,7 +47,8 @@ fun Documentary.toDomain(): dev.liinahamari.api.domain.entities.Documentary =
         name = this.name,
         posterUrl = this.posterUrl,
         year = this.year,
-        description = this.description
+        description = this.description,
+        tmdbUrl = tmdbUrl
     )
 fun Iterable<Documentary>.toDomain(): List<dev.liinahamari.api.domain.entities.Documentary> = map { it.toDomain() }
 
@@ -57,6 +59,7 @@ private fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentar
     name = this.name,
     posterUrl = this.posterUrl,
     year = this.year,
-    description = this.description
+    description = this.description,
+    tmdbUrl = this.tmdbUrl
 )
 fun Array<out dev.liinahamari.api.domain.entities.Documentary>.toData(): List<Documentary> = map { it.toData() }

@@ -88,12 +88,12 @@ class EntryAdapter(
             ui.entryDescriptionTv.text = entry.description
 
             Glide.with(ui.posterIv.context)
-                .load(entry.url)
+                .load(entry.posterUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .timeout(TIMEOUT_20_SEC)
                 .into(ui.posterIv)
             ui.posterIv.setOnClickListener {
-                entry.url?.let(::PopupImageDialog)?.show(fragmentManager, null)
+                entry.posterUrl?.let(::PopupImageDialog)?.show(fragmentManager, null)
             }
         }
 

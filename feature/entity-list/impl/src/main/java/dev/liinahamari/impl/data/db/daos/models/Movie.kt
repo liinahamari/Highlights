@@ -9,6 +9,7 @@ import dev.liinahamari.impl.data.db.daos.Entry
 @Entity
 data class Movie(
     val name: String,
+    val tmdbUrl: String?,
     val genres: List<MovieGenre>,
     override val description: String,
     override val year: Int,
@@ -27,6 +28,7 @@ data class Movie(
         if (genres != other.genres) return false
         if (year != other.year) return false
         if (category != other.category) return false
+        if (tmdbUrl != other.tmdbUrl) return false
         if (posterUrl != other.posterUrl) return false
         return countryCodes.contentEquals(other.countryCodes)
     }
@@ -37,6 +39,7 @@ data class Movie(
         result = 31 * result + year
         result = 31 * result + category.hashCode()
         result = 31 * result + posterUrl.hashCode()
+        result = 31 * result + tmdbUrl.hashCode()
         result = 31 * result + countryCodes.contentHashCode()
         return result
     }
@@ -44,6 +47,7 @@ data class Movie(
 
 fun Movie.toDomain(): dev.liinahamari.api.domain.entities.Movie = dev.liinahamari.api.domain.entities.Movie(
     id = this.id,
+    tmdbUrl = this.tmdbUrl,
     category = this.category,
     countryCodes = this.countryCodes.toList(),
     genres = this.genres,
@@ -63,7 +67,8 @@ private fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
     name = this.name,
     posterUrl = this.posterUrl,
     year = this.year,
-    description = this.description
+    description = this.description,
+    tmdbUrl = this.tmdbUrl
 )
 
 fun Array<out dev.liinahamari.api.domain.entities.Movie>.toData(): List<Movie> = map { it.toData() }
