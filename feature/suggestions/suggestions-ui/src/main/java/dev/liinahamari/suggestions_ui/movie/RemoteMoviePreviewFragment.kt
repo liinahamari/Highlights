@@ -42,9 +42,9 @@ class RemoteMoviePreviewFragment : DialogFragment(R.layout.fragment_movie_previe
             .timeout(5_000)
             .into(ui.posterIv)
 
-        titleTv.text = movieUi.name
-        yearTv.text = movieUi.year.toString()
+        titleTv.text = movieUi.title
+        yearTv.text = movieUi.releaseYear.toString()
         genresTv.text = movieUi.genres.toString()
-        countriesTv.text = movieUi.countryCodes.toString()
+        countriesTv.text = movieUi.productionCountries.toString()
     }
 }

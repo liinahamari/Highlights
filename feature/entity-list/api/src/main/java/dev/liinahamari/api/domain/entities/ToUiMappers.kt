@@ -44,13 +44,13 @@ fun Game.toUi() = EntryUi(
 fun List<Game>.toGameUi() = map { it.toUi() }
 
 fun Movie.toUi() = EntryUi(
-    id,
-    title = name,
+    localId,
+    title = title,
     description = description,
     genres = "",
-    countries = countryCodes.map { Locale("", it).displayCountry },
+    countries = productionCountries.map { Locale("", it).displayCountry },
     posterUrl = posterUrl,
-    year = year,
+    year = releaseYear,
     clazz = Movie::class.java,
     tmdbUrl = tmdbUrl
 )

@@ -41,12 +41,12 @@ class AddMovieDialogFragment : AddFragment(R.layout.fragment_add_movie) {
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchMovieAutoCompleteTextView.MovieObserver {
             override fun onChosen(mov: Movie) {
-                ui.yearEt.setText(mov.year.toString())
+                ui.yearEt.setText(mov.releaseYear.toString())
                 ui.posterUrlEt.setText(mov.posterUrl)
 
                 movie = mov
-                selectedCountries = mov.countryCodes
-                ui.countrySelectionBtn.text = mov.countryCodes.toString()
+                selectedCountries = mov.productionCountries
+                ui.countrySelectionBtn.text = mov.productionCountries.toString()
                 selectedGenres = mov.genres
                 ui.genreBtn.text = mov.genres.toString()
             }
@@ -57,7 +57,7 @@ class AddMovieDialogFragment : AddFragment(R.layout.fragment_add_movie) {
         ui.countrySelectionBtn.setOnClickListener {
             showCountrySelectionDialog(selectedCountries) {
                 selectedCountries = it
-                movie = movie.copy(countryCodes = it)
+                movie = movie.copy(productionCountries = it)
                 ui.countrySelectionBtn.text = it.toString()
             }
         }
@@ -71,8 +71,8 @@ class AddMovieDialogFragment : AddFragment(R.layout.fragment_add_movie) {
     }
 
     override fun setupTextChangedListeners() {
-        ui.yearEt.addTextChangedListener { movie = movie.copy(year = it.toString().toInt()) }
+        ui.yearEt.addTextChangedListener { movie = movie.copy(releaseYear = it.toString().toInt()) }
         ui.posterUrlEt.addTextChangedListener { movie = movie.copy(posterUrl = it.toString()) }
-        ui.titleEt.addTextChangedListener { movie = movie.copy(name = it.toString()) }
+        ui.titleEt.addTextChangedListener { movie = movie.copy(title = it.toString()) }
     }
 }

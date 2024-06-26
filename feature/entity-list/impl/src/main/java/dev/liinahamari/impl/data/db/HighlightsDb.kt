@@ -19,7 +19,7 @@ import dev.liinahamari.impl.data.db.daos.models.Movie
     BookGenreConverters::class,
     GameGenreConverters::class
 )
-@Database(entities = [Book::class, Documentary::class, Movie::class, Game::class], version = 3)
+@Database(entities = [Book::class, Documentary::class, Movie::class, Game::class], version = 4)
 abstract class EntriesDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
     abstract fun documentaryDao(): DocumentaryDao

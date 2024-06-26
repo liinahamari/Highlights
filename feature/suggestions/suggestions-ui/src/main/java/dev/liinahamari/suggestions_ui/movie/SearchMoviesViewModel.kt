@@ -6,9 +6,10 @@ import androidx.lifecycle.LiveData
 import com.example.suggestions.MovieSuggestionsListFactory
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
+import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.core.SingleLiveEvent
 import dev.liinahamari.suggestions.api.MovieSuggestionsDependencies
-import dev.liinahamari.suggestions.api.model.RemoteMovie
+import dev.liinahamari.suggestions.api.model.TmdbRemoteMovie
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -36,7 +37,23 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
             .flatMapObservable { Observable.fromIterable(it) }
             .filter { (it.posterPath.isNullOrBlank() || it.posterPath == "null").not() && it.releaseDate != "0" }
             .flatMapSingle { movie ->
-                getMovieGenres(movie.genreIds.orEmpty()).map { movie.toDomain(category, it) }
+                getMovieGenres(movie.genreIds.orEmpty())
+                    .map { movie.toDomain(category, it) }
+                    .flatMap { mov ->
+                        searchMovieUseCase.getMovieDetails(movie.remoteId!!)
+                            .map { response ->
+                                mov.copy(
+                                    productionCountries = response.productionCountries.map { it.name!! },
+                                    genres = MovieGenre.values()
+                                        .filter { localGenreName ->
+                                            response.genres.map { it.name }.filter { it.isNullOrBlank().not() }.any {
+                                                localGenreName.toString().lowercase().contains(it!!, true)
+                                            }
+                                        }
+                                        .sorted()
+                                )
+                            }
+                    }
             }
             .toList()
             .map<GetRemoteMovies>(GetRemoteMovies::Success)
@@ -79,15 +96,16 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
     }
 }
 
-fun TmdbRemoteMovie.toDomain(category: Category, genres: List<dev.liinahamari.api.domain.entities.MovieGenre>): Movie =
+fun TmdbRemoteMovie.toDomain(category: Category, genres: List<MovieGenre>): Movie =
     Movie(
-        id = 0, // fixme
+        localId = 0, // fixme
         tmdbUrl = remoteId?.let { "https://www.themoviedb.org/movie/$it" },
+        tmdbId = remoteId!!.toInt(),
         category = category,
-        countryCodes = originCountry.orEmpty(),
+        productionCountries = originCountry.orEmpty(),
         genres = genres,
-        name = this.title!!,
+        title = this.title!!,
         description = overview!!,
         posterUrl = "https://image.tmdb.org/t/p/w500${this.posterPath}",
-        year = if (this.releaseDate.isNullOrBlank()) 0 else this.releaseDate?.substring(0, 4)!!.toInt()
+        releaseYear = if (this.releaseDate.isNullOrBlank()) 0 else this.releaseDate?.substring(0, 4)!!.toInt()
     )

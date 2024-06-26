@@ -56,8 +56,8 @@ class PicturedArrayAdapter(private val context: Context) :
 data class SuggestionUi(val title: String, val year: Int, val posterUrl: String?, val genres: List<String>)
 
 fun Movie.toUi() = SuggestionUi(
-    title = name,
-    year = year,
+    title = title,
+    year = releaseYear,
     genres = genres.map { it.name.replace("_", " ").lowercase() },
     posterUrl = posterUrl
 )

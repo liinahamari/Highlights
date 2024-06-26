@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class RemoteMovie(
+data class TmdbRemoteMovie(
     @SerializedName("backdrop_path")
     val backdropPath: String?,
     @SerializedName("id")

@@ -29,6 +29,13 @@ class DatabaseModule {
                 db.execSQL("ALTER TABLE documentary ADD COLUMN tmdbUrl TEXT")
             }
         }
+        ).addMigrations(
+            object : Migration(3, 4) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE movie ADD COLUMN tmdbId INTEGER NOT NULL")
+                    db.execSQL("ALTER TABLE documentary ADD COLUMN tmdbId INTEGER NOT NULL")
+                }
+            }
         )
         .fallbackToDestructiveMigration()
         .build()

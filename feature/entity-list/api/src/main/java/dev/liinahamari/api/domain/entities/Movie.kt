@@ -5,23 +5,23 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize //fixme domain model in suggestions-ui module
 data class Movie(
-    val id: Long = 0L,
+    val localId: Long = 0L,
     val category: Category,
+    val tmdbId: Int,
     val tmdbUrl: String?,
-    val year: Int,
+    val releaseYear: Int,
     val posterUrl: String?,
-    val countryCodes: List<String>,
-    val name: String,
+    val productionCountries: List<String>,
+    val title: String,
     val genres: List<MovieGenre>,
     val description: String
 ) : Parcelable {
     companion object {
         fun default(category: Category = Category.GOOD) = Movie(
-            0L, category, "", 0, "", listOf(), "", listOf(), ""
+            0L, category, 0, "", 0, "", listOf(), "", listOf(), ""
         )
     }
 }
-
 
 enum class MovieGenre {
     ARTHOUSE,

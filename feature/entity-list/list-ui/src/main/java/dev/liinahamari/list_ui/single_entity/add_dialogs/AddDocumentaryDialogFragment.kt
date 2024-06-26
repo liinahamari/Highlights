@@ -41,20 +41,20 @@ class AddDocumentaryDialogFragment : AddFragment(R.layout.fragment_add_documenta
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
         ui.titleEt.setOnItemChosenListener(object : SearchMovieAutoCompleteTextView.MovieObserver {
             override fun onChosen(mov: Movie) {
-                ui.yearEt.setText(mov.year.toString())
+                ui.yearEt.setText(mov.releaseYear.toString())
                 ui.posterUrlEt.setText(mov.posterUrl)
 
                 documentary = Documentary(
                     category = mov.category,
-                    year = mov.year,
+                    year = mov.releaseYear,
                     posterUrl = mov.posterUrl,
-                    countryCodes = mov.countryCodes,
-                    name = mov.name,
+                    countryCodes = mov.productionCountries,
+                    name = mov.title,
                     description = mov.description,
                     tmdbUrl = mov.tmdbUrl
                 )
-                selectedCountries = mov.countryCodes
-                ui.countrySelectionBtn.text = mov.countryCodes.toString()
+                selectedCountries = mov.productionCountries
+                ui.countrySelectionBtn.text = mov.productionCountries.toString()
             }
         })
     }

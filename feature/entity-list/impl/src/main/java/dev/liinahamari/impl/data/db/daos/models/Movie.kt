@@ -10,6 +10,7 @@ import dev.liinahamari.impl.data.db.daos.Entry
 data class Movie(
     val name: String,
     val tmdbUrl: String?,
+    val tmdbId: Int,
     val genres: List<MovieGenre>,
     override val description: String,
     override val year: Int,
@@ -46,29 +47,31 @@ data class Movie(
 }
 
 fun Movie.toDomain(): dev.liinahamari.api.domain.entities.Movie = dev.liinahamari.api.domain.entities.Movie(
-    id = this.id,
+    localId = this.id,
     tmdbUrl = this.tmdbUrl,
     category = this.category,
-    countryCodes = this.countryCodes.toList(),
+    productionCountries = this.countryCodes.toList(),
     genres = this.genres,
-    name = this.name,
+    title = this.name,
     posterUrl = this.posterUrl,
-    year = this.year,
-    description = this.description
+    releaseYear = this.year,
+    description = this.description,
+    tmdbId = this.tmdbId
 )
 
 fun Iterable<Movie>.toDomain(): List<dev.liinahamari.api.domain.entities.Movie> = map { it.toDomain() }
 
 private fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
-    id = this.id,
+    id = this.localId,
     category = this.category,
-    countryCodes = this.countryCodes.toTypedArray(),
+    countryCodes = this.productionCountries.toTypedArray(),
     genres = this.genres,
-    name = this.name,
+    name = this.title,
     posterUrl = this.posterUrl,
-    year = this.year,
+    year = this.releaseYear,
     description = this.description,
-    tmdbUrl = this.tmdbUrl
+    tmdbUrl = this.tmdbUrl,
+    tmdbId = this.tmdbId
 )
 
 fun Array<out dev.liinahamari.api.domain.entities.Movie>.toData(): List<Movie> = map { it.toData() }
