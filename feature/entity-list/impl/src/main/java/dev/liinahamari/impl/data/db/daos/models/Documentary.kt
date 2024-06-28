@@ -3,6 +3,7 @@ package dev.liinahamari.impl.data.db.daos.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Country
 import dev.liinahamari.impl.data.db.daos.Entry
 
 @Entity
@@ -13,7 +14,7 @@ data class Documentary(
     override val year: Int,
     override val category: Category,
     override val posterUrl: String?,
-    override val countryCodes: Array<String>,
+    val countryCodes: Array<String>,
     @PrimaryKey(autoGenerate = true) val id: Long = 0L
 ) : Entry {
     override fun equals(other: Any?): Boolean {
@@ -43,7 +44,7 @@ fun Documentary.toDomain(): dev.liinahamari.api.domain.entities.Documentary =
     dev.liinahamari.api.domain.entities.Documentary(
         id = this.id,
         category = this.category,
-        countryCodes = this.countryCodes.toList(),
+        countryCodes = this.countryCodes.toList().map { Country(iso  = it, name = "")/*fixme: actual*/ },
         name = this.name,
         posterUrl = this.posterUrl,
         year = this.year,
@@ -55,7 +56,7 @@ fun Iterable<Documentary>.toDomain(): List<dev.liinahamari.api.domain.entities.D
 private fun dev.liinahamari.api.domain.entities.Documentary.toData(): Documentary = Documentary(
     id = this.id,
     category = this.category,
-    countryCodes = this.countryCodes.toTypedArray(),
+    countryCodes = this.countryCodes.map { it.iso }.toTypedArray(),
     name = this.name,
     posterUrl = this.posterUrl,
     year = this.year,

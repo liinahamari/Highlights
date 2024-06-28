@@ -14,9 +14,6 @@ interface GameDao {
     @Query("SELECT * FROM game WHERE category = :category")
     fun getAll(category: Category): Single<List<Game>>
 
-    @Query("SELECT * FROM game WHERE category = :category and countryCodes LIKE '%' || :countryCode || '%'")
-    fun filterByCountry(category: Category, countryCode: String): Single<List<Game>>
-
     @Query("SELECT * FROM game WHERE id LIKE :id and category = :category LIMIT 1")
     fun findById(category: Category, id: Long): Single<Game>
 

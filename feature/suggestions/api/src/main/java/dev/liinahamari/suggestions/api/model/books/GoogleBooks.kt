@@ -106,7 +106,7 @@ data class Epub(
 fun RemoteGoogleBook.toDomain(category: Category, genres: List<BookGenre> = listOf()): Book =
     Book(
         category = category,
-        countryCodes = emptyList(),
+        countries = emptyList(),
         genres = genres,
         name = volumeInfo!!.title!!,
         description = volumeInfo.description?:"",

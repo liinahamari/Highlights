@@ -18,14 +18,6 @@ class GamesRepoImpl @Inject constructor(private val gamesDao: GameDao) : GamesRe
             .map { it.toDomain() }
             .firstOrError()
 
-    override fun filterByCountry(category: Category, countryCode: String): Single<List<Game>> =
-        gamesDao.filterByCountry(category, countryCode)
-            .toObservable()
-            .map { it.toDomain() }
-            .firstOrError()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-
     override fun delete(id: Long): Completable = gamesDao.delete(id)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -47,7 +39,6 @@ class GamesRepoImpl @Inject constructor(private val gamesDao: GameDao) : GamesRe
 
 interface GamesRepo {
     fun getAllGamesByCategory(category: Category): Single<List<Game>>
-    fun filterByCountry(category: Category, countryCode: String): Single<List<Game>>
     fun save(vararg games: Game): Completable
     fun delete(id: Long): Completable
     fun findById(category: Category, id: Long): Single<Game>

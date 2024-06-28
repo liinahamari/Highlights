@@ -3,12 +3,11 @@ package dev.liinahamari.list_ui.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Country
 import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.api.domain.entities.toBookUi
 import dev.liinahamari.api.domain.entities.toDocumentaryUi
-import dev.liinahamari.api.domain.entities.toGameUi
 import dev.liinahamari.api.domain.entities.toMovieUi
-import dev.liinahamari.api.domain.entities.toUi
 import dev.liinahamari.api.domain.usecases.get.GetAllBooksResult
 import dev.liinahamari.api.domain.usecases.get.GetAllDocumentariesResult
 import dev.liinahamari.api.domain.usecases.get.GetAllGamesResult
@@ -43,7 +42,9 @@ class FetchEntriesViewModel @Inject constructor(
             EntityType.DOCUMENTARY -> getDocumentariesUseCase.getAllDocumentaries(entityCategory)
                 .subscribeUi { result ->
                     when (result) {
-                        is GetAllDocumentariesResult.Success -> _fetchAllEvent.value = FetchAllEvent.Success(result.data)
+                        is GetAllDocumentariesResult.Success -> _fetchAllEvent.value =
+                            FetchAllEvent.Success(result.data)
+
                         is GetAllDocumentariesResult.EmptyList -> _fetchAllEvent.value = FetchAllEvent.Empty
                         is GetAllDocumentariesResult.Error -> _fetchAllEvent.value = FetchAllEvent.Failure
                     }
@@ -78,45 +79,42 @@ class FetchEntriesViewModel @Inject constructor(
         }
     }
 
-    fun filter(entityType: EntityType, entityCategory: Category, countryCode: String) {
+    fun filter(entityType: EntityType, entityCategory: Category, country: Country) {
         when (entityType) {
-            EntityType.DOCUMENTARY -> getDocumentariesUseCase.filter(entityCategory, countryCode)
+            EntityType.DOCUMENTARY -> getDocumentariesUseCase.filter(entityCategory, country.iso)
                 .map { it.toDocumentaryUi() }
                 .doOnError { _filterEvent.value = FilterEvent.Failure }
                 .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
 
-            EntityType.BOOK -> getBooksUseCase.filter(entityCategory, countryCode)
+            EntityType.BOOK -> getBooksUseCase.filter(entityCategory, country.iso)
                 .map { it.toBookUi() }
                 .doOnError { _filterEvent.value = FilterEvent.Failure }
                 .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
 
-            EntityType.MOVIE -> getMoviesUseCase.filter(entityCategory, countryCode)
+            EntityType.MOVIE -> getMoviesUseCase.filter(entityCategory, country.iso)
                 .map { it.toMovieUi() }
                 .doOnError { _filterEvent.value = FilterEvent.Failure }
                 .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
 
-            EntityType.GAME -> getGamesUseCase.filter(entityCategory, countryCode)
-                .map { it.toGameUi() }
-                .doOnError { _filterEvent.value = FilterEvent.Failure }
-                .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
+            EntityType.GAME -> throw IllegalStateException("there shoudn't be filter by country in games")
         }
     }
 
     override fun onCleared() = disposeSubscriptions()
 
-    sealed class FetchAllEvent {
-        data class Success(val entries: List<EntryUi>) : FetchAllEvent()
-        object Failure : FetchAllEvent()
-        object Empty : FetchAllEvent()
+    sealed interface FetchAllEvent {
+        data class Success(val entries: List<EntryUi>) : FetchAllEvent
+        object Failure : FetchAllEvent
+        object Empty : FetchAllEvent
     }
 
-    sealed class FilterEvent {
-        data class Success(val entries: List<EntryUi>) : FilterEvent()
-        object Failure : FilterEvent()
+    sealed interface FilterEvent {
+        data class Success(val entries: List<EntryUi>) : FilterEvent
+        object Failure : FilterEvent
     }
 
-    sealed class FindEntityEvent {
-        data class Success(val entry: Any) : FindEntityEvent()
-        object Failure : FindEntityEvent()
+    sealed interface FindEntityEvent {
+        data class Success(val entry: Any) : FindEntityEvent
+        object Failure : FindEntityEvent
     }
 }

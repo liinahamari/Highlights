@@ -3,21 +3,26 @@ package dev.liinahamari.list_ui.single_entity.add_dialogs
 import android.content.DialogInterface.OnClickListener
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Country
 import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.core.ext.getParcelableOf
+import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentAddDocumentaryBinding
+import dev.liinahamari.list_ui.viewmodels.CachedCountriesViewModel
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView
 
 class AddDocumentaryDialogFragment : AddFragment(R.layout.fragment_add_documentary) {
     private var _ui: FragmentAddDocumentaryBinding? = null
     private val ui: FragmentAddDocumentaryBinding by lazy { _ui!! }
+    private val cachedCountriesViewModel: CachedCountriesViewModel by viewModels { viewModelFactory }
 
     private var documentary = Documentary.default(Category.GOOD)
-    private var selectedCountries = listOf<String>()
+    private var selectedCountries = listOf<Country>()
 
     companion object {
         fun newInstance(category: Category): AddDocumentaryDialogFragment = AddDocumentaryDialogFragment().apply {
@@ -33,6 +38,22 @@ class AddDocumentaryDialogFragment : AddFragment(R.layout.fragment_add_documenta
     override fun onDestroyView() {
         super.onDestroyView()
         _ui = null
+    }
+
+    override fun setupViewModelSubscriptions() {
+        super.setupViewModelSubscriptions()
+        cachedCountriesViewModel.fetchCountriesEvent.observe(viewLifecycleOwner) {
+            when (it) {
+                is CachedCountriesViewModel.GetAllCountriesEvent.Failure -> toast("Failed to get countries' list")
+                is CachedCountriesViewModel.GetAllCountriesEvent.Success -> {
+                    showCountrySelectionDialog(countries = it.countries, preselectedLocales = selectedCountries) {
+                        selectedCountries = it
+                        documentary = documentary.copy(countryCodes = it)
+                        ui.countrySelectionBtn.text = it.joinToString { it.name }
+                    }
+                }
+            }
+        }
     }
 
     override fun setupTitleEditText() {
@@ -54,18 +75,14 @@ class AddDocumentaryDialogFragment : AddFragment(R.layout.fragment_add_documenta
                     tmdbUrl = mov.tmdbUrl
                 )
                 selectedCountries = mov.productionCountries
-                ui.countrySelectionBtn.text = mov.productionCountries.toString()
+                ui.countrySelectionBtn.text = mov.productionCountries.joinToString { it.name }
             }
         })
     }
 
     override fun setupSelectionDialogs() {
         ui.countrySelectionBtn.setOnClickListener {
-            showCountrySelectionDialog(selectedCountries) {
-                selectedCountries = it
-                documentary = documentary.copy(countryCodes = it)
-                ui.countrySelectionBtn.text = it.toString()
-            }
+            cachedCountriesViewModel.getCachedCountries()
         }
     }
 

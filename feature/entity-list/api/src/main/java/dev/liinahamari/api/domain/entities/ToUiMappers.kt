@@ -1,13 +1,11 @@
 package dev.liinahamari.api.domain.entities
 
-import java.util.Locale
-
 fun Documentary.toUi() = EntryUi(
     id = id,
     title = name,
     description = description,
     genres = "",
-    countries = countryCodes.map { Locale("", it).displayCountry },
+    countries = countryCodes.map { it.name },
     posterUrl = posterUrl,
     year = year,
     clazz = Documentary::class.java,
@@ -20,7 +18,7 @@ fun Book.toUi() = EntryUi(
     title = name,
     description = description,
     genres = "",
-    countries = countryCodes.map { Locale("", it).displayCountry },
+    countries = countries.map { it.name },
     posterUrl = posterUrl,
     year = year,
     clazz = Book::class.java,
@@ -34,7 +32,7 @@ fun Game.toUi() = EntryUi(
     title = name,
     description = description,
     genres = "",
-    countries = countryCodes.map { Locale("", it).displayCountry },
+    countries = emptyList(),
     posterUrl = posterUrl,
     year = year,
     clazz = Game::class.java,
@@ -48,7 +46,7 @@ fun Movie.toUi() = EntryUi(
     title = title,
     description = description,
     genres = "",
-    countries = productionCountries.map { Locale("", it).displayCountry },
+    countries = productionCountries.map { it.name },
     posterUrl = posterUrl,
     year = releaseYear,
     clazz = Movie::class.java,

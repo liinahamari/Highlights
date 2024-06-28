@@ -3,21 +3,26 @@ package dev.liinahamari.list_ui.single_entity.add_dialogs
 import android.content.DialogInterface.OnClickListener
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.BookGenre
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Country
 import dev.liinahamari.core.ext.getParcelableOf
+import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentAddBookBinding
+import dev.liinahamari.list_ui.viewmodels.CachedCountriesViewModel
 import dev.liinahamari.suggestions_ui.book.SearchBookAutoCompleteTextView
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 
 class AddBookDialogFragment : AddFragment(R.layout.fragment_add_book) {
     private var _ui: FragmentAddBookBinding? = null
     private val ui: FragmentAddBookBinding by lazy { _ui!! }
+    private val cachedCountriesViewModel: CachedCountriesViewModel by viewModels { viewModelFactory }
 
     private var book = Book.default()
-    private var selectedCountries = listOf<String>()
+    private var selectedCountries = listOf<Country>()
     private var selectedGenres = listOf<BookGenre>()
 
     companion object {
@@ -36,6 +41,22 @@ class AddBookDialogFragment : AddFragment(R.layout.fragment_add_book) {
         _ui = null
     }
 
+    override fun setupViewModelSubscriptions() {
+        super.setupViewModelSubscriptions()
+        cachedCountriesViewModel.fetchCountriesEvent.observe(viewLifecycleOwner) {
+            when (it) {
+                is CachedCountriesViewModel.GetAllCountriesEvent.Failure -> toast("Failed to get countries' list")
+                is CachedCountriesViewModel.GetAllCountriesEvent.Success -> {
+                    showCountrySelectionDialog(preselectedLocales = selectedCountries, countries = it.countries) {
+                        selectedCountries = it
+                        book = book.copy(countries = it)
+                        ui.countrySelectionBtn.text = it.joinToString { it.name }
+                    }
+                }
+            }
+        }
+    }
+
     override fun setupTitleEditText() {
         ui.titleEt.isSuggestionsEnabled = preferenceRepo.suggestionsEnabled
         ui.titleEt.categoryArg = requireArguments().getParcelableOf(ARG_CATEGORY)
@@ -44,19 +65,15 @@ class AddBookDialogFragment : AddFragment(R.layout.fragment_add_book) {
                 book = b
                 ui.yearEt.setText(b.year.toString())
                 ui.posterUrlEt.setText(b.posterUrl)
-                selectedCountries = b.countryCodes
-                ui.countrySelectionBtn.text = b.countryCodes.toString()
+                selectedCountries = b.countries
+                ui.countrySelectionBtn.text = b.countries.joinToString { it.name }
             }
         })
     }
 
     override fun setupSelectionDialogs() {
         ui.countrySelectionBtn.setOnClickListener {
-            showCountrySelectionDialog(selectedCountries) {
-                selectedCountries = it
-                book = book.copy(countryCodes = it)
-                ui.countrySelectionBtn.text = it.toString()
-            }
+            cachedCountriesViewModel.getCachedCountries()
         }
         ui.genreBtn.setOnClickListener {
             showBookGenreSelectionDialog(selectedGenres) {

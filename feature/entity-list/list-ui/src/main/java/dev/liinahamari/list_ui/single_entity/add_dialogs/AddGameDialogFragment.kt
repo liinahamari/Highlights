@@ -41,8 +41,6 @@ class AddGameDialogFragment : AddFragment(R.layout.fragment_add_game) {
                 game = g
                 ui.yearEt.setText(g.year.toString())
                 ui.posterUrlEt.setText(g.posterUrl)
-                selectedCountries = g.countryCodes
-                ui.countrySelectionBtn.text = g.countryCodes.toString()
                 selectedGenres = g.genres
                 ui.genreBtn.text = g.genres.toString()
             }
@@ -50,13 +48,6 @@ class AddGameDialogFragment : AddFragment(R.layout.fragment_add_game) {
     }
 
     override fun setupSelectionDialogs() {
-        ui.countrySelectionBtn.setOnClickListener {
-            showCountrySelectionDialog(selectedCountries) {
-                selectedCountries = it
-                game = game.copy(countryCodes = it)
-                ui.countrySelectionBtn.text = it.toString()
-            }
-        }
         ui.genreBtn.setOnClickListener {
             showGameGenreSelectionDialog(selectedGenres) {
                 selectedGenres = it

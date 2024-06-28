@@ -3,6 +3,7 @@ package dev.liinahamari.impl.di.modules
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import dev.liinahamari.api.domain.usecases.CacheCountriesUseCase
 import dev.liinahamari.api.domain.usecases.ComposeShareMessageUseCase
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
 import dev.liinahamari.api.domain.usecases.RestoreDatabaseUseCase
@@ -19,6 +20,7 @@ import dev.liinahamari.api.domain.usecases.save.SaveBookUseCase
 import dev.liinahamari.api.domain.usecases.save.SaveDocumentaryUseCase
 import dev.liinahamari.api.domain.usecases.save.SaveGameUseCase
 import dev.liinahamari.api.domain.usecases.save.SaveMovieUseCase
+import dev.liinahamari.impl.data.db.CachedCountriesDao
 import dev.liinahamari.impl.data.db.EntriesDatabase
 import dev.liinahamari.impl.data.db.daos.BookDao
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
@@ -28,6 +30,7 @@ import dev.liinahamari.impl.data.repos.BooksRepo
 import dev.liinahamari.impl.data.repos.DocumentariesRepo
 import dev.liinahamari.impl.data.repos.GamesRepo
 import dev.liinahamari.impl.data.repos.MoviesRepo
+import dev.liinahamari.impl.domain.CacheCountriesUseCaseImpl
 import dev.liinahamari.impl.domain.ComposeShareMessageUseCaseImpl
 import dev.liinahamari.impl.domain.DatabaseCountersUseCaseImpl
 import dev.liinahamari.impl.domain.RestoreDatabaseUseCaseImpl
@@ -109,9 +112,15 @@ interface UseCasesModule {
         @JvmStatic
         fun restoreDbUseCase(@Named(APP_CONTEXT) context: Context, db: EntriesDatabase): RestoreDatabaseUseCase =
             RestoreDatabaseUseCaseImpl(context, db)
+
         @Provides
         @JvmStatic
         fun composeShareMessageUseCase(): ComposeShareMessageUseCase = ComposeShareMessageUseCaseImpl()
+
+        @Provides
+        @JvmStatic
+        fun cacheCountriesUseCase(cachedCountriesDao: CachedCountriesDao): CacheCountriesUseCase =
+            CacheCountriesUseCaseImpl(cachedCountriesDao)
 
         @Provides
         @JvmStatic

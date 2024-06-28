@@ -5,7 +5,7 @@ data class Book(
     val category: Category,
     val year: Int,
     val posterUrl: String,
-    val countryCodes: List<String>,
+    val countries: List<Country>,
     val name: String,
     val genres: List<BookGenre>,
     val author: String,

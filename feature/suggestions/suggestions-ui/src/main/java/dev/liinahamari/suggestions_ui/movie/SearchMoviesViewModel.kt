@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.example.suggestions.MovieSuggestionsListFactory
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Country
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.core.SingleLiveEvent
@@ -43,7 +44,7 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
                         searchMovieUseCase.getMovieDetails(movie.remoteId!!)
                             .map { response ->
                                 mov.copy(
-                                    productionCountries = response.productionCountries.map { it.name!! },
+                                    productionCountries = response.productionCountries.map { Country(iso = it.iso31661!!, name = it.name!!) },
                                     genres = MovieGenre.values()
                                         .filter { localGenreName ->
                                             response.genres.map { it.name }.filter { it.isNullOrBlank().not() }.any {
@@ -102,7 +103,7 @@ fun TmdbRemoteMovie.toDomain(category: Category, genres: List<MovieGenre>): Movi
         tmdbUrl = remoteId?.let { "https://www.themoviedb.org/movie/$it" },
         tmdbId = remoteId!!.toInt(),
         category = category,
-        productionCountries = originCountry.orEmpty(),
+        productionCountries = emptyList(),
         genres = genres,
         title = this.title!!,
         description = overview!!,

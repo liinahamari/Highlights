@@ -50,10 +50,13 @@ abstract class AddFragment(@LayoutRes val layout: Int) : DialogFragment(layout) 
     abstract fun setupSelectionDialogs()
     abstract fun setupTextChangedListeners()
 
-    private fun setupViewModelSubscriptions() = saveEntryViewModel.saveEvent.observe(this) {
-        when (it) {
-            is SaveEvent.Failure -> toast("Failed to save book")
-            is SaveEvent.Success -> requireActivity().supportFragmentManager.popBackStackImmediate()
+    @CallSuper
+    protected open fun setupViewModelSubscriptions() {
+        saveEntryViewModel.saveEvent.observe(this) {
+            when (it) {
+                is SaveEvent.Failure -> toast("Failed to save book")
+                is SaveEvent.Success -> requireActivity().supportFragmentManager.popBackStackImmediate()
+            }
         }
     }
 

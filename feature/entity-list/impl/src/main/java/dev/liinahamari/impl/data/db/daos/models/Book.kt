@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.liinahamari.api.domain.entities.BookGenre
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Country
 import dev.liinahamari.impl.data.db.daos.Entry
 
 @Entity
@@ -15,7 +16,7 @@ data class Book(
     override val description: String,
     override val category: Category,
     override val posterUrl: String,
-    override val countryCodes: Array<String>,
+    val countryCodes: Array<String>,
     @PrimaryKey(autoGenerate = true) val id: Long = 0L
 ) : Entry {
     override fun equals(other: Any?): Boolean {
@@ -48,7 +49,7 @@ data class Book(
 fun Book.toDomain(): dev.liinahamari.api.domain.entities.Book = dev.liinahamari.api.domain.entities.Book(
     id = this.id,
     category = this.category,
-    countryCodes = this.countryCodes.toList(),
+    countries = this.countryCodes.toList().map { Country(iso = it, name = "") /*fixme: actual*/ },
     genres = this.genres,
     name = this.name,
     posterUrl = this.posterUrl,
@@ -61,7 +62,7 @@ fun Iterable<Book>.toDomain(): List<dev.liinahamari.api.domain.entities.Book> = 
 private fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
     id = this.id,
     category = this.category,
-    countryCodes = this.countryCodes.toTypedArray(),
+    countryCodes = this.countries.map { it.iso }.toTypedArray(),
     genres = this.genres,
     name = this.name,
     posterUrl = this.posterUrl,

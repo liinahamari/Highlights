@@ -3,12 +3,16 @@ package dev.liinahamari.list_ui.single_entity.add_dialogs
 import android.content.DialogInterface
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.Country
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.core.ext.getParcelableOf
+import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.FragmentAddMovieBinding
+import dev.liinahamari.list_ui.viewmodels.CachedCountriesViewModel
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView
 
@@ -35,6 +39,22 @@ class AddMovieDialogFragment : AddFragment(R.layout.fragment_add_movie) {
         _ui = null
     }
 
+    override fun setupViewModelSubscriptions() {
+        super.setupViewModelSubscriptions()
+        cachedCountriesViewModel.fetchCountriesEvent.observe(viewLifecycleOwner) {
+            when (it) {
+                is CachedCountriesViewModel.GetAllCountriesEvent.Failure -> toast("Failed to get countries' list")
+                is CachedCountriesViewModel.GetAllCountriesEvent.Success -> {
+                    showCountrySelectionDialog(countries = it.countries, preselectedLocales = selectedCountries) {
+                        selectedCountries = it
+                        movie = movie.copy(productionCountries = it)
+                        ui.countrySelectionBtn.text = it.joinToString { it.name }
+                    }
+                }
+            }
+        }
+    }
+
     override fun getDialogCustomView() = FragmentAddMovieBinding.inflate(layoutInflater).also { _ui = it }.root
 
     override fun setupTitleEditText() {
@@ -46,7 +66,7 @@ class AddMovieDialogFragment : AddFragment(R.layout.fragment_add_movie) {
 
                 movie = mov
                 selectedCountries = mov.productionCountries
-                ui.countrySelectionBtn.text = mov.productionCountries.toString()
+                ui.countrySelectionBtn.text = mov.productionCountries.joinToString { it.name }
                 selectedGenres = mov.genres
                 ui.genreBtn.text = mov.genres.toString()
             }
@@ -55,11 +75,7 @@ class AddMovieDialogFragment : AddFragment(R.layout.fragment_add_movie) {
 
     override fun setupSelectionDialogs() {
         ui.countrySelectionBtn.setOnClickListener {
-            showCountrySelectionDialog(selectedCountries) {
-                selectedCountries = it
-                movie = movie.copy(productionCountries = it)
-                ui.countrySelectionBtn.text = it.toString()
-            }
+            cachedCountriesViewModel.getCachedCountries()
         }
         ui.genreBtn.setOnClickListener {
             showMovieGenreSelectionDialog(selectedGenres) {

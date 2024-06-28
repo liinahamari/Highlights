@@ -16,7 +16,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class DatabaseModule {
+class EntriesDatabaseModule {
     @Provides
     @Singleton
     fun database(@Named(APP_CONTEXT) context: Context): EntriesDatabase = Room.databaseBuilder(
@@ -34,6 +34,12 @@ class DatabaseModule {
                 override fun migrate(db: SupportSQLiteDatabase) {
                     db.execSQL("ALTER TABLE movie ADD COLUMN tmdbId INTEGER NOT NULL")
                     db.execSQL("ALTER TABLE documentary ADD COLUMN tmdbId INTEGER NOT NULL")
+                }
+            }
+        ).addMigrations(
+            object : Migration(4, 5) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE movie REMOVE COLUMN countryCodes")
                 }
             }
         )

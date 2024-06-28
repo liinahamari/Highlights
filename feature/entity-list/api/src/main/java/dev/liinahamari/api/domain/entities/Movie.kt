@@ -11,7 +11,7 @@ data class Movie(
     val tmdbUrl: String?,
     val releaseYear: Int,
     val posterUrl: String?,
-    val productionCountries: List<String>,
+    val productionCountries: List<Country>,
     val title: String,
     val genres: List<MovieGenre>,
     val description: String

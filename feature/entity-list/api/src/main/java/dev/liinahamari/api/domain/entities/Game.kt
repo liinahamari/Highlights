@@ -5,14 +5,13 @@ data class Game(
     val category: Category,
     val year: Int,
     val posterUrl: String,
-    val countryCodes: List<String>,
     val name: String,
     val genres: List<GameGenre>,
     val description: String
 ){
     companion object{
         fun default(category: Category= Category.GOOD) = Game(
-            0L, category, 0, "", listOf(), "", listOf(), ""
+            0L, category, 0, "", "", listOf(), ""
         )
     }
 }

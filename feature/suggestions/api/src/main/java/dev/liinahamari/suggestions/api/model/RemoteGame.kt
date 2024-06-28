@@ -119,7 +119,6 @@ data class GenreGame(
 
 fun RemoteGame.toDomain(category: Category, genres: List<GameGenre> = listOf()): Game = Game(
     category = category,
-    countryCodes = emptyList(),
     genres = genres,
     name = this.name!!,
     description = description ?: "",

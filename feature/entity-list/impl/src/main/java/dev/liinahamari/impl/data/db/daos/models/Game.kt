@@ -14,7 +14,6 @@ data class Game(
     override val year: Int,
     override val category: Category,
     override val posterUrl: String,
-    override val countryCodes: Array<String>,
     @PrimaryKey(autoGenerate = true) val id: Long = 0L
 ) : Entry {
     override fun equals(other: Any?): Boolean {
@@ -28,7 +27,7 @@ data class Game(
         if (year != other.year) return false
         if (category != other.category) return false
         if (posterUrl != other.posterUrl) return false
-        return countryCodes.contentEquals(other.countryCodes)
+        return true
     }
 
     override fun hashCode(): Int {
@@ -37,7 +36,6 @@ data class Game(
         result = 31 * result + year
         result = 31 * result + category.hashCode()
         result = 31 * result + posterUrl.hashCode()
-        result = 31 * result + countryCodes.contentHashCode()
         return result
     }
 }
@@ -45,7 +43,6 @@ data class Game(
 fun Game.toDomain(): dev.liinahamari.api.domain.entities.Game = dev.liinahamari.api.domain.entities.Game(
     id = this.id,
     category = this.category,
-    countryCodes = this.countryCodes.toList(),
     genres = this.genres,
     name = this.name,
     posterUrl = this.posterUrl,
@@ -58,7 +55,6 @@ fun Iterable<Game>.toDomain(): List<dev.liinahamari.api.domain.entities.Game> = 
 private fun dev.liinahamari.api.domain.entities.Game.toData(): Game = Game(
     id = this.id,
     category = this.category,
-    countryCodes = this.countryCodes.toTypedArray(),
     genres = this.genres,
     name = this.name,
     posterUrl = this.posterUrl,

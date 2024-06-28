@@ -3,6 +3,7 @@ package dev.liinahamari.api
 import android.app.Application
 import dev.liinahamari.api.domain.repo.PreferencesRepo
 import dev.liinahamari.api.domain.repo.ShakeCounterRepo
+import dev.liinahamari.api.domain.usecases.CacheCountriesUseCase
 import dev.liinahamari.api.domain.usecases.ComposeShareMessageUseCase
 import dev.liinahamari.api.domain.usecases.DatabaseCountersUseCase
 import dev.liinahamari.api.domain.usecases.RestoreDatabaseUseCase
@@ -41,6 +42,7 @@ interface EntityListApi {
 
     val databaseCountersUseCase: DatabaseCountersUseCase
     val shareMessageUseCase: ComposeShareMessageUseCase
+    val cacheCountriesUseCase: CacheCountriesUseCase
     val shakeCounterRepo: ShakeCounterRepo
     val prefRepo: PreferencesRepo
 

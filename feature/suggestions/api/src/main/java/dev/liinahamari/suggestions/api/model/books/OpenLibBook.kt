@@ -39,7 +39,7 @@ data class RemoteOpenLibraryBook(
 fun RemoteOpenLibraryBook.toDomain(category: Category, genres: List<BookGenre> = listOf()): Book =
     Book(
         category = category,
-        countryCodes = emptyList(),
+        countries = emptyList(),
         genres = genres,
         name = this.title,
         description = "",

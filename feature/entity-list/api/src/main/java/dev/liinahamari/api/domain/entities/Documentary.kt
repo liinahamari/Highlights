@@ -6,7 +6,7 @@ data class Documentary(
     val tmdbUrl: String?,
     val year: Int,
     val posterUrl: String?,
-    val countryCodes: List<String>,
+    val countryCodes: List<Country>,
     val name: String,
     val description: String
 ) {

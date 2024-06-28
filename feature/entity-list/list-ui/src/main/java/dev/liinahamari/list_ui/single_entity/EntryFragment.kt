@@ -40,6 +40,7 @@ import dev.liinahamari.list_ui.single_entity.add_dialogs.AddGameDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.showCountrySelectionDialog
 import dev.liinahamari.list_ui.viewmodels.BunchDeleteEvent
+import dev.liinahamari.list_ui.viewmodels.CachedCountriesViewModel
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
 import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
@@ -60,6 +61,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
     private val deleteEntryViewModel: DeleteEntryViewModel by viewModels { viewModelFactory }
     private val moveToOtherCategoryViewModel: MoveToOtherCategoryViewModel by viewModels { viewModelFactory }
+    private val cachedCountriesViewModel: CachedCountriesViewModel by viewModels { viewModelFactory }
 
     private val argumentEntityType: EntityType by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
     private val argumentEntityCategory: Category by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
@@ -99,8 +101,8 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menu.clear()
             menuInflater.inflate(R.menu.bunch_entities_actions, menu)
-            if (filterEnabled) menu.findItem(R.id.filter)
-                .setIcon(R.drawable.clear_filter) else menu.findItem(R.id.filter).setIcon(R.drawable.filter)
+            menu.findItem(R.id.filter).setIcon(if (filterEnabled) R.drawable.clear_filter else R.drawable.filter)
+            if (argumentEntityType == GAME) menu.findItem(R.id.filter).isVisible = false
             this@EntryFragment.menu = menu
         }
 
@@ -111,11 +113,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                     fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
                     menuItem.setIcon(R.drawable.filter)
                 } else {
-                    showCountrySelectionDialog {
-                        fetchEntriesViewModel.filter(argumentEntityType, argumentEntityCategory, it.first())
-                        filterEnabled = true
-                        menuItem.setIcon(R.drawable.clear_filter)
-                    }
+                    cachedCountriesViewModel.getCachedCountries()
                 }
 
                 R.id.delete -> MaterialDialog(requireContext())
@@ -184,6 +182,18 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
     }
 
     private fun setupViewModelSubscriptions() {
+        cachedCountriesViewModel.fetchCountriesEvent.observe(viewLifecycleOwner) {
+            when (it) {
+                is CachedCountriesViewModel.GetAllCountriesEvent.Failure -> toast("Failed to get countries' list")
+                is CachedCountriesViewModel.GetAllCountriesEvent.Success -> {
+                    showCountrySelectionDialog(countries = it.countries) {
+                        fetchEntriesViewModel.filter(argumentEntityType, argumentEntityCategory, it.first()/*fixme*/)
+                        filterEnabled = true
+                        menu.getItem(R.id.filter).setIcon(R.drawable.clear_filter)
+                    }
+                }
+            }
+        }
         deleteEntryViewModel.bunchDeleteEvent.observe(viewLifecycleOwner) {
             when (it) {
                 is BunchDeleteEvent.Failure -> toast("Failed to delete")
