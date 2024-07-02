@@ -29,4 +29,6 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
 
     implementation project(":feature:entity-list:list-ui")
+
+    debugImplementation "com.github.liinahamari:CrashScreenInterceptor:$crashInterceptor"
 }

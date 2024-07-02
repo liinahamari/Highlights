@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
     override fun onResume() {
         super.onResume()
         shakeDetector!!.start(sensorManager)
+        viewModel.cacheCountries()
     }
 
     override fun hearShake() {

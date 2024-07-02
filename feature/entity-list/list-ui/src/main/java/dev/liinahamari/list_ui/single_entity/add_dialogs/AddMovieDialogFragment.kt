@@ -19,8 +19,9 @@ import dev.liinahamari.suggestions_ui.movie.SearchMovieAutoCompleteTextView
 class AddMovieDialogFragment : AddFragment(R.layout.fragment_add_movie) {
     private var _ui: FragmentAddMovieBinding? = null
     private val ui: FragmentAddMovieBinding by lazy { _ui!! }
+    private val cachedCountriesViewModel by viewModels<CachedCountriesViewModel> { viewModelFactory }
 
-    private var selectedCountries = listOf<String>()
+    private var selectedCountries = listOf<Country>()
     private var selectedGenres = listOf<MovieGenre>()
     private var movie = Movie.default()
 

@@ -38,5 +38,8 @@ class CacheCountriesUseCaseImpl @Inject constructor(private val cachedCountriesD
                     }
                     .also { cachedCountries = it }
             }
+        }.ifEmpty {
+            cacheCountries()
+            getCachedCountries()
         }
 }
