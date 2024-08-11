@@ -13,8 +13,7 @@ class App : Application() {
         if (BuildConfig.DEBUG) {
             CrashInterceptor.init(object : CrashScreenDependencies {
                 override val context: Context = applicationContext
-                override val doWhileImpossibleToStartCrashScreen: (Throwable) -> Unit
-                    get() = {}
+                override val doWhileImpossibleToStartCrashScreen: (Throwable) -> Unit = {}
                 override val doOnCrash: (Throwable) -> Unit = { it.printStackTrace() }
             })
         }
