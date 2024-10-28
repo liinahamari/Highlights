@@ -8,7 +8,7 @@ import dev.liinahamari.list_ui.single_entity.EntityType
 
 class EntityButtonsAdapter(private val onEntityClick: (EntityType) -> Unit) :
     RecyclerView.Adapter<EntityButtonsAdapter.ViewHolder>() {
-    private val entities = EntityType.values()
+    private val entities = EntityType.entries.toTypedArray()
 
     inner class ViewHolder(private val ui: ButtonItemBinding) : RecyclerView.ViewHolder(ui.root) {
         fun bind(buttonTitle: String) {

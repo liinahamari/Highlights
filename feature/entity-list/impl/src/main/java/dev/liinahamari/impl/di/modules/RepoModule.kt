@@ -14,6 +14,8 @@ import dev.liinahamari.impl.data.repos.MoviesRepo
 import dev.liinahamari.impl.data.repos.MoviesRepoImpl
 import dev.liinahamari.impl.data.repos.PreferencesRepoImpl
 import dev.liinahamari.impl.data.repos.ShakeCounterRepoImpl
+import dev.liinahamari.impl.data.repos.ShortsRepo
+import dev.liinahamari.impl.data.repos.ShortsRepoImpl
 import javax.inject.Singleton
 
 @Module
@@ -25,6 +27,10 @@ interface RepoModule {
     @Binds
     @Singleton
     fun gamesRepo(impl: GamesRepoImpl): GamesRepo
+
+    @Binds
+    @Singleton
+    fun shortsRepo(impl: ShortsRepoImpl): ShortsRepo
 
     @Binds
     @Singleton

@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 enum class EntityType: Parcelable {
-    BOOK, GAME, DOCUMENTARY, MOVIE
+    BOOK, GAME, DOCUMENTARY, MOVIE, SHORT
 }

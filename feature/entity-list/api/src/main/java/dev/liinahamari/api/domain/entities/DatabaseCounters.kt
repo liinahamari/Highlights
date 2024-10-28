@@ -21,6 +21,10 @@ sealed interface Entity {
         override val counter: Int,
         override val label: String = Documentaries::class.java.simpleName
     ) : Entity
+    data class Shorts(
+        override val counter: Int,
+        override val label: String = Short::class.java.simpleName
+    ) : Entity
 
     data class Movies(override val counter: Int, override val label: String = Movies::class.java.simpleName) : Entity
     data class Books(override val counter: Int, override val label: String = Books::class.java.simpleName) : Entity

@@ -6,6 +6,7 @@ import dev.liinahamari.api.domain.usecases.delete.DeleteBookUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteDocumentaryUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteGameUseCase
 import dev.liinahamari.api.domain.usecases.delete.DeleteMovieUseCase
+import dev.liinahamari.api.domain.usecases.delete.DeleteShortUseCase
 import dev.liinahamari.core.RxSubscriptionDelegateImpl
 import dev.liinahamari.core.RxSubscriptionsDelegate
 import dev.liinahamari.core.SingleLiveEvent
@@ -17,6 +18,7 @@ class DeleteEntryViewModel @Inject constructor(
     private val deleteBookUseCase: DeleteBookUseCase,
     private val deleteGameUseCase: DeleteGameUseCase,
     private val deleteMovieUseCase: DeleteMovieUseCase,
+    private val deleteShortUseCase: DeleteShortUseCase,
     private val deleteDocumentaryUseCase: DeleteDocumentaryUseCase,
 ) : ViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
     private val _bunchDeleteEvent = SingleLiveEvent<BunchDeleteEvent>()
@@ -24,33 +26,22 @@ class DeleteEntryViewModel @Inject constructor(
 
     override fun onCleared() = disposeSubscriptions()
 
-    fun delete(ids: Set<Long>, entityType: EntityType) = when (entityType) {
-        EntityType.BOOK -> Observable.fromIterable(ids).flatMapCompletable(deleteBookUseCase::deleteBook)
-            .doOnError { _bunchDeleteEvent.postValue(BunchDeleteEvent.Failure) }
-            .doOnComplete { _bunchDeleteEvent.postValue(BunchDeleteEvent.Success) }
-            .subscribeUi()
-
-        EntityType.GAME -> Observable.fromIterable(ids).flatMapCompletable(deleteGameUseCase::deleteGame)
-            .doOnError { _bunchDeleteEvent.postValue(BunchDeleteEvent.Failure) }
-            .doOnComplete { _bunchDeleteEvent.postValue(BunchDeleteEvent.Success) }
-            .subscribeUi()
-
-        EntityType.DOCUMENTARY -> Observable.fromIterable(ids)
-            .flatMapCompletable(deleteDocumentaryUseCase::deleteDocumentary)
-            .doOnError { _bunchDeleteEvent.postValue(BunchDeleteEvent.Failure) }
-            .doOnComplete { _bunchDeleteEvent.postValue(BunchDeleteEvent.Success) }
-            .subscribeUi()
-
-        EntityType.MOVIE -> Observable.fromIterable(ids)
-            .flatMapCompletable(deleteMovieUseCase::deleteMovie)
-            .doOnError { _bunchDeleteEvent.postValue(BunchDeleteEvent.Failure) }
-            .doOnComplete { _bunchDeleteEvent.postValue(BunchDeleteEvent.Success) }
-            .subscribeUi()
+    fun delete(ids: Set<Long>, entityType: EntityType) = Observable.fromIterable(ids).flatMapCompletable {
+        return@flatMapCompletable when (entityType) {
+            EntityType.BOOK -> deleteBookUseCase.deleteBook(it)
+            EntityType.GAME -> deleteGameUseCase.deleteGame(it)
+            EntityType.DOCUMENTARY -> deleteDocumentaryUseCase.deleteDocumentary(it)
+            EntityType.MOVIE -> deleteMovieUseCase.deleteMovie(it)
+            EntityType.SHORT -> deleteShortUseCase.deleteShort(it)
+        }
     }
+        .doOnError { _bunchDeleteEvent.postValue(BunchDeleteEvent.Failure) }
+        .doOnComplete { _bunchDeleteEvent.postValue(BunchDeleteEvent.Success) }
+        .subscribeUi()
 }
 
 sealed class BunchDeleteEvent {
-    object Success : BunchDeleteEvent()
-    object Failure : BunchDeleteEvent()
+    data object Success : BunchDeleteEvent()
+    data object Failure : BunchDeleteEvent()
 }
 

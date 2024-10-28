@@ -55,3 +55,18 @@ fun Movie.toUi() = EntryUi(
 
 
 fun List<Movie>.toMovieUi() = map { it.toUi() }
+
+fun Short.toUi() = EntryUi(
+    localId,
+    title = title,
+    description = description,
+    genres = "",
+    countries = productionCountries.map { it.name },
+    posterUrl = posterUrl,
+    year = releaseYear,
+    clazz = Movie::class.java,
+    tmdbUrl = tmdbUrl
+)
+
+
+fun List<Short>.toShortUi() = map { it.toUi() }

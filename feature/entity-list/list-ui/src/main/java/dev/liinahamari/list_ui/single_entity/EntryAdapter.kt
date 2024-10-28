@@ -10,6 +10,7 @@ import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.custom_views.PopupImageDialog

@@ -4,15 +4,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Country
-import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.impl.data.db.daos.Entry
 
 @Entity
-data class Movie(
+data class Short(
     val name: String,
     val tmdbUrl: String?,
-    val tmdbId: Int?,
-    val genres: List<MovieGenre>,
+    val tmdbId: Int,
     override val description: String,
     override val year: Int,
     override val category: Category,
@@ -27,7 +25,6 @@ data class Movie(
         other as Movie
 
         if (name != other.name) return false
-        if (genres != other.genres) return false
         if (year != other.year) return false
         if (category != other.category) return false
         if (tmdbUrl != other.tmdbUrl) return false
@@ -37,7 +34,6 @@ data class Movie(
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + genres.hashCode()
         result = 31 * result + year
         result = 31 * result + category.hashCode()
         result = 31 * result + posterUrl.hashCode()
@@ -47,26 +43,24 @@ data class Movie(
     }
 }
 
-fun Movie.toDomain(): dev.liinahamari.api.domain.entities.Movie = dev.liinahamari.api.domain.entities.Movie(
+fun Short.toDomain(): dev.liinahamari.api.domain.entities.Short = dev.liinahamari.api.domain.entities.Short(
     localId = this.id,
     tmdbUrl = this.tmdbUrl,
     category = this.category,
     productionCountries = this.countryCodes.toList().map { Country(iso = it, name = "") },
-    genres = this.genres,
     title = this.name,
     posterUrl = this.posterUrl,
     releaseYear = this.year,
     description = this.description,
-    tmdbId = this.tmdbId ?: 0
+    tmdbId = this.tmdbId
 )
 
-fun Iterable<Movie>.toDomain(): List<dev.liinahamari.api.domain.entities.Movie> = map { it.toDomain() }
+fun Iterable<Short>.toDomain(): List<dev.liinahamari.api.domain.entities.Short> = map { it.toDomain() }
 
-private fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
+private fun dev.liinahamari.api.domain.entities.Short.toData(): Short = Short(
     id = this.localId,
     category = this.category,
-    countryCodes = this.productionCountries.map{ it.iso }.toTypedArray(),
-    genres = this.genres,
+    countryCodes = this.productionCountries.map { it.iso }.toTypedArray(),
     name = this.title,
     posterUrl = this.posterUrl,
     year = this.releaseYear,
@@ -75,4 +69,4 @@ private fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
     tmdbId = this.tmdbId
 )
 
-fun Array<out dev.liinahamari.api.domain.entities.Movie>.toData(): List<Movie> = map { it.toData() }
+fun Array<out dev.liinahamari.api.domain.entities.Short>.toData(): List<Short> = map { it.toData() }

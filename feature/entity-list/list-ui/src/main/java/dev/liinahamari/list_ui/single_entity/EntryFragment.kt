@@ -38,6 +38,7 @@ import dev.liinahamari.list_ui.single_entity.add_dialogs.AddBookDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddDocumentaryDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddGameDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddMovieDialogFragment
+import dev.liinahamari.list_ui.single_entity.add_dialogs.AddShortDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.showCountrySelectionDialog
 import dev.liinahamari.list_ui.viewmodels.BunchDeleteEvent
 import dev.liinahamari.list_ui.viewmodels.CachedCountriesViewModel
@@ -260,47 +261,35 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
         }
         fetchEntriesViewModel.findEntityEvent.observe(viewLifecycleOwner) {
             if (it is FetchEntriesViewModel.FindEntityEvent.Success) {
-                when (argumentEntityType) {
-                    BOOK -> AddBookDialogFragment
-                        .newInstance(argumentEntityCategory)
-                        .show(childFragmentManager, null)
-
-                    GAME -> AddGameDialogFragment
-                        .newInstance(argumentEntityCategory)
-                        .show(childFragmentManager, null)
-
-                    MOVIE -> AddMovieDialogFragment
-                        .newInstance(argumentEntityCategory)
-                        .show(childFragmentManager, null)
-
-                    DOCUMENTARY -> AddDocumentaryDialogFragment
-                        .newInstance(argumentEntityCategory)
-                        .show(childFragmentManager, null)
-                }
+                showAppropriateEntityAddFragment()
             }
         }
     }
 
     private fun setupFab() {
-        ui.fab.setOnClickListener {
-            when (argumentEntityType) {
-                BOOK -> AddBookDialogFragment
-                    .newInstance(argumentEntityCategory)
-                    .show(childFragmentManager, null)
+        ui.fab.setOnClickListener { showAppropriateEntityAddFragment() }
+    }
 
-                GAME -> AddGameDialogFragment
-                    .newInstance(argumentEntityCategory)
-                    .show(childFragmentManager, null)
+    private fun showAppropriateEntityAddFragment() = when (argumentEntityType) {
+        BOOK -> AddBookDialogFragment
+            .newInstance(argumentEntityCategory)
+            .show(childFragmentManager, null)
 
-                MOVIE -> AddMovieDialogFragment
-                    .newInstance(argumentEntityCategory)
-                    .show(childFragmentManager, null)
+        GAME -> AddGameDialogFragment
+            .newInstance(argumentEntityCategory)
+            .show(childFragmentManager, null)
 
-                DOCUMENTARY -> AddDocumentaryDialogFragment
-                    .newInstance(argumentEntityCategory)
-                    .show(childFragmentManager, null)
-            }
-        }
+        MOVIE -> AddMovieDialogFragment
+            .newInstance(argumentEntityCategory)
+            .show(childFragmentManager, null)
+
+        DOCUMENTARY -> AddDocumentaryDialogFragment
+            .newInstance(argumentEntityCategory)
+            .show(childFragmentManager, null)
+
+        EntityType.SHORT -> AddShortDialogFragment
+            .newInstance(argumentEntityCategory)
+            .show(childFragmentManager, null)
     }
 
     companion object {

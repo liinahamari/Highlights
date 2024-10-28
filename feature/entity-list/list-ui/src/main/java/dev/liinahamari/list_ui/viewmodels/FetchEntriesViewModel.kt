@@ -8,14 +8,17 @@ import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.api.domain.entities.toBookUi
 import dev.liinahamari.api.domain.entities.toDocumentaryUi
 import dev.liinahamari.api.domain.entities.toMovieUi
+import dev.liinahamari.api.domain.entities.toShortUi
 import dev.liinahamari.api.domain.usecases.get.GetAllBooksResult
 import dev.liinahamari.api.domain.usecases.get.GetAllDocumentariesResult
 import dev.liinahamari.api.domain.usecases.get.GetAllGamesResult
 import dev.liinahamari.api.domain.usecases.get.GetAllMoviesResult
+import dev.liinahamari.api.domain.usecases.get.GetAllShortsResult
 import dev.liinahamari.api.domain.usecases.get.GetBooksUseCase
 import dev.liinahamari.api.domain.usecases.get.GetDocumentariesUseCase
 import dev.liinahamari.api.domain.usecases.get.GetGamesUseCase
 import dev.liinahamari.api.domain.usecases.get.GetMoviesUseCase
+import dev.liinahamari.api.domain.usecases.get.GetShortsUseCase
 import dev.liinahamari.core.RxSubscriptionDelegateImpl
 import dev.liinahamari.core.RxSubscriptionsDelegate
 import dev.liinahamari.core.SingleLiveEvent
@@ -26,6 +29,7 @@ class FetchEntriesViewModel @Inject constructor(
     private val getGamesUseCase: GetGamesUseCase,
     private val getDocumentariesUseCase: GetDocumentariesUseCase,
     private val getMoviesUseCase: GetMoviesUseCase,
+    private val getSortsUseCase: GetShortsUseCase,
     private val getBooksUseCase: GetBooksUseCase
 ) : ViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
     private val _fetchAllEvent = SingleLiveEvent<FetchAllEvent>()
@@ -76,6 +80,15 @@ class FetchEntriesViewModel @Inject constructor(
                         is GetAllGamesResult.Error -> _fetchAllEvent.value = FetchAllEvent.Failure
                     }
                 }
+
+            EntityType.SHORT -> getSortsUseCase.getAllShorts(entityCategory)
+                .subscribeUi { result ->
+                    when (result) {
+                        is GetAllShortsResult.Success -> _fetchAllEvent.value = FetchAllEvent.Success(result.data)
+                        is GetAllShortsResult.EmptyList -> _fetchAllEvent.value = FetchAllEvent.Empty
+                        is GetAllShortsResult.Error -> _fetchAllEvent.value = FetchAllEvent.Failure
+                    }
+                }
         }
     }
 
@@ -96,6 +109,11 @@ class FetchEntriesViewModel @Inject constructor(
                 .doOnError { _filterEvent.value = FilterEvent.Failure }
                 .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
 
+            EntityType.SHORT -> getSortsUseCase.filter(entityCategory, country.iso)
+                .map { it.toShortUi() }
+                .doOnError { _filterEvent.value = FilterEvent.Failure }
+                .subscribeUi { entries -> _filterEvent.value = FilterEvent.Success(entries) }
+
             EntityType.GAME -> throw IllegalStateException("there shoudn't be filter by country in games")
         }
     }
@@ -104,17 +122,17 @@ class FetchEntriesViewModel @Inject constructor(
 
     sealed interface FetchAllEvent {
         data class Success(val entries: List<EntryUi>) : FetchAllEvent
-        object Failure : FetchAllEvent
-        object Empty : FetchAllEvent
+        data object Failure : FetchAllEvent
+        data object Empty : FetchAllEvent
     }
 
     sealed interface FilterEvent {
         data class Success(val entries: List<EntryUi>) : FilterEvent
-        object Failure : FilterEvent
+        data object Failure : FilterEvent
     }
 
     sealed interface FindEntityEvent {
         data class Success(val entry: Any) : FindEntityEvent
-        object Failure : FindEntityEvent
+        data object Failure : FindEntityEvent
     }
 }

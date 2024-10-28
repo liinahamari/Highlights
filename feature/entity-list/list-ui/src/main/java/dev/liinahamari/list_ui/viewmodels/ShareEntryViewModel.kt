@@ -8,12 +8,13 @@ import dev.liinahamari.api.domain.entities.toBookUi
 import dev.liinahamari.api.domain.entities.toDocumentaryUi
 import dev.liinahamari.api.domain.entities.toGameUi
 import dev.liinahamari.api.domain.entities.toMovieUi
-import dev.liinahamari.api.domain.entities.toUi
+import dev.liinahamari.api.domain.entities.toShortUi
 import dev.liinahamari.api.domain.usecases.ComposeShareMessageUseCase
 import dev.liinahamari.api.domain.usecases.get.GetBooksUseCase
 import dev.liinahamari.api.domain.usecases.get.GetDocumentariesUseCase
 import dev.liinahamari.api.domain.usecases.get.GetGamesUseCase
 import dev.liinahamari.api.domain.usecases.get.GetMoviesUseCase
+import dev.liinahamari.api.domain.usecases.get.GetShortsUseCase
 import dev.liinahamari.core.RxSubscriptionDelegateImpl
 import dev.liinahamari.core.RxSubscriptionsDelegate
 import dev.liinahamari.core.SingleLiveEvent
@@ -24,6 +25,7 @@ class ShareEntryViewModel @Inject constructor(
     private val getGamesUseCase: GetGamesUseCase,
     private val getDocumentariesUseCase: GetDocumentariesUseCase,
     private val getMoviesUseCase: GetMoviesUseCase,
+    private val getShortsUseCase: GetShortsUseCase,
     private val getBooksUseCase: GetBooksUseCase,
     private val composeShareMessageUseCase: ComposeShareMessageUseCase,
 ) : ViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
@@ -40,6 +42,7 @@ class ShareEntryViewModel @Inject constructor(
             EntityType.BOOK -> getBooksUseCase.findByIds(category, selection).map { it.toBookUi() }
             EntityType.MOVIE -> getMoviesUseCase.findByIds(category, selection).map { it.toMovieUi() }
             EntityType.GAME -> getGamesUseCase.findByIds(category, selection).map { it.toGameUi() }
+            EntityType.SHORT -> getShortsUseCase.findByIds(category, selection).map { it.toShortUi() }
         }
             .map(composeShareMessageUseCase::composeShareMessage)
             .doOnError { _shareEntryEvent.value = ShareEntry.Failure }

@@ -12,6 +12,7 @@ import dev.liinahamari.impl.data.db.daos.BookDao
 import dev.liinahamari.impl.data.db.daos.DocumentaryDao
 import dev.liinahamari.impl.data.db.daos.GameDao
 import dev.liinahamari.impl.data.db.daos.MovieDao
+import dev.liinahamari.impl.data.db.daos.ShortsDao
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -32,14 +33,20 @@ class EntriesDatabaseModule {
         ).addMigrations(
             object : Migration(3, 4) {
                 override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL("ALTER TABLE movie ADD COLUMN tmdbId INTEGER NOT NULL")
-                    db.execSQL("ALTER TABLE documentary ADD COLUMN tmdbId INTEGER NOT NULL")
+                    db.execSQL("ALTER TABLE movie ADD COLUMN tmdbId INTEGER")
+                    db.execSQL("ALTER TABLE documentary ADD COLUMN tmdbId INTEGER")
                 }
             }
         ).addMigrations(
             object : Migration(4, 5) {
                 override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL("ALTER TABLE movie REMOVE COLUMN countryCodes")
+                    db.execSQL("ALTER TABLE game DROP COLUMN countryCodes")
+                }
+            }
+        ).addMigrations(
+            object : Migration(5, 6)/*todo make last migration version to EntriesDatabase argu*/ {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `short` (`name` TEXT NOT NULL, `description` TEXT NOT NULL, `year` INTEGER NOT NULL, `category` TEXT NOT NULL, `posterUrl` TEXT, `countryCodes` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tmdbUrl` TEXT, `tmdbId` INTEGER NOT NULL)")
                 }
             }
         )
@@ -49,6 +56,10 @@ class EntriesDatabaseModule {
     @Provides
     @Singleton
     fun bookDao(db: EntriesDatabase): BookDao = db.bookDao()
+
+    @Provides
+    @Singleton
+    fun shortsDao(db: EntriesDatabase): ShortsDao = db.shortsDao()
 
     @Provides
     @Singleton
