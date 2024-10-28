@@ -97,7 +97,7 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
     }
 }
 
-fun TmdbRemoteMovie.toDomain(category: Category, genres: List<MovieGenre>): Movie =
+fun TmdbRemoteMovie.toDomain(category: Category, genres: List<MovieGenre> = emptyList()): Movie =
     Movie(
         localId = 0, // fixme
         tmdbUrl = remoteId?.let { "https://www.themoviedb.org/movie/$it" },

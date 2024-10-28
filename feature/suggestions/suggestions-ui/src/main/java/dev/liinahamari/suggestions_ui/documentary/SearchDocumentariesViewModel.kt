@@ -19,7 +19,7 @@ class SearchDocumentariesViewModel(application: Application) : SearchMoviesViewM
         searchMovieUseCase.search(query)
             .flatMapObservable { Observable.fromIterable(it) }
             .filter { it.genreIds!!.contains(IMDB_DOCUMENTARY_GENRE_ID) }
-            .map { it.toDomain(category, emptyList()) }
+            .map { it.toDomain(category) }
             .toList()
             .map<GetRemoteMovies>(GetRemoteMovies::Success)
             .onErrorReturn {
