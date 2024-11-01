@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.liinahamari.api.domain.entities.BookGenre
 import dev.liinahamari.api.domain.entities.Category
-import dev.liinahamari.api.domain.entities.Country
+import dev.liinahamari.api.domain.entities.fromIsoCode
 import dev.liinahamari.impl.data.db.daos.Entry
 
 @Entity
@@ -49,7 +49,7 @@ data class Book(
 fun Book.toDomain(): dev.liinahamari.api.domain.entities.Book = dev.liinahamari.api.domain.entities.Book(
     id = this.id,
     category = this.category,
-    countries = this.countryCodes.toList().map { Country(iso = it, name = "") /*fixme: actual*/ },
+    countries = this.countryCodes.toList().map { it.fromIsoCode() },
     genres = this.genres,
     name = this.name,
     posterUrl = this.posterUrl,
@@ -57,6 +57,7 @@ fun Book.toDomain(): dev.liinahamari.api.domain.entities.Book = dev.liinahamari.
     author = this.author,
     description = this.description
 )
+
 fun Iterable<Book>.toDomain(): List<dev.liinahamari.api.domain.entities.Book> = this.map { it.toDomain() }
 
 private fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
@@ -70,4 +71,5 @@ private fun dev.liinahamari.api.domain.entities.Book.toData(): Book = Book(
     author = this.author,
     description = this.description
 )
+
 fun Array<out dev.liinahamari.api.domain.entities.Book>.toData(): List<Book> = map { it.toData() }

@@ -3,7 +3,7 @@ package dev.liinahamari.impl.data.db.daos.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.liinahamari.api.domain.entities.Category
-import dev.liinahamari.api.domain.entities.Country
+import dev.liinahamari.api.domain.entities.fromIsoCode
 import dev.liinahamari.impl.data.db.daos.Entry
 
 @Entity
@@ -47,7 +47,7 @@ fun Short.toDomain(): dev.liinahamari.api.domain.entities.Short = dev.liinahamar
     localId = this.id,
     tmdbUrl = this.tmdbUrl,
     category = this.category,
-    productionCountries = this.countryCodes.toList().map { Country(iso = it, name = "") },
+    productionCountries = this.countryCodes.toList().map { it.fromIsoCode() },
     title = this.name,
     posterUrl = this.posterUrl,
     releaseYear = this.year,

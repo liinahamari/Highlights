@@ -13,7 +13,6 @@ import java.net.UnknownHostException
 private val SHORTS_RANGE_IN_MINUTES = 3..30
 
 class SearchShortsViewModel(application: Application) : SearchMoviesViewModel(application) {
-
     fun searchForShort(
         query: String,
         category: Category
@@ -27,12 +26,10 @@ class SearchShortsViewModel(application: Application) : SearchMoviesViewModel(ap
                             .map { short.toDomain(category) }
                             .flatMapSingle { mov ->
                                 searchMovieUseCase.getMovieDetails(short.remoteId!!)
-                                    .map { response ->
-                                        mov.copy(
-                                            productionCountries = response.productionCountries.map {
-                                                Country(iso = it.iso31661!!, name = it.name!!)
-                                            },
-                                        )
+                                    .map {
+                                        mov.copy(productionCountries = it.productionCountries.map {
+                                            Country(iso = it.iso31661!!, name = it.name!!)
+                                        })
                                     }
                             }
                     }

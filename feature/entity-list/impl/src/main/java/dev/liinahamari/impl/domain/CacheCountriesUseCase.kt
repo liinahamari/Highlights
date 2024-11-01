@@ -14,7 +14,7 @@ class CacheCountriesUseCaseImpl @Inject constructor(private val cachedCountriesD
         withContext(Dispatchers.IO) {
             if (cachedCountriesDao.getRowCount() == 0) {
                 Locale.getISOCountries()
-                    .map { Locale("", it) }
+                    .map { Locale(Locale.US.language, it) }
                     .filter { it.country.isNullOrBlank().not() && it.displayCountry.isNullOrBlank().not() }
                     .map { Country(it.country, it.getDisplayCountry(Locale.US)) /*todo: multi-language support*/}
                     .sortedBy { it.countryEnglishName }

@@ -3,7 +3,6 @@ package dev.liinahamari.impl.domain.get
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
 import dev.liinahamari.api.domain.entities.toMovieUi
-import dev.liinahamari.api.domain.entities.toUi
 import dev.liinahamari.api.domain.usecases.get.GetAllMoviesResult
 import dev.liinahamari.api.domain.usecases.get.GetMoviesUseCase
 import dev.liinahamari.impl.data.repos.MoviesRepo

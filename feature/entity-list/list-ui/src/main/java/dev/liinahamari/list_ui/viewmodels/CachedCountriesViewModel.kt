@@ -25,6 +25,6 @@ class CachedCountriesViewModel @Inject constructor(private val cacheCountriesUse
 
     sealed interface GetAllCountriesEvent {
         data class Success(val countries: List<Country>) : GetAllCountriesEvent
-        object Failure : GetAllCountriesEvent
+        data object Failure : GetAllCountriesEvent
     }
 }

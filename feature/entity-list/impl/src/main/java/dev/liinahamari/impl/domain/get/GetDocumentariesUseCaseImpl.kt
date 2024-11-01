@@ -3,7 +3,6 @@ package dev.liinahamari.impl.domain.get
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.toDocumentaryUi
-import dev.liinahamari.api.domain.entities.toUi
 import dev.liinahamari.api.domain.usecases.get.GetAllDocumentariesResult
 import dev.liinahamari.api.domain.usecases.get.GetDocumentariesUseCase
 import dev.liinahamari.impl.data.repos.DocumentariesRepo

@@ -2,15 +2,11 @@ package dev.liinahamari.impl.domain.get
 
 import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Category
-import dev.liinahamari.api.domain.entities.Documentary
-import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.api.domain.entities.toBookUi
-import dev.liinahamari.api.domain.entities.toUi
 import dev.liinahamari.api.domain.usecases.get.GetAllBooksResult
 import dev.liinahamari.api.domain.usecases.get.GetBooksUseCase
 import dev.liinahamari.impl.data.repos.BooksRepo
 import io.reactivex.rxjava3.core.Single
-import java.util.Locale
 import javax.inject.Inject
 
 class GetBooksUseCaseImpl @Inject constructor(private val booksRepo: BooksRepo) : GetBooksUseCase {

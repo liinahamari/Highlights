@@ -61,6 +61,6 @@ class SaveEntryViewModel @Inject constructor(
 }
 
 sealed class SaveEvent {
-    object Success : SaveEvent()
-    object Failure : SaveEvent()
+    data object Success : SaveEvent()
+    data object Failure : SaveEvent()
 }

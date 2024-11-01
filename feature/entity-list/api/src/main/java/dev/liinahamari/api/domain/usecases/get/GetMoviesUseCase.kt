@@ -13,7 +13,7 @@ interface GetMoviesUseCase {
 }
 
 sealed interface GetAllMoviesResult {
-    object EmptyList: GetAllMoviesResult
+    data object EmptyList: GetAllMoviesResult
     data class Success(val data: List<EntryUi>): GetAllMoviesResult
-    object Error: GetAllMoviesResult
+    data object Error: GetAllMoviesResult
 }

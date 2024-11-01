@@ -1,11 +1,13 @@
 package dev.liinahamari.api.domain.entities
 
+import java.util.Locale
+
 fun Documentary.toUi() = EntryUi(
     id = id,
     title = name,
     description = description,
     genres = "",
-    countries = countryCodes.map { it.name },
+    countries = countryCodes.toCountriesNames(),
     posterUrl = posterUrl,
     year = year,
     clazz = Documentary::class.java,
@@ -13,16 +15,17 @@ fun Documentary.toUi() = EntryUi(
 )
 
 fun List<Documentary>.toDocumentaryUi() = map { it.toUi() }
+
 fun Book.toUi() = EntryUi(
     id = id,
     title = name,
     description = description,
     genres = "",
-    countries = countries.map { it.name },
+    countries = countries.toCountriesNames(),
     posterUrl = posterUrl,
     year = year,
     clazz = Book::class.java,
-            tmdbUrl = null
+    tmdbUrl = null
 )
 
 fun List<Book>.toBookUi() = map { it.toUi() }
@@ -46,13 +49,12 @@ fun Movie.toUi() = EntryUi(
     title = title,
     description = description,
     genres = "",
-    countries = productionCountries.map { it.name },
+    countries = productionCountries.toCountriesNames(),
     posterUrl = posterUrl,
     year = releaseYear,
     clazz = Movie::class.java,
     tmdbUrl = tmdbUrl
 )
-
 
 fun List<Movie>.toMovieUi() = map { it.toUi() }
 
@@ -61,12 +63,13 @@ fun Short.toUi() = EntryUi(
     title = title,
     description = description,
     genres = "",
-    countries = productionCountries.map { it.name },
+    countries = productionCountries.toCountriesNames(),
     posterUrl = posterUrl,
     year = releaseYear,
     clazz = Movie::class.java,
     tmdbUrl = tmdbUrl
 )
 
-
 fun List<Short>.toShortUi() = map { it.toUi() }
+
+private fun List<Country>.toCountriesNames() = map { it.name.ifBlank { Locale("", it.iso).getDisplayCountry(Locale.US) } }

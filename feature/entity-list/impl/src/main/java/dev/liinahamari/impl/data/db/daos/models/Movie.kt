@@ -3,8 +3,8 @@ package dev.liinahamari.impl.data.db.daos.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.liinahamari.api.domain.entities.Category
-import dev.liinahamari.api.domain.entities.Country
 import dev.liinahamari.api.domain.entities.MovieGenre
+import dev.liinahamari.api.domain.entities.fromIsoCode
 import dev.liinahamari.impl.data.db.daos.Entry
 
 @Entity
@@ -51,7 +51,7 @@ fun Movie.toDomain(): dev.liinahamari.api.domain.entities.Movie = dev.liinahamar
     localId = this.id,
     tmdbUrl = this.tmdbUrl,
     category = this.category,
-    productionCountries = this.countryCodes.toList().map { Country(iso = it, name = "") },
+    productionCountries = this.countryCodes.toList().map { it.fromIsoCode() },
     genres = this.genres,
     title = this.name,
     posterUrl = this.posterUrl,
@@ -65,7 +65,7 @@ fun Iterable<Movie>.toDomain(): List<dev.liinahamari.api.domain.entities.Movie> 
 private fun dev.liinahamari.api.domain.entities.Movie.toData(): Movie = Movie(
     id = this.localId,
     category = this.category,
-    countryCodes = this.productionCountries.map{ it.iso }.toTypedArray(),
+    countryCodes = this.productionCountries.map { it.iso }.toTypedArray(),
     genres = this.genres,
     name = this.title,
     posterUrl = this.posterUrl,
