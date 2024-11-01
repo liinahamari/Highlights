@@ -22,5 +22,5 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxandroid:$rxAndroidVersion"
 
     implementation "com.google.android.material:material:$materialVersion"
-    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
+    implementation "androidx.recyclerview:recyclerview-selection:$recyclerviewSelectionVersion"
 }
