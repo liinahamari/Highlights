@@ -17,23 +17,29 @@ android {
 dependencies {
     implementation "androidx.core:core-ktx:$coreKtxVersion"
     implementation "androidx.appcompat:appcompat:$appcompatKtxVersion"
-    implementation "com.google.android.material:material:$materialVersion"
-    testImplementation "junit:junit:$junitVersion"
-    implementation "com.github.kirich1409:viewbindingpropertydelegate-noreflection:$viewBindingPropertyDelegateVersion"
     implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+    implementation "com.github.kirich1409:viewbindingpropertydelegate-noreflection:$viewBindingPropertyDelegateVersion"
+    implementation "androidx.preference:preference-ktx:$preferencesVersion"
+
+    implementation "com.squareup:seismic:$seismicVersion"
+
+    implementation "androidx.recyclerview:recyclerview-selection:$recyclerviewSelectionVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "me.saket.cascade:cascade:$cascadeVersion"
+    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+    implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
+    implementation "com.github.cachapa:ExpandableLayout:$expandableLayoutVersion"
 
     implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
-    implementation "com.github.bumptech.glide:glide:$glideVersion"
-    implementation "me.saket.cascade:cascade:$cascadeVersion"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-rxjava3:$roomVersion"
 
     implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
-
-    implementation "com.google.android.material:material:$materialVersion"
-
-    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    implementation "com.afollestad.material-dialogs:input:$materialDialogsVersion"
 
     implementation project(":core")
     implementation project(":feature:entity-list")
@@ -41,16 +47,4 @@ dependencies {
     implementation project(":feature:summary:summary-ui")
     implementation project(':feature:settings:settings-ui')
     implementation project(':feature:settings')
-
-    implementation "androidx.room:room-runtime:$roomVersion"
-    annotationProcessor "androidx.room:room-compiler:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
-    implementation "androidx.room:room-rxjava3:$roomVersion"
-
-    implementation "com.squareup:seismic:$seismicVersion"
-
-    implementation "com.github.cachapa:ExpandableLayout:$expandableLayoutVersion"
-    implementation "androidx.preference:preference-ktx:$preferencesVersion"
-
-    implementation "androidx.recyclerview:recyclerview-selection:$recyclerviewSelectionVersion"
 }
