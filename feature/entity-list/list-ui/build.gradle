@@ -15,7 +15,6 @@ android {
 }
 
 dependencies {
-
     implementation "androidx.core:core-ktx:$coreKtxVersion"
     implementation "androidx.appcompat:appcompat:$appcompatKtxVersion"
     implementation "com.google.android.material:material:$materialVersion"
@@ -39,6 +38,9 @@ dependencies {
     implementation project(":core")
     implementation project(":feature:entity-list")
     implementation project(":feature:suggestions:suggestions-ui")
+    implementation project(":feature:summary:summary-ui")
+    implementation project(':feature:settings:settings-ui')
+    implementation project(':feature:settings')
 
     implementation "androidx.room:room-runtime:$roomVersion"
     annotationProcessor "androidx.room:room-compiler:$roomVersion"
@@ -46,7 +48,6 @@ dependencies {
     implementation "androidx.room:room-rxjava3:$roomVersion"
 
     implementation "com.squareup:seismic:$seismicVersion"
-    implementation project(":feature:summary:summary-ui")
 
     implementation "com.github.cachapa:ExpandableLayout:$expandableLayoutVersion"
     implementation "androidx.preference:preference-ktx:$preferencesVersion"

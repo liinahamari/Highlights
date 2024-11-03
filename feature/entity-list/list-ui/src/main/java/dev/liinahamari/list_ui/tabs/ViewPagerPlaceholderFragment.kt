@@ -9,7 +9,7 @@ import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.entries_list.EntriesFragment
-import dev.liinahamari.list_ui.single_entity.SettingsFragment
+import dev.liinahamari.settings_ui.SettingsFragment
 import dev.liinahamari.suggestions_ui.movie.ARG_CATEGORY
 import kotlinx.parcelize.Parcelize
 

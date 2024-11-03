@@ -18,9 +18,10 @@ import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.seismic.ShakeDetector
 import dev.liinahamari.api.EntityListDependencies
+import dev.liinahamari.api.SettingsDeps
 import dev.liinahamari.core.ext.getCurrentFragment
 import dev.liinahamari.core.ext.sensorManager
-import dev.liinahamari.entity_list.EntityListFactory.getApi
+import dev.liinahamari.entity_list.EntityListFactory
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.ActivityMainBinding
 import dev.liinahamari.list_ui.di.DaggerListUiComponent
@@ -29,6 +30,7 @@ import dev.liinahamari.list_ui.single_entity.EntryFragment
 import dev.liinahamari.list_ui.tabs.SectionsPagerAdapter
 import dev.liinahamari.list_ui.tabs.ViewPagerPlaceholderFragment
 import dev.liinahamari.list_ui.viewmodels.MainActivityViewModel
+import dev.liinahamari.settings.SettingsFactory
 import javax.inject.Inject
 
 internal const val RETURN_CODE_SUCCESS = 100
@@ -44,10 +46,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
     private var shakeDetector: ShakeDetector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        listUiComponent = DaggerListUiComponent.factory().create(getApi(object : EntityListDependencies {
-            override val application: Application
-                get() = getApplication()
-        }))
+        listUiComponent =
+            DaggerListUiComponent.factory().create(EntityListFactory.getApi(object : EntityListDependencies {
+                override val application: Application
+                    get() = getApplication()
+            }), SettingsFactory.getApi(object : SettingsDeps { //todo: figure out to place (scope) it it on Application level
+                override val application: Application
+                    get() = getApplication()
+            }))
         listUiComponent.inject(this)
         shakeDetector = ShakeDetector(this)
         super.onCreate(savedInstanceState)

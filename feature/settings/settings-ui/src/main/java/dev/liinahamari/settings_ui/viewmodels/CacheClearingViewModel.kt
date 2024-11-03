@@ -1,4 +1,4 @@
-package dev.liinahamari.list_ui.viewmodels
+package dev.liinahamari.settings_ui.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.LiveData
@@ -18,7 +18,8 @@ class CacheClearingViewModel @Inject constructor(private val application: Applic
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    Glide.get(application.applicationContext).clearDiskCache()
+                    //todo glide as a dependency and test failure of function
+                    Glide.get(application.applicationContext).clearDiskCache() //todo calculate and show cache/image_cache dir size
                 }
                 _fetchAllEvent.value = ClearCacheEvent.Success
             } catch (e: Exception) {
@@ -29,6 +30,6 @@ class CacheClearingViewModel @Inject constructor(private val application: Applic
 }
 
 sealed interface ClearCacheEvent {
-    object Success : ClearCacheEvent
+    data object Success : ClearCacheEvent
     data class Error(val errorMessage: String) : ClearCacheEvent
 }

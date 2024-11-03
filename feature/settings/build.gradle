@@ -1,0 +1,15 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+setupDefaultModuleConfig(android)
+
+android {
+    namespace 'dev.liinahamari.settings'
+}
+
+dependencies {
+    api project(":feature:settings:api")
+    implementation project(":feature:settings:impl")
+}

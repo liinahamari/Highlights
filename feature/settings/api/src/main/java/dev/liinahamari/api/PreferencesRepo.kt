@@ -1,4 +1,4 @@
-package dev.liinahamari.api.domain.repo
+package dev.liinahamari.api
 
 interface PreferencesRepo {
     var suggestionsEnabled: Boolean

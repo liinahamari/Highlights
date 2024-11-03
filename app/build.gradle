@@ -24,11 +24,9 @@ dependencies {
     implementation "com.google.android.material:material:$materialVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
-
     implementation "com.github.anrwatchdog:anrwatchdog:$anrWatchDogVersion"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-
-    implementation project(":feature:entity-list:list-ui")
 
     debugImplementation "com.github.liinahamari:CrashScreenInterceptor:$crashInterceptor"
+
+    implementation project(":feature:entity-list:list-ui")
 }

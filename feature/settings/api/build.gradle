@@ -1,0 +1,13 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+}
+
+setupDefaultModuleConfig(android)
+
+android {
+    namespace 'dev.liinahamari.settings.api'
+}
+
+dependencies {}

@@ -1,0 +1,16 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+setupDefaultModuleConfig(android)
+
+android {
+    namespace 'dev.liinahamari.settings.sample'
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:$coreKtxVersion"
+    implementation "androidx.appcompat:appcompat:$appcompatKtxVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+}

@@ -15,7 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import dev.liinahamari.api.domain.repo.PreferencesRepo
+import dev.liinahamari.api.PreferencesRepo
 import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.activities.MainActivity

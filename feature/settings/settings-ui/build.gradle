@@ -1,0 +1,33 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+}
+
+setupDefaultModuleConfig(android)
+
+android {
+    namespace 'dev.liinahamari.settings.settings_ui'
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:$coreKtxVersion"
+    implementation "androidx.appcompat:appcompat:$appcompatKtxVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "com.github.kirich1409:viewbindingpropertydelegate-noreflection:$viewBindingPropertyDelegateVersion"
+    implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+
+    implementation project(":core")
+    implementation project(":feature:settings")
+    implementation project(":feature:summary:summary-ui")
+
+    implementation "androidx.preference:preference-ktx:$preferencesVersion"
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+}

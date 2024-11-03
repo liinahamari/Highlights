@@ -7,7 +7,6 @@ import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
 import dev.liinahamari.list_ui.entries_list.EntriesViewModel
-import dev.liinahamari.list_ui.viewmodels.CacheClearingViewModel
 import dev.liinahamari.list_ui.viewmodels.CachedCountriesViewModel
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
@@ -56,11 +55,6 @@ abstract class ViewModelBuilderModule {
     @IntoMap
     @ViewModelKey(MainActivityViewModel::class)
     abstract fun mainActivityViewModel(viewModel: MainActivityViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CacheClearingViewModel::class)
-    abstract fun cacheClearingViewModel(viewModel: CacheClearingViewModel): ViewModel
 
     @Binds
     @IntoMap

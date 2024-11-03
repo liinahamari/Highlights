@@ -7,8 +7,8 @@ plugins {
 
 ext {
     minSdkVersion = 24
-    compileSdkVersion = 34
-    targetSdkVersion = 34
+    compileSdkVersion = 35
+    targetSdkVersion = 35
 
     //libraries' versions
     coroutinesVersion = '1.7.3'
@@ -21,7 +21,7 @@ ext {
     activityKtxVersion = '1.9.3'
     fragmentKtxVersion = '1.8.5'
     appcompatKtxVersion = '1.7.0'
-    constraintLayoutVersion = '2.1.4'
+    constraintLayoutVersion = '2.2.0'
     lifecycleVersion = '2.8.7'
     roomVersion = '2.6.1'
     roomKtxVersion = '2.6.1'
@@ -47,6 +47,7 @@ ext {
     preferencesVersion = '1.2.1'
     recyclerviewSelectionVersion = '1.1.0'
     crashInterceptor = '1.0.0'
+    annotationsVersion = '1.9.1'
 
     junitVersion = '4.13.2'
 }

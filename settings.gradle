@@ -30,5 +30,11 @@ include ':feature:suggestions',
         ':feature:suggestions:impl',
         ':feature:suggestions:sample',
         ':feature:suggestions:suggestions-ui'
+include ':feature:settings',
+        ':feature:settings:api',
+        ':feature:settings:impl',
+        ':feature:settings:sample',
+        ':feature:settings:settings-ui'
 include ':feature:summary:summary-ui',
         ':feature:summary:sample'
+include ':feature:settings'

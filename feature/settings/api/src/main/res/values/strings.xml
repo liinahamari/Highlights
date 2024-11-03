@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="image_cache_cleared">Image cache cleared</string>
+    <string name="title_enable_suggestions">Enable suggestions</string>
+    <string name="clear_image_cache">Clear image cache</string>
+    <string name="title_leak_canary_enabled">Enable Leak Canary</string>
+</resources>
