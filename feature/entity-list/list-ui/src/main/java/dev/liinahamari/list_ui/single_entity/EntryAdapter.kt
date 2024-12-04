@@ -82,6 +82,7 @@ class EntryAdapter(
                 }
             }
 
+            ui.titleTv.isSelected = true
             ui.titleTv.text = entry.title
             ui.yearTv.text = ui.root.context.getString(R.string.years_placeholder, entry.year)
             ui.entryGenresTv.text = entry.genres
