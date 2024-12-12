@@ -31,7 +31,7 @@ class SearchGameAutoCompleteTextView @JvmOverloads constructor(
     private val disposable = CompositeDisposable()
     private var suggestionsEnabled = true
     var categoryArg: Category = Category.GOOD //fixme actual
-    private val textInput = parent.parent as TextInputLayout
+    private val textInput by lazy { parent.parent as TextInputLayout }
 
     private lateinit var bookObserver: GameObserver
 
