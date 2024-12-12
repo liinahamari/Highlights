@@ -25,6 +25,7 @@ fun View.hideKeyboard() = context.inputMethodManager.hideSoftInputFromWindow(win
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int): View = LayoutInflater.from(context).inflate(layoutRes, this, false)
 
+fun View.toast(text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 fun Context.toast(text: String) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 fun Fragment.toast(text: String) = requireContext().toast(text)
 

@@ -55,21 +55,25 @@ class PicturedArrayAdapter(private val context: Context) :
 
 data class SuggestionUi(val title: String, val year: Int, val posterUrl: String?, val genres: List<String>)
 
-fun Movie.toUi() = SuggestionUi(
+fun List<Movie>.toMoviesUi() = map { it.toUi() }
+fun List<Book>.toBooksUi() = map { it.toUi() }
+fun List<Game>.toGamesUi() = map { it.toUi() }
+
+private fun Movie.toUi() = SuggestionUi(
     title = title,
     year = releaseYear,
     genres = genres.map { it.name.replace("_", " ").lowercase() },
     posterUrl = posterUrl
 )
 
-fun Book.toUi() = SuggestionUi(
+private fun Book.toUi() = SuggestionUi(
     title = name,
     year = year,
     posterUrl = posterUrl,
     genres = genres.map { it.name.replace("_", " ").lowercase() }
 )
 
-fun Game.toSuggestion() = SuggestionUi(
+private fun Game.toUi() = SuggestionUi(
     title = name,
     year = year,
     posterUrl = posterUrl,

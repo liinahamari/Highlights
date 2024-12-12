@@ -48,6 +48,7 @@ ext {
     recyclerviewSelectionVersion = '1.1.0'
     crashInterceptor = '1.0.0'
     annotationsVersion = '1.9.1'
+    swipeRefreshlayoutVersion = '1.1.0'
 
     junitVersion = '4.13.2'
 }

@@ -57,20 +57,21 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
                     }
             }
             .toList()
+            .toObservable()
             .map<GetRemoteMovies>(GetRemoteMovies::Success)
+            .startWithItem(GetRemoteMovies.Loading)
             .onErrorReturn {
                 when (it) {
                     is UnknownHostException -> GetRemoteMovies.Error.NoInternetError
                     else -> GetRemoteMovies.Error.CommonError
                 }
             }
-            .toObservable()
             .doOnError { it.printStackTrace() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext(_searchMoviesEvent::setValue)
 
-    private fun getMovieGenres(ids: List<Int>): Single<List<dev.liinahamari.api.domain.entities.MovieGenre>> =
+    private fun getMovieGenres(ids: List<Int>): Single<List<MovieGenre>> =
         movieGenresUseCase.getMovieGenresByIds(ids)
             .subscribeOn(Schedulers.io())
 
@@ -89,10 +90,10 @@ open class SearchMoviesViewModel(application: Application) : AndroidViewModel(ap
 
     sealed interface GetRemoteMovies {
         data class Success(val movies: List<Movie>) : GetRemoteMovies
-
+        data object Loading: GetRemoteMovies
         sealed interface Error : GetRemoteMovies {
-            object CommonError : Error
-            object NoInternetError : Error
+            data object CommonError : Error
+            data object NoInternetError : Error
         }
     }
 }

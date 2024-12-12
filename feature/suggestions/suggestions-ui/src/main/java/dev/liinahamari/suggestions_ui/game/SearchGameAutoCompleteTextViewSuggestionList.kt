@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.get
+import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Game
@@ -14,7 +15,8 @@ import dev.liinahamari.core.ext.toast
 import dev.liinahamari.core.views.HideSuggestionListOnScrollMaterialAutoCompleteTextView
 import dev.liinahamari.suggestions_ui.PicturedArrayAdapter
 import dev.liinahamari.suggestions_ui.SuggestionUi
-import dev.liinahamari.suggestions_ui.toSuggestion
+import dev.liinahamari.suggestions_ui.startCircularProgress
+import dev.liinahamari.suggestions_ui.toGamesUi
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -29,6 +31,7 @@ class SearchGameAutoCompleteTextView @JvmOverloads constructor(
     private val disposable = CompositeDisposable()
     private var suggestionsEnabled = true
     var categoryArg: Category = Category.GOOD //fixme actual
+    private val textInput = parent.parent as TextInputLayout
 
     private lateinit var bookObserver: GameObserver
 
@@ -43,6 +46,7 @@ class SearchGameAutoCompleteTextView @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (suggestionsEnabled) {
+            setPaddingRelative(paddingStart, 0, paddingEnd+compoundPaddingEnd, 0)
             setAdapter(suggestionsAdapter)
             disposable.add(textChanges()
                 .filter { it.isBlank().not() }
@@ -62,11 +66,32 @@ class SearchGameAutoCompleteTextView @JvmOverloads constructor(
     private fun setupViewModelSubscriptions() {
         viewModel.searchGameEvent.observe(findViewTreeLifecycleOwner()!!) {
             when (it) {
-                is GetRemoteGames.Error.CommonError -> context.toast("Suggestions API failed")
-                is GetRemoteGames.Error.NoInternetError -> context.toast("Check the Internet connection")
+                is GetRemoteGames.Loading -> {
+                    textInput.isEndIconVisible = false
+                    setCompoundDrawablesWithIntrinsicBounds(
+                        null,
+                        null,
+                        context.applicationContext.startCircularProgress(),
+                        null
+                    )
+                }
+
+                is GetRemoteGames.Error.CommonError -> {
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    context.toast("Suggestions API failed")
+                }
+
+                is GetRemoteGames.Error.NoInternetError -> {
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    context.toast("Check the Internet connection")
+                }
 
                 is GetRemoteGames.Success -> {
-                    suggestionsAdapter.replaceAll(it.games.map { it.toSuggestion() })
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    suggestionsAdapter.replaceAll(it.games.toGamesUi())
                     setOnItemClickListener { _, _, position, _ -> bookObserver.onChosen(it.games[position]) }
                 }
             }

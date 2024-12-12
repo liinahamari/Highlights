@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.get
+import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Book
 import dev.liinahamari.api.domain.entities.Category
@@ -14,7 +15,8 @@ import dev.liinahamari.core.ext.toast
 import dev.liinahamari.core.views.HideSuggestionListOnScrollMaterialAutoCompleteTextView
 import dev.liinahamari.suggestions_ui.PicturedArrayAdapter
 import dev.liinahamari.suggestions_ui.SuggestionUi
-import dev.liinahamari.suggestions_ui.toUi
+import dev.liinahamari.suggestions_ui.startCircularProgress
+import dev.liinahamari.suggestions_ui.toBooksUi
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -30,6 +32,8 @@ class SearchBookAutoCompleteTextView @JvmOverloads constructor(
     private var suggestionsEnabled = true
     var categoryArg: Category = Category.GOOD //fixme actual
 
+    private val textInput = parent.parent as TextInputLayout
+
     private lateinit var bookObserver: BookObserver
 
     fun setOnItemChosenListener(bo: BookObserver) {
@@ -43,6 +47,7 @@ class SearchBookAutoCompleteTextView @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (suggestionsEnabled) {
+            setPaddingRelative(paddingStart, 0, paddingEnd+compoundPaddingEnd, 0)
             setAdapter(suggestionsAdapter)
             disposable.add(textChanges()
                 .filter { it.isBlank().not() }
@@ -62,11 +67,33 @@ class SearchBookAutoCompleteTextView @JvmOverloads constructor(
     private fun setupViewModelSubscriptions() {
         viewModel.searchBookEvent.observe(findViewTreeLifecycleOwner()!!) {
             when (it) {
-                is GetRemoteBooks.Error.CommonError -> context.toast("Suggestions API failed")
-                is GetRemoteBooks.Error.NoInternetError -> context.toast("Check the Internet connection")
+                is GetRemoteBooks.Loading -> {
+                    textInput.isEndIconVisible = false
+                    setCompoundDrawablesWithIntrinsicBounds(
+                        null,
+                        null,
+                        context.applicationContext.startCircularProgress(),
+                        null
+                    )
+                    textInput.isEndIconVisible = false
+                }
+
+                is GetRemoteBooks.Error.CommonError -> {
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    context.toast("Suggestions API failed")
+                }
+
+                is GetRemoteBooks.Error.NoInternetError -> {
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    context.toast("Check the Internet connection")
+                }
 
                 is GetRemoteBooks.Success -> {
-                    suggestionsAdapter.replaceAll(it.books.map {it.toUi()})
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    suggestionsAdapter.replaceAll(it.books.toBooksUi())
                     setOnItemClickListener { _, _, position, _ -> bookObserver.onChosen(it.books[position]) }
                 }
             }

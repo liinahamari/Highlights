@@ -29,4 +29,5 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
     implementation "com.jakewharton.rxbinding4:rxbinding-core:$rxBindingVersion"
     implementation "com.jakewharton.rxbinding4:rxbinding-appcompat:$rxBindingVersion"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipeRefreshlayoutVersion"
 }

@@ -1,12 +1,14 @@
 package dev.liinahamari.suggestions_ui.movie
 
+import android.R
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import androidx.appcompat.R
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.get
+import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding4.widget.textChanges
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Movie
@@ -15,10 +17,12 @@ import dev.liinahamari.core.views.HideSuggestionListOnScrollMaterialAutoComplete
 import dev.liinahamari.suggestions_ui.PicturedArrayAdapter
 import dev.liinahamari.suggestions_ui.SuggestionUi
 import dev.liinahamari.suggestions_ui.movie.SearchMoviesViewModel.GetRemoteMovies
-import dev.liinahamari.suggestions_ui.toUi
+import dev.liinahamari.suggestions_ui.startCircularProgress
+import dev.liinahamari.suggestions_ui.toMoviesUi
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
+
 
 const val ARG_CATEGORY = "search_movie_category"
 
@@ -38,11 +42,15 @@ open class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
     private var suggestionsEnabled = true
     var categoryArg: Category = Category.GOOD
 
+    private val textInput by lazy { parent.parent as TextInputLayout }
+
     private lateinit var movieObserver: MovieObserver
 
+    @SuppressLint("SetTextI18n")
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (suggestionsEnabled) {
+            setPaddingRelative(paddingStart, 0, paddingEnd+compoundPaddingEnd, 0)
             setAdapter(suggestionsAdapter)
             disposable.add(textChanges()
                 .filter { it.isBlank().not() }
@@ -66,10 +74,32 @@ open class SearchMovieAutoCompleteTextView @JvmOverloads constructor(
     private fun setupViewModelSubscriptions() {
         viewModel.searchMoviesResultEvent.observe(findViewTreeLifecycleOwner()!!) {
             when (it) {
-                is GetRemoteMovies.Error.CommonError -> context.toast("Suggestions API failed")
-                is GetRemoteMovies.Error.NoInternetError -> context.toast("Check the Internet connection")
+                is GetRemoteMovies.Loading -> {
+                    textInput.isEndIconVisible = false
+                    setCompoundDrawablesWithIntrinsicBounds(
+                        null,
+                        null,
+                        context.applicationContext.startCircularProgress(),
+                        null
+                    )
+                }
+
+                is GetRemoteMovies.Error.CommonError -> {
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    toast("Suggestions API failed")
+                }
+
+                is GetRemoteMovies.Error.NoInternetError -> {
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    toast("Check the Internet connection")
+                }
+
                 is GetRemoteMovies.Success -> {
-                    suggestionsAdapter.replaceAll(it.movies.map { it.toUi() })
+                    setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
+                    textInput.isEndIconVisible = true
+                    suggestionsAdapter.replaceAll(it.movies.toMoviesUi())
                     setOnItemClickListener { _, _, position, _ -> movieObserver.onChosen(it.movies[position]) }
                 }
             }

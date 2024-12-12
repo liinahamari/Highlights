@@ -4,22 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="10dp"
-    android:padding="20dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="20dp">
 
-    <dev.liinahamari.suggestions_ui.documentary.SearchDocumentaryAutoCompleteTextView
-        android:id="@+id/titleEt"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="15dp"
         android:hint="@string/name"
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
+        android:textSize="20sp"
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
-        app:hintEnabled="true">
-        <requestFocus />
-    </dev.liinahamari.suggestions_ui.documentary.SearchDocumentaryAutoCompleteTextView>
+        app:hintEnabled="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <dev.liinahamari.suggestions_ui.documentary.SearchDocumentaryAutoCompleteTextView
+            android:id="@+id/titleEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:inputType="text"
+            android:minHeight="51dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
+
+            <requestFocus />
+        </dev.liinahamari.suggestions_ui.documentary.SearchDocumentaryAutoCompleteTextView>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -31,6 +49,7 @@
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/yearEt"
             android:layout_width="match_parent"
@@ -38,6 +57,7 @@
             android:ems="10"
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/posterUrlInputLayout"
         android:layout_width="match_parent"
@@ -49,13 +69,14 @@
         app:endIconMode="clear_text"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true">
+
         <dev.liinahamari.list_ui.custom_views.UrlValidatingEditText
             android:id="@+id/posterUrlEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusableInTouchMode="true"
-            android:focusable="true"
             android:ems="10"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -63,9 +84,9 @@
         android:id="@+id/countrySelectionBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/country"
-        app:cornerRadius="3dp"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginTop="10dp"/>
+        android:text="@string/country"
+        app:cornerRadius="3dp" />
 </LinearLayout>
