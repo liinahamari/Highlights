@@ -27,7 +27,7 @@ fun Fragment.showCountrySelectionDialog(
         preselectedLocales = preselectedLocales
     )
     MaterialDialog(requireContext())
-        .positiveButton(res = android.R.string.ok) { onCountrySelected(countriesListAdapter.checkedLocales + preselectedLocales) }
+        .positiveButton(res = android.R.string.ok) { onCountrySelected(countriesListAdapter.checkedLocales) }
         .customView(R.layout.countries_selection)
         .apply {
             getCustomView().also {
@@ -47,7 +47,7 @@ fun Fragment.showCountrySelectionDialog(
 
 private class CountriesAdapter(
     private val allLocales: List<Country>,
-    private val preselectedLocales: List<Country>
+    preselectedLocales: List<Country>
 ) : RecyclerView.Adapter<CountriesAdapter.ViewHolder>() {
     class ViewHolder(val ui: CountriesRvItemBinding) : RecyclerView.ViewHolder(ui.root)
 
@@ -57,7 +57,7 @@ private class CountriesAdapter(
     })
 
     private var filteredLocales: List<Country> = allLocales
-    val checkedLocales = mutableListOf<Country>()
+    val checkedLocales = preselectedLocales.toMutableList()
 
     init {
         filteredLocales = allLocales
@@ -82,14 +82,14 @@ private class CountriesAdapter(
         holder.ui.checkbox.setOnCheckedChangeListener(null)
         with(asyncListDiffer.currentList[position]) {
             holder.ui.titleTv.text = name
-            holder.ui.checkbox.isChecked = checkedLocales.contains(this) || this in preselectedLocales
+            holder.ui.checkbox.isChecked = checkedLocales.map { it.iso }.contains(iso)
             holder.ui.checkbox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    if (checkedLocales.contains(this).not()) {
+                    if (checkedLocales.map { it.iso }.contains(iso).not()) {
                         checkedLocales.add(this)
                     }
                 } else {
-                    checkedLocales.remove(this)
+                    checkedLocales.removeIf { it.iso == iso }
                 }
             }
         }
