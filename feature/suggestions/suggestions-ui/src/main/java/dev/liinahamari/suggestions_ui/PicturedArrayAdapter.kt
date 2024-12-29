@@ -2,6 +2,7 @@ package dev.liinahamari.suggestions_ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -31,6 +32,8 @@ class PicturedArrayAdapter(private val context: Context) :
 
     private fun SuggestionUi.render(ui: SuggestionsListItemBinding) {
         ui.titleTv.text = title
+        ui.titleTv.setSelected(true);
+
         ui.yearTv.text = year.toString()
         ui.genresTv.text = genres.joinToString()
         posterUrl?.let {
