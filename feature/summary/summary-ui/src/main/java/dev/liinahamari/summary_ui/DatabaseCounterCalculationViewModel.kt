@@ -18,9 +18,9 @@ class DatabaseCounterCalculationViewModel @Inject constructor(private val databa
     private val _errorEvent = SingleLiveEvent<String>()
     val errorEvent: LiveData<String> get() = _errorEvent
 
-    fun getDatabaseCounters() {
+    fun getDatabaseCounters(filterActual: Boolean = false) {
         viewModelScope.launch {
-            when (val databaseCounters = databaseCountersUseCase.getAllDatabaseCounters()) {
+            when (val databaseCounters = databaseCountersUseCase.getAllDatabaseCounters(filterActual)) {
                 is DatabaseCounters.Empty -> _emptyViewEvent.call()
                 is DatabaseCounters.DatabaseCorruptionError -> _errorEvent.value = "Something wrong with database!"
                 is DatabaseCounters.Success -> _chartDataEvent.value = databaseCounters

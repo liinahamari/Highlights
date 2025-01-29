@@ -19,13 +19,13 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
     private val documentariesDao: DocumentaryDao,
     private val shortsDao: ShortsDao
 ) : DatabaseCountersUseCase {
-    override suspend fun getAllDatabaseCounters(): DatabaseCounters = withContext(Dispatchers.IO) {
+    override suspend fun getAllDatabaseCounters(filterActual: Boolean): DatabaseCounters = withContext(Dispatchers.IO) {
         listOf(
-            getGamesAmount(),
-            getMoviesAmount(),
-            getBooksAmount(),
-            getDocumentariesAmount(),
-            getShortsAmount()
+            getGamesAmount(filterActual),
+            getMoviesAmount(filterActual),
+            getBooksAmount(filterActual),
+            getDocumentariesAmount(filterActual),
+            getShortsAmount(filterActual)
         )
             .let { entities ->
                 when (val allEntitiesCounter = entities.sumOf { it.counter }) {
@@ -41,9 +41,28 @@ class DatabaseCountersUseCaseImpl @Inject constructor(
             }
     }
 
-    private suspend fun getMoviesAmount(): Entity = movieDao.getRowCount().let(Entity::Movies)
-    private suspend fun getDocumentariesAmount(): Entity = documentariesDao.getRowCount().let(Entity::Documentaries)
-    private suspend fun getShortsAmount(): Entity = shortsDao.getRowCount().let(Entity::Shorts)
-    private suspend fun getBooksAmount(): Entity = bookDao.getRowCount().let(Entity::Books)
-    private suspend fun getGamesAmount(): Entity = gameDao.getRowCount().let(Entity::Games)
+    private suspend fun getMoviesAmount(filterActual: Boolean = false): Entity = if (filterActual)
+        movieDao.getRowActualCount().let(Entity::Movies)
+    else
+        movieDao.getRowCount().let(Entity::Movies)
+
+    private suspend fun getDocumentariesAmount(filterActual: Boolean = false): Entity = if (filterActual)
+        documentariesDao.getRowActualCount().let(Entity::Documentaries)
+    else
+        documentariesDao.getRowCount().let(Entity::Documentaries)
+
+    private suspend fun getShortsAmount(filterActual: Boolean = false): Entity = if (filterActual)
+        shortsDao.getRowActualCount().let(Entity::Shorts)
+    else
+        shortsDao.getRowCount().let(Entity::Shorts)
+
+    private suspend fun getBooksAmount(filterActual: Boolean = false): Entity = if (filterActual)
+        bookDao.getRowActualCount().let(Entity::Books)
+    else
+        bookDao.getRowCount().let(Entity::Books)
+
+    private suspend fun getGamesAmount(filterActual: Boolean = false): Entity = if (filterActual)
+        gameDao.getRowActualCount().let(Entity::Games)
+    else
+        gameDao.getRowCount().let(Entity::Games)
 }

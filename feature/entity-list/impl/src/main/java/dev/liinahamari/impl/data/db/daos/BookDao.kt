@@ -31,4 +31,7 @@ interface BookDao {
 
     @Query("SELECT COUNT(id) FROM book")
     suspend fun getRowCount(): Int
+
+    @Query("SELECT COUNT(id) FROM book WHERE category = :categoryGood OR category = :categorySo")
+    suspend fun getRowActualCount(categoryGood: Category = Category.GOOD, categorySo: Category = Category.SO_SO): Int
 }

@@ -31,4 +31,7 @@ interface MovieDao {
 
     @Query("SELECT COUNT(id) FROM movie")
     suspend fun getRowCount(): Int
+
+    @Query("SELECT COUNT(id) FROM movie WHERE category = :categoryGood OR category = :categorySo")
+    suspend fun getRowActualCount(categoryGood: Category = Category.GOOD, categorySo: Category = Category.SO_SO): Int
 }

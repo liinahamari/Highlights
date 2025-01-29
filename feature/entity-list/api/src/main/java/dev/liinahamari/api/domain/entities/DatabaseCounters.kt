@@ -7,9 +7,9 @@ sealed interface DatabaseCounters {
         val titleInCenterOfChart: String
     ) : DatabaseCounters
 
-    object Empty : DatabaseCounters
+    data object Empty : DatabaseCounters
     sealed interface Error : DatabaseCounters
-    object DatabaseCorruptionError : Error
+    data object DatabaseCorruptionError : Error
 }
 
 sealed interface Entity {

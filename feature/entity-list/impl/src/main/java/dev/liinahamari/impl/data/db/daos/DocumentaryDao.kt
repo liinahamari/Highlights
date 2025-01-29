@@ -31,4 +31,7 @@ interface DocumentaryDao {
 
     @Query("SELECT COUNT(id) FROM documentary")
     suspend fun getRowCount(): Int
+
+    @Query("SELECT COUNT(id) FROM documentary WHERE category = :categoryGood OR category = :categorySo")
+    suspend fun getRowActualCount(categoryGood: Category = Category.GOOD, categorySo: Category = Category.SO_SO): Int
 }

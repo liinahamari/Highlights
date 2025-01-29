@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import dev.liinahamari.api.EntityListDependencies
 import dev.liinahamari.api.domain.entities.Book
+import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
 import dev.liinahamari.api.domain.entities.Game
 import dev.liinahamari.api.domain.entities.Movie
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 saveMovieUseCase.saveMovies(Movie.default()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe()
                 saveBookUseCase.saveBooks(Book.default()).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe()
+                saveBookUseCase.saveBooks(Book.default(Category.WISHLIST)).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe()
                 saveDocumentaryUseCase.saveDocumentaries(Documentary.default()).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribe()

@@ -1,6 +1,7 @@
 package dev.liinahamari.summary_ui
 
 import android.app.Application
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -32,6 +33,30 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val databaseCounterCalculationViewModel: DatabaseCounterCalculationViewModel by viewModels { viewModelFactory }
 
+    private val chart by lazy {
+        AnyChart.pie().apply {
+            setOnClickListener(object : ListenersInterface.OnClickListener(arrayOf("x", "value")) {
+                override fun onClick(event: Event) {
+                    toast(event.data["x"] + ":" + event.data["value"]) //todo tap again to rerender chart
+                }
+            })
+
+            labels().position("outside")
+
+            with(legend()) {
+                title()
+                    .enabled(true)
+                    .text("Groups")
+                    .padding(0.0, 0.0, 10.0, 0.0)
+
+                position("center-bottom")
+                    .itemsLayout(LegendLayout.HORIZONTAL)
+                    .align(Align.CENTER)
+            }
+            ui.entityRatioChart.setBackgroundColor(Color.BLACK)
+        }.also(ui.entityRatioChart::setChart)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         summaryComponent = DaggerSummaryComponent.builder().databaseCountersUseCase(EntityListFactory.getApi(object :
             EntityListDependencies {
@@ -48,34 +73,15 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
         super.onViewCreated(view, savedInstanceState)
         setupViewModelSubscriptions()
 
+        ui.filterActualCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            databaseCounterCalculationViewModel.getDatabaseCounters(isChecked)
+        }
         databaseCounterCalculationViewModel.getDatabaseCounters()
     }
 
     private fun renderChart(chartData: DatabaseCounters.Success) {
-        AnyChart.pie().apply {
-            setOnClickListener(object : ListenersInterface.OnClickListener(arrayOf("x", "value")) {
-                override fun onClick(event: Event) {
-                    toast(event.data["x"] + ":" + event.data["value"]) //todo tap again to rerender chart
-                }
-            })
-
-            data(chartData.entities.map { ValueDataEntry(it.label, it.counter) })
-            title(chartData.titleInCenterOfChart)
-            labels().position("outside")
-
-            with(legend()) {
-                title()
-                    .enabled(true)
-
-                title()
-                    .text("Groups")
-                    .padding(0.0, 0.0, 10.0, 0.0)
-
-                position("center-bottom")
-                    .itemsLayout(LegendLayout.HORIZONTAL)
-                    .align(Align.CENTER)
-            }
-        }.also(ui.entityRatioChart::setChart)
+        chart.data(chartData.entities.map { ValueDataEntry(it.label, it.counter) })
+        chart.title(chartData.titleInCenterOfChart)
     }
 
     private fun setupViewModelSubscriptions() {

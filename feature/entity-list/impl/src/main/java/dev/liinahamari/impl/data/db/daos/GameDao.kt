@@ -28,4 +28,7 @@ interface GameDao {
 
     @Query("SELECT COUNT(id) FROM game")
     suspend fun getRowCount(): Int
+
+    @Query("SELECT COUNT(id) FROM game WHERE category = :categoryGood OR category = :categorySo")
+    suspend fun getRowActualCount(categoryGood: Category = Category.GOOD, categorySo: Category = Category.SO_SO): Int
 }
