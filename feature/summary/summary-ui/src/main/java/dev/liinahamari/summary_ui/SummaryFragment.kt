@@ -60,7 +60,6 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
     override fun onCreate(savedInstanceState: Bundle?) {
         summaryComponent = DaggerSummaryComponent.builder().databaseCountersUseCase(EntityListFactory.getApi(object :
             EntityListDependencies {
-            /*todo check it's singleton*/
             override val application: Application
                 get() = requireActivity().application
         }).databaseCountersUseCase).build()
