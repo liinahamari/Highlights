@@ -1,8 +1,8 @@
 package dev.liinahamari.api.domain.usecases.get
 
 import dev.liinahamari.api.domain.entities.Category
-import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.api.domain.entities.Short
+import dev.liinahamari.api.domain.entities.ShortUi
 import io.reactivex.rxjava3.core.Single
 
 interface GetShortsUseCase {
@@ -14,6 +14,6 @@ interface GetShortsUseCase {
 
 sealed interface GetAllShortsResult {
     data object EmptyList : GetAllShortsResult
-    data class Success(val data: List<EntryUi>) : GetAllShortsResult
+    data class Success(val data: List<ShortUi>) : GetAllShortsResult
     data object Error : GetAllShortsResult
 }

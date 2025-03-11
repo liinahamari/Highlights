@@ -3,6 +3,7 @@ package dev.liinahamari.core.ext
 import android.content.ContentResolver
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
@@ -23,3 +24,5 @@ fun Fragment.restartApp(mainActivityClass: Class<out AppCompatActivity>) {
 
 val Fragment.contentResolver: ContentResolver
     get() = requireContext().contentResolver
+
+fun Fragment.withArguments(vararg args: Pair<String, Any?>) = this.apply { arguments = bundleOf(*args) }

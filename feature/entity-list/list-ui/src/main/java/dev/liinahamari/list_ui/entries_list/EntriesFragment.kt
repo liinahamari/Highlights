@@ -26,9 +26,8 @@ import dev.liinahamari.core.ext.toast
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentEntriesBinding
-import dev.liinahamari.list_ui.single_entity.EntityType
+import dev.liinahamari.list_ui.di.ViewModelBuilderModule
 import dev.liinahamari.list_ui.single_entity.EntryFragment
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 private const val PROCESS_BACKUP = 1
@@ -105,7 +104,7 @@ class EntriesFragment : Fragment(R.layout.fragment_entries) {
         }
     }
 
-    private fun onEntityClicked(entityType: EntityType) = parentFragmentManager.beginTransaction()
+    private fun onEntityClicked(entityType: ViewModelBuilderModule.ENTITY_TYPE) = parentFragmentManager.beginTransaction()
         .add(
             R.id.pagerContainer,
             EntryFragment.newInstance(requireArguments().getParcelableOf(ARG_CATEGORY), entityType)

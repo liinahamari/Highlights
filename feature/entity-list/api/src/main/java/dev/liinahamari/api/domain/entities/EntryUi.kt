@@ -1,54 +1,66 @@
 package dev.liinahamari.api.domain.entities
 
-data class EntryUi(
-    val id: Long,
-    val title: String,
-    val countries: List<String>,
-    val genres: String,
-    val year: Int,
-    val description: String,
-    val posterUrl: String?,
-    val clazz: Class<*>,
-    val tmdbUrl: String?
-)
+import java.time.Year
+
 data class BookUi(
     val id: Long,
     val title: String,
-    val author: String,
-    val countries: List<CountryUi>,
+    val author: String?,
+    val productionCountries: List<CountryUi>,
     val genres: List<BookGenreUi>,
-    val year: Int,
+    val firstPublicationYear: Year?,
     val description: String?,
     val coverUrl: String?,
+    val isImported: Boolean
 )
 
 data class MovieUi(
     val id: Long,
     val title: String,
-    val directorsName: String,
-    val countries: List<CountryUi>,
+    val directorsNames: List<String>,
+    val actorsNames: List<String>,
+    val productionCounties: List<CountryUi>,
     val genres: List<MovieGenreUi>,
-    val year: Int,
+    val releaseYear: Year?,
     val description: String?,
     val posterUrl: String?,
+    val isImported: Boolean,
+    val tmdbUrl: String?
+)
+
+data class ShortUi(
+    val id: Long,
+    val title: String,
+    val directorsNames: List<String>,
+    val actorsNames: List<String>,
+    val productionCounties: List<CountryUi>,
+    val genres: List<MovieGenreUi>,
+    val releaseYear: Year?,
+    val description: String?,
+    val posterUrl: String?,
+    val isImported: Boolean,
+    val tmdbUrl: String?
 )
 
 data class GameUi(
     val id: Long,
     val title: String,
     val genres: List<GameGenreUi>,
-    val year: Int,
+    val year: Year,
     val description: String?,
     val posterUrl: String?,
+    val isImported: Boolean
 )
 
 data class DocumentaryUi(
     val id: Long,
     val title: String,
-    val countries: List<CountryUi>,
-    val year: Int,
+    val productionCounties: List<CountryUi>,
+    val releaseYear: Year?,
     val description: String?,
     val posterUrl: String?,
+    val isImported: Boolean,
+    val tmdbUrl: String?
 )
 
 typealias CountryUi = String

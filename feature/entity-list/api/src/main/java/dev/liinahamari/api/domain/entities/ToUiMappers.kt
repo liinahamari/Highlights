@@ -1,75 +1,78 @@
 package dev.liinahamari.api.domain.entities
 
+import java.time.Year
 import java.util.Locale
 
-fun Documentary.toUi() = EntryUi(
+fun Documentary.toUi() = DocumentaryUi(
     id = id,
     title = name,
     description = description,
-    genres = "",
-    countries = countryCodes.toCountriesNames(),
+    productionCounties = countryCodes.toCountriesNames(),
     posterUrl = posterUrl,
-    year = year,
-    clazz = Documentary::class.java,
+    releaseYear = Year.parse(year.toString()),
+    isImported = false/*fixme*/,
     tmdbUrl = tmdbUrl
 )
 
 fun List<Documentary>.toDocumentaryUi() = map { it.toUi() }
 
-fun Book.toUi() = EntryUi(
+fun Book.toUi() = BookUi(
     id = id,
     title = name,
     description = description,
-    genres = "",
-    countries = countries.toCountriesNames(),
-    posterUrl = posterUrl,
-    year = year,
-    clazz = Book::class.java,
-    tmdbUrl = null
+    genres = genres.map { it.name },
+    productionCountries = countries.toCountriesNames(),
+    coverUrl = posterUrl,
+    firstPublicationYear = Year.parse(year.toString()),
+    isImported = false/*fixme*/,
+    author = author
 )
 
 fun List<Book>.toBookUi() = map { it.toUi() }
 
-fun Game.toUi() = EntryUi(
+fun Game.toUi() = GameUi(
     id,
     title = name,
     description = description,
-    genres = "",
-    countries = emptyList(),
+    genres = genres.map { it.name },
     posterUrl = posterUrl,
-    year = year,
-    clazz = Game::class.java,
-    tmdbUrl = null
+    year = Year.parse(year.toString()),
+    isImported = false/*fixme*/
 )
 
 fun List<Game>.toGameUi() = map { it.toUi() }
 
-fun Movie.toUi() = EntryUi(
+fun Movie.toUi() = MovieUi(
     localId,
     title = title,
     description = description,
-    genres = "",
-    countries = productionCountries.toCountriesNames(),
+    genres = genres.map { it.name },
+    productionCounties = productionCountries.toCountriesNames(),
     posterUrl = posterUrl,
-    year = releaseYear,
-    clazz = Movie::class.java,
-    tmdbUrl = tmdbUrl
+    releaseYear = Year.parse(releaseYear.toString()),
+    tmdbUrl = tmdbUrl,
+    isImported = false/*fixme*/,
+    directorsNames = listOf()/*fixme*/,
+    actorsNames = listOf()/*fixme*/
 )
 
 fun List<Movie>.toMovieUi() = map { it.toUi() }
 
-fun Short.toUi() = EntryUi(
+fun Short.toUi() = ShortUi(
     localId,
     title = title,
     description = description,
-    genres = "",
-    countries = productionCountries.toCountriesNames(),
+    genres = genres.map { it.name },
+    productionCounties = productionCountries.toCountriesNames(),
     posterUrl = posterUrl,
-    year = releaseYear,
-    clazz = Movie::class.java,
-    tmdbUrl = tmdbUrl
+    releaseYear = Year.parse(releaseYear.toString()),
+    tmdbUrl = tmdbUrl,
+    isImported = false/*fixme*/,
+    actorsNames = listOf()/*fixme*/,
+    directorsNames = listOf()/*fixme*/
 )
 
 fun List<Short>.toShortUi() = map { it.toUi() }
 
-private fun List<Country>.toCountriesNames() = map { it.name.ifBlank { Locale("", it.iso).getDisplayCountry(Locale.US) } }
+private fun List<Country>.toCountriesNames() =
+    map { it.name.ifBlank { Locale("", it.iso).getDisplayCountry(Locale.US) } }

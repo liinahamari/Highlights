@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Short(
     val localId: Long = 0L,
     val category: Category,
+    val genres: List<MovieGenre>,
     val tmdbId: Int,
     val tmdbUrl: String?,
     val releaseYear: Int,
@@ -16,6 +17,6 @@ data class Short(
     val description: String
 ) : Parcelable {
     companion object {
-        fun default(category: Category = Category.GOOD) = Short(0L, category, 0, "", 0, "", listOf(), "", "")
+        fun default(category: Category = Category.GOOD) = Short(0L, category, listOf(),0, "", 0, "", listOf(), "", "")
     }
 }

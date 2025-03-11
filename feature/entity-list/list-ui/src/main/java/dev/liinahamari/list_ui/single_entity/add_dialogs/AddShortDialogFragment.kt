@@ -66,6 +66,7 @@ class AddShortDialogFragment : AddFragment(R.layout.fragment_add_short) {
                 ui.posterUrlEt.setText(mov.posterUrl)
 
                 short = Short(
+                    genres = mov.genres,
                     category = mov.category,
                     releaseYear = mov.releaseYear,
                     posterUrl = mov.posterUrl,

@@ -1,8 +1,8 @@
 package dev.liinahamari.api.domain.usecases.get
 
 import dev.liinahamari.api.domain.entities.Category
-import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.api.domain.entities.Game
+import dev.liinahamari.api.domain.entities.GameUi
 import io.reactivex.rxjava3.core.Single
 
 interface GetGamesUseCase {
@@ -12,7 +12,7 @@ interface GetGamesUseCase {
 }
 
 sealed interface GetAllGamesResult {
-    object EmptyList : GetAllGamesResult
-    data class Success(val data: List<EntryUi>) : GetAllGamesResult
-    object Error : GetAllGamesResult
+    data object EmptyList : GetAllGamesResult
+    data class Success(val data: List<GameUi>) : GetAllGamesResult
+    data object Error : GetAllGamesResult
 }

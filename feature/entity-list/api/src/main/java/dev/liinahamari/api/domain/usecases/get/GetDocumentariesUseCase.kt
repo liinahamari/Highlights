@@ -2,7 +2,7 @@ package dev.liinahamari.api.domain.usecases.get
 
 import dev.liinahamari.api.domain.entities.Category
 import dev.liinahamari.api.domain.entities.Documentary
-import dev.liinahamari.api.domain.entities.EntryUi
+import dev.liinahamari.api.domain.entities.DocumentaryUi
 import io.reactivex.rxjava3.core.Single
 
 interface GetDocumentariesUseCase {
@@ -13,7 +13,7 @@ interface GetDocumentariesUseCase {
 }
 
 sealed interface GetAllDocumentariesResult {
-    object EmptyList: GetAllDocumentariesResult
-    data class Success(val data: List<EntryUi>): GetAllDocumentariesResult
-    object Error: GetAllDocumentariesResult
+    data object EmptyList : GetAllDocumentariesResult
+    data class Success(val data: List<DocumentaryUi>) : GetAllDocumentariesResult
+    data object Error : GetAllDocumentariesResult
 }

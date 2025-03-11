@@ -6,7 +6,7 @@ plugins {
 }
 
 ext {
-    minSdkVersion = 24
+    minSdkVersion = 26
     compileSdkVersion = 35
     targetSdkVersion = 35
 
@@ -72,12 +72,12 @@ def setupDefaultModuleConfig(android) {
     }
 
     android.compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     android.kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = JavaVersion.VERSION_11.toString()
         freeCompilerArgs = ['-Xjvm-default=all']
     }
 

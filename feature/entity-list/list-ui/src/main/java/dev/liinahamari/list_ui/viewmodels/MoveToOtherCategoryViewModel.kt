@@ -16,65 +16,101 @@ import dev.liinahamari.api.domain.usecases.save.SaveShortsUseCase
 import dev.liinahamari.core.RxSubscriptionDelegateImpl
 import dev.liinahamari.core.RxSubscriptionsDelegate
 import dev.liinahamari.core.SingleLiveEvent
-import dev.liinahamari.list_ui.single_entity.EntityType
 import javax.inject.Inject
 
-class MoveToOtherCategoryViewModel @Inject constructor(
+class ChangeGameCategoryViewModel (
     private val getGamesUseCase: GetGamesUseCase,
-    private val getShortsUseCase: GetShortsUseCase,
-    private val getDocumentariesUseCase: GetDocumentariesUseCase,
-    private val getMoviesUseCase: GetMoviesUseCase,
-    private val getBooksUseCase: GetBooksUseCase,
-    private val saveGameUseCase: SaveGameUseCase,
-    private val saveDocumentaryUseCase: SaveDocumentaryUseCase,
-    private val saveMovieUseCase: SaveMovieUseCase,
-    private val saveShortsUseCase: SaveShortsUseCase,
-    private val saveBookUseCase: SaveBookUseCase
-) : ViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
-    private val _saveEntityEvent = SingleLiveEvent<SaveEntityEvent>()
-    val saveEntityEvent: LiveData<SaveEntityEvent> get() = _saveEntityEvent
-
-    fun moveToOtherCategory(
+    private val saveGameUseCase: SaveGameUseCase
+) : MoveToOtherCategoryViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
+    override fun moveToOtherCategory(
         actualCategory: Category,
         desirableCategory: Category,
-        entityType: EntityType,
         selection: Set<Long>
     ) {
-        when (entityType) {
-            EntityType.DOCUMENTARY -> getDocumentariesUseCase.findByIds(actualCategory, selection)
-                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
-                .flatMapCompletable(saveDocumentaryUseCase::saveDocumentaries)
-                .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
-
-            EntityType.BOOK -> getBooksUseCase.findByIds(actualCategory, selection)
-                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
-                .flatMapCompletable(saveBookUseCase::saveBooks)
-                .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
-
-            EntityType.MOVIE -> getMoviesUseCase.findByIds(actualCategory, selection)
-                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
-                .flatMapCompletable(saveMovieUseCase::saveMovies)
-                .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
-
-            EntityType.GAME -> getGamesUseCase.findByIds(actualCategory, selection)
-                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
-                .flatMapCompletable(saveGameUseCase::saveGames)
-                .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
-
-            EntityType.SHORT -> getShortsUseCase.findByIds(actualCategory, selection)
-                .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
-                .flatMapCompletable(saveShortsUseCase::saveShorts)
-                .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
-                .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
-        }
+        getGamesUseCase.findByIds(actualCategory, selection)
+            .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+            .flatMapCompletable(saveGameUseCase::saveGames)
+            .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
+            .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
     }
+}
+
+class ChangeDocumentaryCategoryViewModel (
+    private val getDocumentariesUseCase: GetDocumentariesUseCase,
+    private val saveDocumentaryUseCase: SaveDocumentaryUseCase
+) : MoveToOtherCategoryViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
+    override fun moveToOtherCategory(
+        actualCategory: Category,
+        desirableCategory: Category,
+        selection: Set<Long>
+    ) {
+        getDocumentariesUseCase.findByIds(actualCategory, selection)
+            .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+            .flatMapCompletable(saveDocumentaryUseCase::saveDocumentaries)
+            .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
+            .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
+    }
+}
+
+class ChangeShortCategoryViewModel (
+    private val getShortsUseCase: GetShortsUseCase,
+    private val saveShortsUseCase: SaveShortsUseCase
+) : MoveToOtherCategoryViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
+    override fun moveToOtherCategory(
+        actualCategory: Category,
+        desirableCategory: Category,
+        selection: Set<Long>
+    ) {
+        getShortsUseCase.findByIds(actualCategory, selection)
+            .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+            .flatMapCompletable(saveShortsUseCase::saveShorts)
+            .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
+            .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
+    }
+}
+
+class ChangeMovieCategoryViewModel (
+    private val getMoviesUseCase: GetMoviesUseCase,
+    private val saveMovieUseCase: SaveMovieUseCase
+) : MoveToOtherCategoryViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
+    override fun moveToOtherCategory(
+        actualCategory: Category,
+        desirableCategory: Category,
+        selection: Set<Long>
+    ) {
+        getMoviesUseCase.findByIds(actualCategory, selection)
+            .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+            .flatMapCompletable(saveMovieUseCase::saveMovies)
+            .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
+            .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
+    }
+}
+
+class ChangeBookCategoryViewModel (
+    private val getBooksUseCase: GetBooksUseCase,
+    private val saveBookUseCase: SaveBookUseCase
+) : MoveToOtherCategoryViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
+    override fun moveToOtherCategory(
+        actualCategory: Category,
+        desirableCategory: Category,
+        selection: Set<Long>
+    ) {
+        getBooksUseCase.findByIds(actualCategory, selection)
+            .map { it.map { it.copy(category = desirableCategory) }.toTypedArray() }
+            .flatMapCompletable(saveBookUseCase::saveBooks)
+            .doOnError { _saveEntityEvent.value = SaveEntityEvent.Failure }
+            .subscribeUi { _saveEntityEvent.value = SaveEntityEvent.Success }
+    }
+}
+
+open class MoveToOtherCategoryViewModel @Inject constructor(): ViewModel(), RxSubscriptionsDelegate by RxSubscriptionDelegateImpl() {
+    protected val _saveEntityEvent = SingleLiveEvent<SaveEntityEvent>()
+    val saveEntityEvent: LiveData<SaveEntityEvent> get() = _saveEntityEvent
+
+    open fun moveToOtherCategory(actualCategory: Category, desirableCategory: Category, selection: Set<Long>) {}
 
     sealed class SaveEntityEvent {
-        object Success : SaveEntityEvent()
-        object Failure : SaveEntityEvent()
+        data object Success : SaveEntityEvent()
+        data object Failure : SaveEntityEvent()
     }
 }

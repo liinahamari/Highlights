@@ -11,7 +11,6 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import dev.liinahamari.api.domain.entities.EntryUi
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.custom_views.PopupImageDialog
 import dev.liinahamari.list_ui.databinding.EntryRowItemBinding
@@ -22,8 +21,8 @@ private const val TIMEOUT_20_SEC = 20_000
 class EntryAdapter(
     private val fragmentManager: FragmentManager,
     private val recyclerView: RecyclerView
-) :
-    RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
+) /*:
+    RecyclerView.Adapter<EntryAdapter.ViewHolder>() */{/*
     private var entries: MutableList<EntryUi> = mutableListOf()
     private var filteredEntries: MutableList<EntryUi> = entries
 
@@ -122,5 +121,5 @@ class EntryAdapter(
                 (recyclerView.getChildViewHolder(it) as EntryAdapter.ViewHolder)
                     .getItemDetails()
             }
-    }
+    }*/
 }

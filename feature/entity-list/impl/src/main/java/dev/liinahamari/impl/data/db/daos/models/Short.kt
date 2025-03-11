@@ -3,6 +3,7 @@ package dev.liinahamari.impl.data.db.daos.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.liinahamari.api.domain.entities.Category
+import dev.liinahamari.api.domain.entities.MovieGenre
 import dev.liinahamari.api.domain.entities.fromIsoCode
 import dev.liinahamari.impl.data.db.daos.Entry
 
@@ -10,6 +11,7 @@ import dev.liinahamari.impl.data.db.daos.Entry
 data class Short(
     val name: String,
     val tmdbUrl: String?,
+    val genres:List<MovieGenre>,
     val tmdbId: Int,
     override val description: String,
     override val year: Int,
@@ -52,7 +54,8 @@ fun Short.toDomain(): dev.liinahamari.api.domain.entities.Short = dev.liinahamar
     posterUrl = this.posterUrl,
     releaseYear = this.year,
     description = this.description,
-    tmdbId = this.tmdbId
+    tmdbId = this.tmdbId,
+    genres = this.genres
 )
 
 fun Iterable<Short>.toDomain(): List<dev.liinahamari.api.domain.entities.Short> = map { it.toDomain() }
@@ -60,6 +63,7 @@ fun Iterable<Short>.toDomain(): List<dev.liinahamari.api.domain.entities.Short> 
 private fun dev.liinahamari.api.domain.entities.Short.toData(): Short = Short(
     id = this.localId,
     category = this.category,
+    genres = this.genres,
     countryCodes = this.productionCountries.map { it.iso }.toTypedArray(),
     name = this.title,
     posterUrl = this.posterUrl,

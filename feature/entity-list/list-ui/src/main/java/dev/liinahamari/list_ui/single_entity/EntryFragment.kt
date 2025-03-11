@@ -9,7 +9,6 @@ import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.bundleOf
 import androidx.core.view.MenuCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
@@ -26,14 +25,12 @@ import dev.liinahamari.api.domain.entities.ShareMessage
 import dev.liinahamari.core.ext.createSelectionTracker
 import dev.liinahamari.core.ext.getParcelableOf
 import dev.liinahamari.core.ext.toast
+import dev.liinahamari.core.ext.withArguments
 import dev.liinahamari.core.views.VerticalSpaceItemDecoration
 import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.activities.MainActivity
 import dev.liinahamari.list_ui.databinding.FragmentCategoryBinding
-import dev.liinahamari.list_ui.single_entity.EntityType.BOOK
-import dev.liinahamari.list_ui.single_entity.EntityType.DOCUMENTARY
-import dev.liinahamari.list_ui.single_entity.EntityType.GAME
-import dev.liinahamari.list_ui.single_entity.EntityType.MOVIE
+import dev.liinahamari.list_ui.di.ViewModelBuilderModule
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddBookDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddDocumentaryDialogFragment
 import dev.liinahamari.list_ui.single_entity.add_dialogs.AddGameDialogFragment
@@ -43,7 +40,11 @@ import dev.liinahamari.list_ui.single_entity.add_dialogs.showCountrySelectionDia
 import dev.liinahamari.list_ui.viewmodels.BunchDeleteEvent
 import dev.liinahamari.list_ui.viewmodels.CachedCountriesViewModel
 import dev.liinahamari.list_ui.viewmodels.DeleteEntryViewModel
-import dev.liinahamari.list_ui.viewmodels.FetchEntriesViewModel
+import dev.liinahamari.list_ui.viewmodels.FetchAllEvent
+import dev.liinahamari.list_ui.viewmodels.FetchViewModel
+import dev.liinahamari.list_ui.viewmodels.FetchGamesViewModel
+import dev.liinahamari.list_ui.viewmodels.FilterEvent
+import dev.liinahamari.list_ui.viewmodels.FindEntityEvent
 import dev.liinahamari.list_ui.viewmodels.MoveToOtherCategoryViewModel
 import dev.liinahamari.list_ui.viewmodels.SaveEntryViewModel
 import dev.liinahamari.list_ui.viewmodels.ShareEntryViewModel
@@ -57,24 +58,24 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
     private lateinit var menu: Menu
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val fetchEntriesViewModel: FetchEntriesViewModel by viewModels { viewModelFactory }
+    private val fetchViewModel: FetchViewModel by viewModels { viewModelFactory }
     private val shareEntryViewModel: ShareEntryViewModel by viewModels { viewModelFactory }
     private val saveEntryViewModel: SaveEntryViewModel by activityViewModels { viewModelFactory }
     private val deleteEntryViewModel: DeleteEntryViewModel by viewModels { viewModelFactory }
     private val moveToOtherCategoryViewModel: MoveToOtherCategoryViewModel by viewModels { viewModelFactory }
     private val cachedCountriesViewModel: CachedCountriesViewModel by viewModels { viewModelFactory }
 
-    private val argumentEntityType: EntityType by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
     private val argumentEntityCategory: Category by lazy { requireArguments().getParcelableOf(ARG_CATEGORY) }
+    private val argumentEntityType: ViewModelBuilderModule.ENTITY_TYPE by lazy { requireArguments().getParcelableOf(ARG_TYPE) }
 
     private var entriesAdapter: EntryAdapter? = null
-    private val tracker: SelectionTracker<Long> by lazy {
-        ui.entriesRv.createSelectionTracker(
-            ::onSelectionChanged,
-            ::javaClass.name,
-            EntryAdapter.EntryDetailsLookup(ui.entriesRv)
-        )
-    }
+//    private val tracker: SelectionTracker<Long> by lazy {
+//        ui.entriesRv.createSelectionTracker(
+//            ::onSelectionChanged,
+//            ::javaClass.name,
+//            EntryAdapter.EntryDetailsLookup(ui.entriesRv)
+//        )
+//    }
 
     private fun shareEntity(shareMessage: ShareMessage) {
         val shareIntent = Intent().apply {
@@ -93,7 +94,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
         (requireActivity() as MainActivity).listUiComponent.inject(this)
         setupViewModelSubscriptions()
         setupViews()
-        fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+        fetchViewModel.fetchEntries(argumentEntityCategory)
         setupMenu()
         (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
@@ -103,7 +104,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             menu.clear()
             menuInflater.inflate(R.menu.bunch_entities_actions, menu)
             menu.findItem(R.id.filter).setIcon(if (filterEnabled) R.drawable.clear_filter else R.drawable.filter)
-            if (argumentEntityType == GAME) menu.findItem(R.id.filter).isVisible = false
+            if (argumentEntityType == ViewModelBuilderModule.ENTITY_TYPE.GAME) menu.findItem(R.id.filter).isVisible = false
             this@EntryFragment.menu = menu
         }
 
@@ -111,7 +112,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             when (menuItem.itemId) {
                 R.id.filter -> if (filterEnabled) {
                     filterEnabled = false
-                    fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+                    fetchViewModel.fetchEntries(argumentEntityCategory)
                     menuItem.setIcon(R.drawable.filter)
                 } else {
                     cachedCountriesViewModel.getCachedCountries()
@@ -120,14 +121,10 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                 R.id.delete -> MaterialDialog(requireContext())
                     .message(R.string.sure_to_delete)
                     .negativeButton(android.R.string.cancel)
-                    .positiveButton { deleteEntryViewModel.delete(selectedEntitiesIds, argumentEntityType) }
+                    .positiveButton { deleteEntryViewModel.delete(selectedEntitiesIds) }
                     .show()
 
-                R.id.share -> shareEntryViewModel.getEntitiesById(
-                    argumentEntityCategory,
-                    argumentEntityType,
-                    selectedEntitiesIds
-                )
+                R.id.share -> shareEntryViewModel.getById(argumentEntityCategory, selectedEntitiesIds)
 
                 R.id.moveTo -> with(CascadePopupMenu(requireContext(), requireView())) {
                     menu.apply {
@@ -142,7 +139,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
 
     private fun SubMenu.setupMoveToEntrySubMenu() {
 //        setIcon(R.drawable.move) //todo
-        Category.values() //todo to usecase
+        Category.entries //todo to usecase
             .toMutableList()
             .apply { removeIf { it == argumentEntityCategory } }
             .forEach { category ->
@@ -150,8 +147,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                     moveToOtherCategoryViewModel.moveToOtherCategory(
                         selection = selectedEntitiesIds,
                         actualCategory = argumentEntityCategory,
-                        desirableCategory = category,
-                        entityType = argumentEntityType
+                        desirableCategory = category
                     )
                     true
                 }
@@ -160,17 +156,17 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
 
     private fun setupViews() {
         setupRecyclerView()
-        setupFab()
+        ui.fab.setOnClickListener { showAppropriateEntityAddFragment() }
         ui.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean = false
-            override fun onQueryTextChange(newText: String) = false.also { entriesAdapter!!.filter(newText) }
+            override fun onQueryTextChange(newText: String) = false.also { /*entriesAdapter!!.filter(newText)*/ }
         })
     }
 
     private fun setupRecyclerView() {
         ui.entriesRv.addItemDecoration(VerticalSpaceItemDecoration(10))
         entriesAdapter = EntryAdapter(childFragmentManager, ui.entriesRv)
-        ui.entriesRv.adapter = entriesAdapter
+//        ui.entriesRv.adapter = entriesAdapter
     }
 
     private fun onSelectionChanged(selection: Selection<Long>) {
@@ -188,7 +184,7 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                 is CachedCountriesViewModel.GetAllCountriesEvent.Failure -> toast("Failed to get countries' list")
                 is CachedCountriesViewModel.GetAllCountriesEvent.Success -> {
                     showCountrySelectionDialog(countries = it.countries) {
-                        fetchEntriesViewModel.filter(argumentEntityType, argumentEntityCategory, it.first()/*fixme*/)
+                        fetchViewModel.filter(argumentEntityCategory, it.first()/*fixme*/)
                         filterEnabled = true
                         menu.getItem(R.id.filter).setIcon(R.drawable.clear_filter)
                     }
@@ -199,18 +195,18 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
             when (it) {
                 is BunchDeleteEvent.Failure -> toast("Failed to delete")
                 is BunchDeleteEvent.Success -> {
-                    tracker.clearSelection()
+//                    tracker.clearSelection()
                     toast("Successfully deleted")
-                    fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+                    fetchViewModel.fetchEntries(argumentEntityCategory)
                 }
             }
         }
         saveEntryViewModel.saveEvent.observe(viewLifecycleOwner) {
-            fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+            fetchViewModel.fetchEntries(argumentEntityCategory)
         }
-        fetchEntriesViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
+        fetchViewModel.fetchAllEvent.observe(viewLifecycleOwner) {
             when (it) {
-                is FetchEntriesViewModel.FetchAllEvent.Empty -> {
+                is FetchAllEvent.Empty -> {
                     ui.searchAndListLayout.isVisible = false
                     ui.errorView.isVisible = false
                     ui.emptyMessageView.isVisible = true
@@ -221,25 +217,26 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
                     )
                 }
 
-                is FetchEntriesViewModel.FetchAllEvent.Success -> {
+                is FetchAllEvent.Success<*> -> {
+                    println("dasdasadad ${it.entries.first()?.javaClass }}")
                     ui.searchAndListLayout.isVisible = true
                     ui.emptyMessageView.isVisible = false
                     ui.errorView.isVisible = false
-                    entriesAdapter!!.replaceDataset(it.entries)
-                    entriesAdapter!!.tracker = tracker
+//                    entriesAdapter!!.replaceDataset(it.entries)
+//                    entriesAdapter!!.tracker = tracker
                 }
 
-                is FetchEntriesViewModel.FetchAllEvent.Failure -> {
+                is FetchAllEvent.Failure -> {
                     ui.searchAndListLayout.isVisible = false
                     ui.errorView.isVisible = true
                     ui.emptyMessageView.isVisible = false
                 }
             }
         }
-        fetchEntriesViewModel.filterEvent.observe(viewLifecycleOwner) {
-            if (it is FetchEntriesViewModel.FilterEvent.Success) {
-                entriesAdapter!!.replaceDataset(it.entries)
-                entriesAdapter!!.tracker = tracker
+        fetchViewModel.filterEvent.observe(viewLifecycleOwner) {
+            if (it is FilterEvent.Success<*>) {
+//                entriesAdapter!!.replaceDataset(it.entries)
+//                entriesAdapter!!.tracker = tracker
             }
         }
         shareEntryViewModel.shareEntryEvent.observe(viewLifecycleOwner) {
@@ -251,52 +248,46 @@ class EntryFragment : Fragment(R.layout.fragment_category) {
         moveToOtherCategoryViewModel.saveEntityEvent.observe(viewLifecycleOwner) {
             when (it) {
                 is MoveToOtherCategoryViewModel.SaveEntityEvent.Success -> {
-                    tracker.clearSelection()
+//                    tracker.clearSelection()
                     toast("Successfully changed category")
-                    fetchEntriesViewModel.fetchEntries(argumentEntityType, argumentEntityCategory)
+                    fetchViewModel.fetchEntries(argumentEntityCategory)
                 }
 
                 is MoveToOtherCategoryViewModel.SaveEntityEvent.Failure -> toast("Failed to move to other category")
             }
         }
-        fetchEntriesViewModel.findEntityEvent.observe(viewLifecycleOwner) {
-            if (it is FetchEntriesViewModel.FindEntityEvent.Success) {
+        fetchViewModel.findEntityEvent.observe(viewLifecycleOwner) {
+            if (it is FindEntityEvent.Success<*>) {
                 showAppropriateEntityAddFragment()
             }
         }
     }
 
-    private fun setupFab() {
-        ui.fab.setOnClickListener { showAppropriateEntityAddFragment() }
-    }
-
     private fun showAppropriateEntityAddFragment() = when (argumentEntityType) {
-        BOOK -> AddBookDialogFragment
+        ViewModelBuilderModule.ENTITY_TYPE.BOOK -> AddBookDialogFragment
             .newInstance(argumentEntityCategory)
             .show(childFragmentManager, null)
 
-        GAME -> AddGameDialogFragment
+        ViewModelBuilderModule.ENTITY_TYPE.GAME -> AddGameDialogFragment
             .newInstance(argumentEntityCategory)
             .show(childFragmentManager, null)
 
-        MOVIE -> AddMovieDialogFragment
+        ViewModelBuilderModule.ENTITY_TYPE.MOVIE -> AddMovieDialogFragment
             .newInstance(argumentEntityCategory)
             .show(childFragmentManager, null)
 
-        DOCUMENTARY -> AddDocumentaryDialogFragment
+        ViewModelBuilderModule.ENTITY_TYPE.DOCUMENTARY -> AddDocumentaryDialogFragment
             .newInstance(argumentEntityCategory)
             .show(childFragmentManager, null)
 
-        EntityType.SHORT -> AddShortDialogFragment
+        ViewModelBuilderModule.ENTITY_TYPE.SHORT -> AddShortDialogFragment
             .newInstance(argumentEntityCategory)
             .show(childFragmentManager, null)
     }
 
     companion object {
         const val ARG_TYPE = "arg_type"
-        @JvmStatic fun newInstance(entityCategory: Category, entityType: EntityType) =
-            EntryFragment().apply {
-                arguments = bundleOf(ARG_CATEGORY to entityCategory, ARG_TYPE to entityType)
-            }
+        @JvmStatic fun newInstance(entityCategory: Category, entityType: ViewModelBuilderModule.ENTITY_TYPE) =
+            EntryFragment().withArguments(ARG_CATEGORY to entityCategory, ARG_TYPE to entityType)
     }
 }

@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dev.liinahamari.list_ui.databinding.ButtonItemBinding
-import dev.liinahamari.list_ui.single_entity.EntityType
+import dev.liinahamari.list_ui.di.ViewModelBuilderModule
 
-class EntityButtonsAdapter(private val onEntityClick: (EntityType) -> Unit) :
+class EntityButtonsAdapter(private val onEntityClick: (ViewModelBuilderModule.ENTITY_TYPE) -> Unit) :
     RecyclerView.Adapter<EntityButtonsAdapter.ViewHolder>() {
-    private val entities = EntityType.entries.toTypedArray()
+    private val entities = ViewModelBuilderModule.ENTITY_TYPE.entries.toTypedArray()
 
     inner class ViewHolder(private val ui: ButtonItemBinding) : RecyclerView.ViewHolder(ui.root) {
         fun bind(buttonTitle: String) {

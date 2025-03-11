@@ -26,6 +26,7 @@ import dev.liinahamari.list_ui.R
 import dev.liinahamari.list_ui.databinding.ActivityMainBinding
 import dev.liinahamari.list_ui.di.DaggerListUiComponent
 import dev.liinahamari.list_ui.di.ListUiComponent
+import dev.liinahamari.list_ui.di.ViewModelBuilderModule
 import dev.liinahamari.list_ui.single_entity.EntryFragment
 import dev.liinahamari.list_ui.tabs.SectionsPagerAdapter
 import dev.liinahamari.list_ui.tabs.ViewPagerPlaceholderFragment
@@ -47,13 +48,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ShakeDetector.Li
 
     override fun onCreate(savedInstanceState: Bundle?) {
         listUiComponent =
-            DaggerListUiComponent.factory().create(EntityListFactory.getApi(object : EntityListDependencies {
-                override val application: Application
-                    get() = getApplication()
-            }), SettingsFactory.getApi(object : SettingsDeps { //todo: figure out to place (scope) it it on Application level
+            DaggerListUiComponent.builder()
+                .entityType(ViewModelBuilderModule.ENTITY_TYPE.MOVIE)
+                .deps(EntityListFactory.getApi(object : EntityListDependencies {
                 override val application: Application
                     get() = getApplication()
             }))
+                .deps2(SettingsFactory.getApi(object : SettingsDeps { //todo: figure out to place (scope) it it on Application level
+                    override val application: Application
+                        get() = getApplication()
+                })).create()
         listUiComponent.inject(this)
         shakeDetector = ShakeDetector(this)
         super.onCreate(savedInstanceState)
